@@ -1,0 +1,13 @@
+require 'rails_helper'
+
+RSpec.describe DiscoveryController, :type => :controller do
+	describe '#resources' do
+		#it 'should return status 200 OK' do
+			#expect(response.status).to eq(200)
+		#end
+		it {SimpleCov.minimum_coverage 85 # Para que os testes falhem caso a cobertura esteja abaixo de 85%
+
+SimpleCov.start}
+	end
+
+end
