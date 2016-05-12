@@ -1,0 +1,2 @@
+class DiscoveryController < ApplicationController
+end
