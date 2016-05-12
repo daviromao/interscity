@@ -1,4 +1,4 @@
-
+image: ruby:2.3
 
 before_script:
   - ruby -v
@@ -11,5 +11,3 @@ before_script:
 rspec:
   script:
     - bundle exec rspec
-
-
