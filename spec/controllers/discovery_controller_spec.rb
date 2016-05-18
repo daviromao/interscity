@@ -3,19 +3,47 @@ require 'rails_helper'
 RSpec.describe DiscoveryController, :type => :controller do
 	describe '#resources' do
 		it 'should return status 400 (Bad Request)' do
-			get 'resources', format: :json
+			get 'resources'
 			expect(response.status).to eq(400)
 		end
-		#it {expect(response.status).to eq(200)}
+		
+		it 'should fail when given a nil capability without value' do
+                        get 'resources', params: {capability: ""}
 
-		it 'should return 1 params' do
-			get 'resources', params: {capability: "temp"}
+                        expect(response.status).to eq(400)
 
-			expect(JSON.parse(response.body)["data"]["capability"]).
-			       to eq("temp")
-			expect(response.status).to eq(200)
-		end
+                end
+		
+		it 'should fail when lon is blank' do
+                        get 'resources', params: {capability: "temp", lat: "212121", lon: ""}
+
+              		expect(response.status).to eq(400)
+
+                 end
+
+		it 'should fail when lat is blank' do
+                        get 'resources', params: {capability: "temp", lon: "212121", lat: ""}
+
+                        expect(response.status).to eq(400)
+
+                 end
+
+
+		it 'should return a set of id or ids given a capability' do
+                        get 'resources', params: {capability: "temp"}
+
+                        hash_response_uuids = JSON.parse(response.body)
+
+                        expected_array = ["1111", "2222", "3333", "4444"]
+
+                        expect(response.status).to eq(200)
+
+                        expect(hash_response_uuids["uuids"]).to eq (expected_array)
+                end
+
 
 	end
+
+	
 
 end
