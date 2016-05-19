@@ -1,0 +1,7 @@
+class DiscoveryController < ApplicationController
+  def resources
+	
+  	render json: {data: request.params},  status: 200
+	
+  end
+end

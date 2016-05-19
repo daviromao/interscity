@@ -40,7 +40,9 @@ class DiscoveryController < ApplicationController
 	#uncoment this line when resource catalog is availible
 	#JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
 
-	data_catalog_mockup()
+	uuids = {:uuids => ["1111","2222"]}
+
+	uuids.to_json
   end
 
   def call_to_data_collector(uuids, lat, lon)
@@ -60,8 +62,4 @@ class DiscoveryController < ApplicationController
 	data
   end
 
-  def data_catalog_mockup
-	hash_uuids = {:uuids => ["1111","2222"]}
-	hash_uuids.to_json
-  end	
 end

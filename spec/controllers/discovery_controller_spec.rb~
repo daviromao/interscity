@@ -35,7 +35,7 @@ RSpec.describe DiscoveryController, :type => :controller do
 		    hash_response_uuids = JSON.parse(response.body)
 		    expected_array = ["1111", "2222"]
 		    expect(response.status).to eq(200)
-		    expect(hash_response_uuids["uuids"]).to eq (expected_array)
+		    expect(hash_response_uuids[uuids]).to eq (expected_array)
 		end
 
 		it 'should return data from data collector for a given capability with specific params' do

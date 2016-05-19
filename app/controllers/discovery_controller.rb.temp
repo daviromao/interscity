@@ -1,0 +1,70 @@
+require 'rest-client'
+
+class DiscoveryController < ApplicationController
+  def resources
+	#render params[].each_with_index {|value, index| puts "[#{index}] == #{value}" }
+
+	if request.GET.size == 0
+		render :status => 400
+	else
+		#json: {data: request.params}, status: 200
+
+		#test if the param is capability
+
+		unless  params["capability"].blank? 
+			params_request = Hash.new
+			params_request["capability"] =  params["capability"]
+
+			unless (not params["lat"].blank? and params["lon"].blank?) or
+                               (params["lat"].blank? and not params["lon"].blank?)
+				params_request["lat"] =  params["lat"]
+				params_request["lon"] =  params["lon"]
+			else
+				render :plain => "Params are not right.", :status => 400
+				return true
+			end
+
+			uuids = call_to_data_catalog()
+
+			capabilities = call_to_data_collector(uuids)
+
+			render json: uuids
+	
+		else
+			render :plain => "Params are not right.", :status => 400
+		end
+
+		#return to client a set of ids as json
+	end
+
+	private
+
+	def call_to_data_catalog
+		#uncoment this line when resource catalog is availible
+                #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
+		hash_uuids = {:uuids => ["1111","2222","3333","4444"]}
+                hash_uuids.to_json
+
+                JSON.parse(uuids)
+	end
+	
+	def call_to_data_collector
+		#uncoment this line when data collector is availible
+                #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
+
+		JSON.parse(data_collector_mockup)
+	end
+
+	def data_collector_mockup(uuids)
+		def capabilities = Hash.new
+		uuids.each { |uuid|
+			unless uuid.blank?
+				capability = Hash.new
+				capability = {:lat => "1231321545", :lon => "55445125"}
+				capabilities[uuid] = capability 
+			end
+		}
+	end
+
+  end
+end
