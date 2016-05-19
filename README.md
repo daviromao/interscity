@@ -1,24 +1,43 @@
-# README
+![Build Status](https://gitlab.com/smart-city-platform/discovery-service/badges/master/build.svg)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+#Resources Catalog API
+#====================
 
-Things you may want to cover:
+Environment Setup
+-----------------
 
-* Ruby version
+* Install RVM
+* Run on terminal: ```$ rvm install 2.3.1```
+* In the project directory, run:
+  * ```$ gem install bundle```
+  * ```$ bundle install```
+  Run the tests:
+  * ```$ rspec```
 
-* System dependencies
+You should see all tests passing =)
 
-* Configuration
+Provides
+--------
+* get /discovery/resources/? capability=[capability_name] 
+							& lat=[number] 
+							& lon=[number] 
+							& min_cap_data=[minValue] 
+							& max_cap_data=[maxValue] 
+							& start_date=[date] 
+							& end_date=[date]
 
-* Database creation
+Needs
+-----
 
-* Database initialization
+* data_catalog 		GET /resources/search
+* data_collector	GET /events/?resource_id=:value
+								&limit=:value
+								&start=:value
 
-* How to run the test suite
+Useful links
+============
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes) @ STOA
+* [Discovery Services description](https://social.stoa.usp.br/poo2016/projeto/grupo-5-middleware-cidade-inteligente) @ STOA
+* [Group Repository](https://gitlab.com/groups/smart-city-platform)
+* [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
