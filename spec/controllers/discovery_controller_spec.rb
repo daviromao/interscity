@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe DiscoveryController, :type => :controller do
+
   describe '#resources' do
     it 'should return status 400 (Bad Request)' do
       get 'resources'
