@@ -128,24 +128,10 @@ class DiscoveryController < ApplicationController
 	  data_catalog_mockup(discovery_query)
   end
 
-  def call_to_data_collector(found_resources)
+  def call_to_data_collector(resource)
 	#uncoment this line when data collector is availible
 	#JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
-
-    service_uri = build_collector_service_query
-
-    id_array = {}
-
-    found_resources.each do |resource|
-      id_array.add(resource[:id])
-    end
-
-    id_list=array.join(',')
-
-    service_uri =+ id_list
-
-	  data_collector_mockup(found_resources)
-
+    resource.data = data_collector_mockup(build_collector_service_query resource)
   end
 
   def data_collector_mockup(discovery_query)
