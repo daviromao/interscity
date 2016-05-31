@@ -21,7 +21,7 @@ module ErrorMessage
   def error_payload(message, status)
     payload = {
         code: ERROR_CODE[status],
-        message: message,
+        message: message
     }
 
     {json: payload, status: status}

@@ -24,7 +24,8 @@ class DiscoveryController < ApplicationController
       end
 
     else
-      render error_payload (error_message,400)
+      render error_payload(error_message,400)
+
       return true
     end
 
