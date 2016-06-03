@@ -1,8 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe DiscoveryController, :type => :controller do
+
+describe DiscoveryController, :type => :controller do
+
+
 
   describe '#resources' do
+
+    before(:all) do
+      @controller = DiscoveryController.new
+
+    end
     it 'should return status 400 (Bad Request)' do
       get 'resources'
 
@@ -15,11 +23,6 @@ RSpec.describe DiscoveryController, :type => :controller do
       expect(response.status).to eq(400)
     end
 
-    it 'should fail when lon is blank' do
-      get 'resources', params: {capability: "temp", lat: "212121", lon: ""}
-
-      expect(response.status).to eq(400)
-    end
 
     it 'should fail when lat is blank' do
       get 'resources', params: {capability: "temp", lon: "212121", lat: ""}
@@ -38,13 +41,36 @@ RSpec.describe DiscoveryController, :type => :controller do
 
     it 'should return data from data collector for specific params' do
       get 'resources', params: {capability: "temp", lat: "12.34", lon: "43.21"}
-      expected_json = {
-        "1111"=>{lat: "12.34", lon:"43.21"},
-        "2222"=>{lat: "12.34", lon:"43.21"}
-      }.to_json
+      hash_response_uuids = JSON.parse(response.body)
+      expected_json = ["1111","2222"]
 
       expect(response.status).to eq(200)
-      expect(response.body).to eq (expected_json)
+      expect(hash_response_uuids["uuids"]).to eq (expected_json)
+    end
+
+
+    it 'should return resources based on lat lon within a radius' do
+      get 'resources', params: {capability: "temp", lat: "12.34", lon: "43.21", radius:"100"}
+      hash_response_uuids = JSON.parse(response.body)
+      expected_json = ["4444","3333"]
+
+      expect(response.status).to eq(200)
+      expect(hash_response_uuids["uuids"]).to eq (expected_json)
+    end
+
+    it 'should fail when lon is blank' do
+      get 'resources', params: {capability: "temp", lat: "212121", lon: ""}
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'should not find any resources fom catalog' do
+      get 'resources', params: {capability: "temp", lat: "12.34", lon: "43.21", radius:80}
+      hash_response_uuids = JSON.parse(response.body)
+      expected_json = nil
+
+      expect(response.status).to eq(404)
+      expect(hash_response_uuids["uuids"]).to eq (expected_json)
     end
   end
 end

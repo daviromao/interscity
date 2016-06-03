@@ -1,12 +1,14 @@
 require 'rest-client'
+require 'json'
 
 class DiscoveryController < ApplicationController
 
   Catalog_Base_URL = 'someip/resource_catalog/query_resources?'
 
   def initialize
-    SERVICES_CONFIG['resource_catalog'] = 'someip/resource_catalog/query_resources?'
-    SERVICES_CONFIG['collector_service'] = 'someip/collector/'
+    @SERVICES_CONFIG = Hash.new
+    @SERVICES_CONFIG['resource_catalog'] = 'someip/resource_catalog/query_resources?'
+    @SERVICES_CONFIG['collector_service'] = 'someip/collector/'
   end
 
   def resources
@@ -16,11 +18,12 @@ class DiscoveryController < ApplicationController
 
       found_resources = call_to_resource_catalog(build_resource_catalog_url)
 
-      found_resources.delete_if do |resource|
-        resource_data = call_to_data_collector(resource)
-        #returns true if capability data does not obey the restrictions and removes the resource from the list
-        filter_resources(resource_data)
-
+      if(not validate_collector_url and not found_resources.blank?)
+        found_resources['uuids'].delete_if do |resource|
+          resource_data = call_to_data_collector(resource)
+          #returns true if capability data does not obey the restrictions and removes the resource from the list
+          filter_resources(resource_data)
+        end
       end
 
     else
@@ -39,12 +42,12 @@ class DiscoveryController < ApplicationController
 
   def build_resource_catalog_url
 
-    query_string_url += SERVICES_CONFIG['resource_catalog'] + 'capability=' + params['capability']
+    query_string_url = @SERVICES_CONFIG['resource_catalog'] + 'capability=' + params['capability']
 
     if params['radius'].blank? and not params['lat'].blank?
       query_string_url += ',' + 'lat=' + params['lat'] + ',' + 'lon=' + params['lon']
     elsif not params['radius'].blank? and not params['lat'].blank?
-      query_string_url += ',' + 'lat=' + params['lat'] + ',' + 'lon=' + params['lon'] + ',' + params['radious']
+      query_string_url += ',' + 'lat=' + params['lat'] + ',' + 'lon=' + params['lon'] + ',' + 'radius=' + params['radius']
     end
 
     return query_string_url
@@ -52,7 +55,7 @@ class DiscoveryController < ApplicationController
 
   def build_collector_service_query (resource_id)
 
-    query_string_url += SERVICES_CONFIG['collector_service'] + '/' + resource_id + '/' + params['capability'] + '?'
+    query_string_url = @SERVICES_CONFIG['collector_service'] + '/' + resource_id + '/' + params['capability'] + '?'
 
     if not params['start_range'].blank? and not params['end_range'].blank?
       query_string_url += 'start_range=' + params['start_range'] + ',' + 'end_range=' + params['end_range']
@@ -65,7 +68,9 @@ class DiscoveryController < ApplicationController
 
     delete_it = false
 
-      #Clients wants exact value
+    #Not for this sprint
+    #Clients wants exact value
+=begin
       if (params['max_cap_data']==params['min_cap_data'])
 
         cap_data=params['max_cap_data']
@@ -87,7 +92,8 @@ class DiscoveryController < ApplicationController
             delete_it = true if res_datum < params['min_cap_data'] or res_datum > params['max_cap_data']
           end
         end
-      end
+=end
+    #end
 
     return delete_it
   end
@@ -95,6 +101,7 @@ class DiscoveryController < ApplicationController
   def validate_url_params
 
     error_message = ''
+
     if request.GET.size != 0
 
       if params['capability'].blank?
@@ -109,8 +116,8 @@ class DiscoveryController < ApplicationController
         error_message = +'Latitude has not been specified \n'
       end
 
-      if (params['radious'].blank? and not params['lon'].blank? and not params['lat'].blank?)
-        error_message = +'Latitude and Longitude have not been specified \n'
+      if (not params['radius'].blank? and params['lon'].blank? and params['lat'].blank?)
+        error_message = +'To use radius Latitude and Longitude must be specified \n'
       end
 
     else
@@ -122,33 +129,66 @@ class DiscoveryController < ApplicationController
 
   private
 
-  def call_to_resource_catalog(discovery_query)
-	#uncoment this line when resource catalog is availible
-	#JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
+  def validate_collector_url()
+    if query_collector (['capability'])
+      return true
+    end
+    if query_collector (['capability', 'lon', 'lat'])
+      return true
+    end
+    if query_collector (['capability', 'lon', 'lat', 'radius'])
+      return true
+    end
 
-	  data_catalog_mockup(discovery_query)
+  end
+
+  def query_collector (args)
+    valid_collector_url=true
+    args.each { |arg|
+      if (params[arg].blank?)
+        valid_collector_url = false
+      end
+    }
+    if(args.size!=request.GET.size)
+      valid_collector_url = false
+    end
+    valid_collector_url
+  end
+
+  def call_to_resource_catalog(discovery_query)
+    #uncoment this line when resource catalog is availible
+    #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
+
+    data_catalog_mockup(discovery_query)
   end
 
   def call_to_data_collector(resource)
-	#uncoment this line when data collector is availible
-	#JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
-    resource.data = data_collector_mockup(build_collector_service_query resource)
+    #uncoment this line when data collector is availible
+    #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
+    data = data_collector_mockup(build_collector_service_query(resource),resource)
   end
 
-  def data_collector_mockup(discovery_query)
+  def data_collector_mockup(discovery_query,resource)
     data = Hash.new
-
-    uuids.each { |uuid|
-        temp = Hash.new
-        temp = {:lat => lat, :lon => lon}
-        data[uuid] = temp
-    }
-    data
+    data = {:uuids => resource, :data => ["1111","2222"]}
   end
 
   def data_catalog_mockup (discovery_query)
-    hash_uuids = {:uuids => ["1111","2222"]}
-    hash_uuids.to_json
+
+
+    if params['radius'].blank?
+      hash_uuids = {:uuids => ["1111","2222"]}
+    else
+      hash_uuids = {:uuids => ["4444","3333"]}
+    end
+
+    if (params['radius']=="80")
+
+      hash_uuids = {}
+    end
+
+    temp=hash_uuids.to_json
+    JSON.parse(temp)
   end
 
 end
