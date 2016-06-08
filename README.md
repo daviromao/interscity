@@ -1,24 +1,48 @@
-# README
+![Build Status](https://gitlab.com/smart-city-platform/actuators-control/badges/master/build.svg)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Actuators-Control API
+=====================
 
-Things you may want to cover:
+Environment Setup
+-----------------
 
-* Ruby version
+* Install RVM
+* Run on terminal: ```$ rvm install 2.3.1```
+* In the project directory, run:
+  * ```$ gem install bundle```
+  * ```$ bundle install```
+  Run the tests:
+  * ```$ rspec```
 
-* System dependencies
+You should see all tests passing =)
 
-* Configuration
+Provides
+--------
 
-* Database creation
+* put 'actuator/resources/:uuid/exec/:capability'
 
-* Database initialization
+Expected put body:
 
-* How to run the test suite
+{
+   "uuid": '1'
+   "capability": {value:'green'}
+}
 
-* Services (job queues, cache servers, search engines, etc.)
+* get 'actuator/resources/:uuid/status/:capability''
 
-* Deployment instructions
+Data catalog interaction
+* post 'resources'
+* put 'resources/:uuid'
 
-* ...
+Needs
+-----
+
+* resource_adaptor 		put /resources-adaptor/execute/:capability
+
+Useful links
+============
+
+* [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes) @ STOA
+* [Actuators-control description](https://social.stoa.usp.br/poo2016/projeto/grupo-5-middleware-cidade-inteligente) @ STOA
+* [Group Repository](https://gitlab.com/groups/smart-city-platform)
+* [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
