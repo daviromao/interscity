@@ -2,7 +2,9 @@ class ValidateParams
 
   def self.validate_cap_exec (json)
     if (json.key?('uuid') and json.key?('capability'))
+
       if(not json['uuid'].blank? and not json['capability'].blank?)
+
         return true
       end
     end

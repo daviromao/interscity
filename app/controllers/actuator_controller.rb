@@ -18,9 +18,12 @@ class ActuatorController < ApplicationController
 
       if (ValidateParams.validate_cap_exec(execParams))
         #find resource url in local database with uuid
+
         res=Resource.find_by(uuid:execParams['uuid'])
         #execute capability in the specific
-        status = ResourceAdaptorMock.traffic_light_mock(execParams,res.uri)
+        status = ResourceAdaptorMock.traffic_light_exec_mock(execParams,res.uri)
+      else
+        status = 400
       end
 
     rescue Exception => e
@@ -77,6 +80,7 @@ class ActuatorController < ApplicationController
     begin
       updateParams = JSON.parse(request.body.string)
       if (ValidateParams.validate_resource_catalog_update(updateParams))
+
         #find resource url in local database with uuid
         res=Resource.find_by(uuid:updateParams['uuid'])
         res.uri = updateParams['uri']

@@ -24,7 +24,6 @@ Provides
 Expected put body:
 
 {
-   "uuid": '1'
    "capability": {value:'green'}
 }
 
