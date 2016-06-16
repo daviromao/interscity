@@ -1,6 +1,7 @@
 class ResourceAdaptorMock
 
   def self.execute_actuator_capability (json,uri)
+    
     case uri
       when 'traffic_light_url'
         traffic_light_exec_mock json, uri
@@ -21,7 +22,8 @@ class ResourceAdaptorMock
 
   private
 
-  def traffic_light_exec_mock (json, uri)
+  def self.traffic_light_exec_mock (json, uri)
+
     if(json['capability']['value']=='red')
       return 200
     end

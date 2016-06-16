@@ -24,11 +24,12 @@ describe ActuatorController, :type => :controller do
       expect(response.status).to eq(400)
     end
 
-    it 'Should return status 201. The traffict light actuator should be able to turn green.' do
+    it 'Should return status 200. The traffict light actuator should be able to turn green.' do
       request.env["HTTP_ACCEPT"] = "application/json"
       request.env["RAW_POST_DATA"] = {uuid: "1", capability: {name: 'trafficlight', value: 'green'}}.to_json
       url_params = {uuid: '1', capability: 'trafficlight'}
       put :exec, url_params, 'CONTENT_TYPE' => 'application/json'
+      
       expect(response.status).to eq(200)
     end
 

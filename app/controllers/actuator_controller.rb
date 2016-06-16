@@ -11,13 +11,14 @@ class ActuatorController < ApplicationController
   end
 
   def exec
+  
     status =''
     begin
 
       execParams = JSON.parse(request.body.string)
-
       if (ValidateParams.validate_cap_exec(execParams))
         #find resource url in local database with uuid
+        
 
         res=Resource.find_by(uuid:execParams['uuid'])
         #execute capability in the specific
