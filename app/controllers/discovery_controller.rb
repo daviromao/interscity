@@ -16,31 +16,27 @@ class DiscoveryController < ApplicationController
 
     if error_message.blank?
 
-      found_resources = call_to_resource_catalog(build_resource_catalog_url)
+      found_resources = JSON.parse(call_to_resource_catalog(build_resource_catalog_url))
       
       #if(not validate_collector_url and not found_resources.blank?)
-      if(not found_resources.blank?)
-        
+      if(not found_resources.blank? and validate_collector_url)
         found_resources['uuids'].delete_if do |resource|
-          resource_data = call_to_data_collector(resource)
-          #returns true if capability data does not obey the restrictions and removes the resource from the list
-          filter_resources(resource_data)
+            resource_data = JSON.parse(call_to_data_collector(resource))
+            #returns true if capability data does not obey the restrictions and removes the resource from the list
+            filter_resources(resource_data['capability_values'])
         end
-        
       end
-
     else
       render error_payload(error_message,400)
-
       return true
     end
 
     if not found_resources.empty?
-      render json: found_resources
+      render json: found_resources.to_json
     else
+
       render error_payload('No resources have been found',404)
     end
-
   end
 
   def build_resource_catalog_url
@@ -58,7 +54,7 @@ class DiscoveryController < ApplicationController
 
   def build_collector_service_query (resource_id)
 
-    query_string_url = @SERVICES_CONFIG['collector_service'] + '/' + resource_id + '/' + params['capability'] + '?'
+    query_string_url = @SERVICES_CONFIG['collector_service'] + '/' + resource_id['uuid'] + '/' + params['capability'] + '?'
 
     if not params['start_range'].blank? and not params['end_range'].blank?
       query_string_url += 'start_range=' + params['start_range'] + ',' + 'end_range=' + params['end_range']
@@ -70,34 +66,46 @@ class DiscoveryController < ApplicationController
   def filter_resources(resource_data)
 
     delete_it = false
-=begin
-    if (not params['end_range'].blank? or not params['start_range'].blank?)
+
+    params['max_cap_value'] = params['max_cap_value'].to_i
+    params['min_cap_value'] = params['min_cap_value'].to_i
+
+    resource_data.each { |res_datum|
+      res_datum['cap_value']=res_datum['cap_value'].to_i
+    }
+
+    if (not params['max_cap_value'].blank? or not params['min_cap_value'].blank?)
       #Clients wants exact value
-      if (params['end_range']==params['start_range'])
-
-        cap_data=params['end_range']
-        #value exists within the resource_data
-        delete_it = !resource_data.include?(cap_data)
-
+      if (params['max_cap_value']==params['min_cap_value'])
+        delete_it = !resource_data.include?(params['max_cap_value'])
       #Client restriction has a range
       else
-        if (not params['end_range'].blank? and params['start_range'].blank?)
+        if (not params['max_cap_value'].blank? and params['min_cap_value'].blank?)
           resource_data.each do |res_datum|
-            delete_it = true if res_datum > params['end_range']
+            if(res_datum['cap_value'] > params['max_cap_value'])
+              delete_it = true
+              return delete_it
+            end
           end
-        elsif (params['end_range'].blank? and not params['start_range'].blank?)
+        elsif (params['max_cap_value'].blank? and not params['min_cap_value'].blank?)
           resource_data.each do |res_datum|
-            delete_it = true if res_datum < params['start_range']
+            if(res_datum['cap_value'] < params['min_cap_value'])
+              delete_it = true
+              return delete_it
+            end
           end
-        elsif (not params['end_range'].blank? and not params['start_range'].blank?)
+        elsif (not params['max_cap_value'].blank? and not params['min_cap_value'].blank?)
           resource_data.each do |res_datum|
-            debugger
-            delete_it = true if res_datum < params['start_range'] or res_datum > params['end_range']
+            if ( res_datum['cap_value'] > params['max_cap_value'] or res_datum['cap_value']< params['min_cap_value'])
+              delete_it = true
+              return delete_it
+            end
           end
         end
       end
+    elsif (not params['cap_value'].blank?)
+      delete_it = !resource_data.include?(params['cap_value'])
     end
-=end
 
     return delete_it
   end
@@ -133,33 +141,24 @@ class DiscoveryController < ApplicationController
 
   private
 
-=begin    redundant methods
-
   def validate_collector_url()
-    if query_collector (['capability'])
+
+
+
+    if (url_param_checker(['min_cap_value']) or url_param_checker(['max_cap_value']) or url_param_checker(['cap_value']))
       return true
-    elsif query_collector (['capability', 'lon', 'lat'])
-      return true
-    elsif query_collector (['capability', 'lon', 'lat', 'radius'])
-      return true
-    else
-      return false
     end
   end
 
-  def query_collector (args)
-    valid_collector_url=true
+  def url_param_checker (args)
+    valid_url=true
     args.each { |arg|
       if (params[arg].blank?)
-        valid_collector_url = false
+        valid_url = false
       end
     }
-    if(args.size!=request.GET.size)
-      valid_collector_url = false
-    end
-    valid_collector_url
+    valid_url
   end
-=end
 
 
   def call_to_resource_catalog(discovery_query)
@@ -175,31 +174,40 @@ class DiscoveryController < ApplicationController
     data_collector_mockup(build_collector_service_query(resource),resource)
   end
 
-  def data_collector_mockup(discovery_query,resource)
+  def data_collector_mockup(colector_query,resource)
     data = Hash.new
-    if params['start_range'].blank?
-      data = {:uuids => resource, :data => ["1111","2222"]}
-    else
-      data = {:uuids => resource, :data => ["1111"]}
-      #data = {uuids : resource, data : {uidd : "1111", last_value: 20}}
-    end
+    if params['start_date'].blank? and params['end_date'].blank?
 
+      case resource['uuid']
+        when '4'
+          data = {uuid:'4',capability_values: [{cap_value: 19,time_stamp:'2016-01-01T23:30:21'}]}
+        when '5'
+          data = {uuid:'5',capability_values: [{cap_value: 31,time_stamp:'2016-01-01T23:30:21'}]}
+        when '7'
+          data = {uuid:'7',capability_values: [{cap_value: 25,time_stamp:'2016-01-01T23:30:21'}]}
+      end
+
+    else
+      data = {:uuids => resource, :value => ["1111"]}
+    end
+    data.to_json
   end
 
   def data_catalog_mockup (discovery_query)
 
-    if params['radius'].blank?
-      hash_uuids = {:uuids => ["1111","2222"]}
+    if (params['radius'].blank? and not params['lat'].blank? and not params['lon'].blank?)
+      hash_uuids = {uuids: [{uuid:'2', lat: '20', lon: '20'},{uuid:'3', lat: '30', lon: '30'}]}
+    elsif params['radius'].blank?
+      hash_uuids =  {uuids: [{uuid:'1', lat: '10', lon: '10'},{uuid:'2', lat: '20', lon: '20'},{uuid:'3', lat: '30', lon: '30'}]}
     else
-      hash_uuids = {:uuids => ["4444","3333"]}
+      hash_uuids = {uuids: [{uuid:'4', lat: '40', lon: '40'},{uuid:'5', lat: '40', lon: '40'},{uuid:'7', lat: '40', lon: '40'}]}
     end
 
     if (params['radius']=="80")
       hash_uuids = {}
     end
-
-    temp=hash_uuids.to_json
-    JSON.parse(temp)
+    #The data catalog will return json formatted data
+    hash_uuids.to_json
   end
 
 end

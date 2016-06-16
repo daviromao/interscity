@@ -18,13 +18,25 @@ You should see all tests passing =)
 
 Provides
 --------
-* get /discovery/resources/? capability=[capability_name]&lat=[number]&lon=[number]&min_cap_data=[minValue]&max_cap_data=[maxValue]&start_date=[date]&end_date=[date]
+* get /discovery/resources/? capability=[capability_name]&lat=[number]&lon=[number]&min_cap_value=[minValue]&max_cap_value=[maxValue]&cap_value=[value]&start_date=[date]&end_date=[date]
+
+    obs: The parameter cap_value is used to filter resources with a specific capability value and should not be used with the min_cap_value/max_cap_value
 
 Needs
 -----
 
 * data_catalog 		GET /resources/search
+
 * data_collector	GET /events/?resource_id=:value&limit=:value&start=:value
+envia
+{data:{
+    uudis:{
+        cababilities
+}}}
+responde
+{data:
+    {uuid:{
+}
 
 Useful links
 ============
