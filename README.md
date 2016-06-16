@@ -14,7 +14,7 @@ Environment Setup
   Run the tests:
   * ```$ rspec```
 
-You should see all tests passing =)
+All tests should pass =)
 
 Provides
 --------
@@ -31,7 +31,31 @@ Expected put body:
 
 Data catalog interaction
 * post 'resources'
+
+    Service post content:
+    {
+        "uuid": "value"
+        "capabilities": {name:}
+    }
+
+    How this service responds
+        on successful execution
+            return code 201
+        on failure
+            return code 400
+
 * put 'resources/:uuid'
+
+    Service post content:
+    {
+        "uuid": "value"
+        "capabilities": {name:}
+    }
+    How this service responds
+        on successful execution
+            return code 200
+        on failure
+            return code 400
 
 Needs
 -----

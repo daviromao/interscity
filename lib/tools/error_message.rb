@@ -3,6 +3,7 @@ module ErrorMessage
   ERROR_CODE = {}
 
   ERROR_CODE[200] = 'OK'
+  ERROR_CODE[201] = 'Resource successfully created'
 
   ERROR_CODE[400] = 'BadRequest'
   ERROR_CODE[401] = 'Unauthorized'

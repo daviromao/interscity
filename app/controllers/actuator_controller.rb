@@ -21,7 +21,7 @@ class ActuatorController < ApplicationController
 
         res=Resource.find_by(uuid:execParams['uuid'])
         #execute capability in the specific
-        status = ResourceAdaptorMock.traffic_light_exec_mock(execParams,res.uri)
+        status = ResourceAdaptorMock.execute_actuator_capability(execParams,res.uri)
       else
         status = 400
       end
@@ -31,7 +31,6 @@ class ActuatorController < ApplicationController
     else
       render json: {status: status}, status: status
     end
-
   end
 
   def status
@@ -86,7 +85,7 @@ class ActuatorController < ApplicationController
         res.uri = updateParams['uri']
         res.name = updateParams['name']
         res.save
-        status = 201
+        status = 200
       else
         status = 400
       end
