@@ -1,5 +1,7 @@
 require 'rest-client'
 require 'json'
+require 'mocks/data_catalog_mock'
+require 'mocks/data_collector_mock'
 
 class DiscoveryController < ApplicationController
 
@@ -164,50 +166,14 @@ class DiscoveryController < ApplicationController
   def call_to_resource_catalog(discovery_query)
     #uncoment this line when resource catalog is availible
     #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
-
-    data_catalog_mockup(discovery_query)
+    DataCatalogMock.call(discovery_query, params)
+    
   end
 
   def call_to_data_collector(resource)
     #uncoment this line when data collector is availible
     #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
-    data_collector_mockup(build_collector_service_query(resource),resource)
-  end
-
-  def data_collector_mockup(colector_query,resource)
-    data = Hash.new
-    if params['start_date'].blank? and params['end_date'].blank?
-
-      case resource['uuid']
-        when '4'
-          data = {uuid:'4',capability_values: [{cap_value: 19,time_stamp:'2016-01-01T23:30:21'}]}
-        when '5'
-          data = {uuid:'5',capability_values: [{cap_value: 31,time_stamp:'2016-01-01T23:30:21'}]}
-        when '7'
-          data = {uuid:'7',capability_values: [{cap_value: 25,time_stamp:'2016-01-01T23:30:21'}]}
-      end
-
-    else
-      data = {:uuids => resource, :value => ["1111"]}
-    end
-    data.to_json
-  end
-
-  def data_catalog_mockup (discovery_query)
-
-    if (params['radius'].blank? and not params['lat'].blank? and not params['lon'].blank?)
-      hash_uuids = {uuids: [{uuid:'2', lat: '20', lon: '20'},{uuid:'3', lat: '30', lon: '30'}]}
-    elsif params['radius'].blank?
-      hash_uuids =  {uuids: [{uuid:'1', lat: '10', lon: '10'},{uuid:'2', lat: '20', lon: '20'},{uuid:'3', lat: '30', lon: '30'}]}
-    else
-      hash_uuids = {uuids: [{uuid:'4', lat: '40', lon: '40'},{uuid:'5', lat: '40', lon: '40'},{uuid:'7', lat: '40', lon: '40'}]}
-    end
-
-    if (params['radius']=="80")
-      hash_uuids = {}
-    end
-    #The data catalog will return json formatted data
-    hash_uuids.to_json
+    DataCollectorMock.call(resource, params, @SERVICES_CONFIG)
   end
 
 end
