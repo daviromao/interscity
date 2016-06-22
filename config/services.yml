@@ -1,4 +1,6 @@
 # Be sure to restart your server when you modify this file
 
+# do not include a final slash after the URL
 services:
-  catalog: "url:porta"
+  collector: "http://localhost:8080"
+  catalog: "http://localhost:3001"
