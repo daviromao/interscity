@@ -19,7 +19,12 @@ class CreateResources < ActiveRecord::Migration[5.0]
       t.string :value
       t.timestamps
     end
+
+    create_table :has_capabilities do |t|
+      t.belongs_to :resource, index: true
+      t.belongs_to :capability, index: true
+      t.timestamps
+    end
+
   end
-
-
 end

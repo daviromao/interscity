@@ -3,7 +3,7 @@ module ErrorMessage
   ERROR_CODE = {}
 
   ERROR_CODE[200] = 'OK'
-  ERROR_CODE[201] = 'Resource successfully created'
+  ERROR_CODE[201] = 'BasicResource successfully created'
 
   ERROR_CODE[400] = 'BadRequest'
   ERROR_CODE[401] = 'Unauthorized'
@@ -20,6 +20,7 @@ module ErrorMessage
   protected
 
   def error_payload(message, status)
+
     payload = {
         code: ERROR_CODE[status],
         message: message
@@ -27,6 +28,5 @@ module ErrorMessage
 
     {json: payload, status: status}
   end
-
 
 end

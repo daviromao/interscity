@@ -1,3 +1,5 @@
+require 'exceptions/actuator_exception'
+
 class ResourceAdaptorMock
 
   def self.execute_actuator_capability (json,uri)
@@ -6,8 +8,8 @@ class ResourceAdaptorMock
       when 'traffic_light_url'
         traffic_light_exec_mock json, uri
       else
-        puts 'Url does not responds'
-        return 404
+        puts 'The actuator does not respond trough this URL'
+        raise ActuatorException.new(404)
     end
   end
 
@@ -16,7 +18,7 @@ class ResourceAdaptorMock
       return 'green'
     end
     if(params['capability']=='temperature')
-      return 400
+      raise ActuatorException.new(400)
     end
   end
 
@@ -31,7 +33,7 @@ class ResourceAdaptorMock
       return 200
     end
     if(json['capability']['value']=='blue')
-      return 400
+      raise ActuatorException.new(400)
     end
   end
 

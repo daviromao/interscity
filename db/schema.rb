@@ -29,6 +29,15 @@ ActiveRecord::Schema.define(version: 20160608210349) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "has_capabilities", force: :cascade do |t|
+    t.integer  "resource_id"
+    t.integer  "capability_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["capability_id"], name: "index_has_capabilities_on_capability_id"
+    t.index ["resource_id"], name: "index_has_capabilities_on_resource_id"
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string   "name"
     t.string   "uuid"
