@@ -1,119 +1,63 @@
 require 'rest-client'
 require 'json'
-require 'mocks/data_catalog_mock'
-require 'mocks/data_collector_mock'
 
 class DiscoveryController < ApplicationController
-
-  Catalog_Base_URL = 'someip/resource_catalog/query_resources?'
-
   def initialize
-    @SERVICES_CONFIG = Hash.new
-    @SERVICES_CONFIG['resource_catalog'] = 'someip/resource_catalog/query_resources?'
-    @SERVICES_CONFIG['collector_service'] = 'someip/collector/'
+    @CATALOG_URL = SERVICES_CONFIG['services']['catalog'] +  '/resources/search?'
+    @COLLECTOR_URL = SERVICES_CONFIG['services']['collector'] + '/resources/data/last'
   end
 
   def resources
     error_message = validate_url_params
+    begin
+      if error_message.blank?
+        found_resources = call_to_resource_catalog(build_resource_catalog_url)
 
-    if error_message.blank?
+        if(not found_resources.blank? and validate_collector_url)
+          uuids = []
+          found_resources['resources'].each do |resource|
+            uuids << resource['uuid']
+          end
 
-      found_resources = JSON.parse(call_to_resource_catalog(build_resource_catalog_url))
-      
-      #if(not validate_collector_url and not found_resources.blank?)
-      if(not found_resources.blank? and validate_collector_url)
-        found_resources['uuids'].delete_if do |resource|
-            resource_data = JSON.parse(call_to_data_collector(resource))
-            #returns true if capability data does not obey the restrictions and removes the resource from the list
-            filter_resources(resource_data['capability_values'])
+          collector_response = call_to_data_collector(uuids)
+
+          collector_uuids = []
+          collector_response['resources'].each do |resource|
+            collector_uuids << resource['uuid']
+          end
+
+          found_resources['resources'].select! do |resource|
+            collector_uuids.include?(resource['uuid'])
+          end
         end
+      else
+        render error_payload(error_message,400)
+        return true
       end
-    else
-      render error_payload(error_message,400)
-      return true
-    end
 
-    if not found_resources.empty?
-      render json: found_resources.to_json
-    else
-
-      render error_payload('No resources have been found',404)
+      if not found_resources.empty?
+        render json: found_resources
+      else
+        render error_payload('No resources have been found',404)
+      end
+    rescue
+      render error_payload('Service Unavailable', 503)
     end
   end
 
   def build_resource_catalog_url
-
-    query_string_url = @SERVICES_CONFIG['resource_catalog'] + 'capability=' + params['capability']
+    query_string_url = @CATALOG_URL + 'capability=' + params['capability']
 
     if params['radius'].blank? and not params['lat'].blank?
-      query_string_url += ',' + 'lat=' + params['lat'] + ',' + 'lon=' + params['lon']
+      query_string_url += '&' + 'lat=' + params['lat'] + '&' + 'lon=' + params['lon']
     elsif not params['radius'].blank? and not params['lat'].blank?
-      query_string_url += ',' + 'lat=' + params['lat'] + ',' + 'lon=' + params['lon'] + ',' + 'radius=' + params['radius']
+      query_string_url += '&' + 'lat=' + params['lat'] + '&' + 'lon=' + params['lon'] + '&' + 'radius=' + params['radius']
     end
 
     return query_string_url
-  end
-
-  def build_collector_service_query (resource_id)
-
-    query_string_url = @SERVICES_CONFIG['collector_service'] + '/' + resource_id['uuid'] + '/' + params['capability'] + '?'
-
-    if not params['start_range'].blank? and not params['end_range'].blank?
-      query_string_url += 'start_range=' + params['start_range'] + ',' + 'end_range=' + params['end_range']
-    end
-
-    return query_string_url
-  end
-
-  def filter_resources(resource_data)
-
-    delete_it = false
-
-    params['max_cap_value'] = params['max_cap_value'].to_i
-    params['min_cap_value'] = params['min_cap_value'].to_i
-
-    resource_data.each { |res_datum|
-      res_datum['cap_value']=res_datum['cap_value'].to_i
-    }
-
-    if (not params['max_cap_value'].blank? or not params['min_cap_value'].blank?)
-      #Clients wants exact value
-      if (params['max_cap_value']==params['min_cap_value'])
-        delete_it = !resource_data.include?(params['max_cap_value'])
-      #Client restriction has a range
-      else
-        if (not params['max_cap_value'].blank? and params['min_cap_value'].blank?)
-          resource_data.each do |res_datum|
-            if(res_datum['cap_value'] > params['max_cap_value'])
-              delete_it = true
-              return delete_it
-            end
-          end
-        elsif (params['max_cap_value'].blank? and not params['min_cap_value'].blank?)
-          resource_data.each do |res_datum|
-            if(res_datum['cap_value'] < params['min_cap_value'])
-              delete_it = true
-              return delete_it
-            end
-          end
-        elsif (not params['max_cap_value'].blank? and not params['min_cap_value'].blank?)
-          resource_data.each do |res_datum|
-            if ( res_datum['cap_value'] > params['max_cap_value'] or res_datum['cap_value']< params['min_cap_value'])
-              delete_it = true
-              return delete_it
-            end
-          end
-        end
-      end
-    elsif (not params['cap_value'].blank?)
-      delete_it = !resource_data.include?(params['cap_value'])
-    end
-
-    return delete_it
   end
 
   def validate_url_params
-
     error_message = ''
 
     if request.GET.size != 0
@@ -144,9 +88,6 @@ class DiscoveryController < ApplicationController
   private
 
   def validate_collector_url()
-
-
-
     if (url_param_checker(['min_cap_value']) or url_param_checker(['max_cap_value']) or url_param_checker(['cap_value']))
       return true
     end
@@ -164,16 +105,24 @@ class DiscoveryController < ApplicationController
 
 
   def call_to_resource_catalog(discovery_query)
-    #uncoment this line when resource catalog is availible
-    #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_catalog"])
-    DataCatalogMock.call(discovery_query, params)
-    
+    response = JSON.parse(RestClient.get(discovery_query))
   end
 
-  def call_to_data_collector(resource)
-    #uncoment this line when data collector is availible
-    #JSON.parse (RestClient.get SERVICES_CONFIG["services_data_collector"])
-    DataCollectorMock.call(resource, params, @SERVICES_CONFIG)
+  def call_to_data_collector(uuids)
+    filters = {
+      data: {
+        uuids: uuids,
+        capabilities: [params['capability']],
+        range: {
+          params['capability'] => {
+            max: params['max_cap_value'],
+            min: params['min_cap_value'],
+            equal: params['cap_value']
+          }
+        }
+      }
+    }
+    response = JSON.parse(RestClient.post(COLLECTOR_URL, filters, content_type: 'application/json'))
   end
 
 end
