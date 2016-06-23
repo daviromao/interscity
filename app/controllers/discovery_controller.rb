@@ -49,9 +49,12 @@ class DiscoveryController < ApplicationController
     query_string_url = @CATALOG_URL + 'capability=' + params['capability']
 
     if params['radius'].blank? and not params['lat'].blank?
-      query_string_url += '&' + 'lat=' + params['lat'] + '&' + 'lon=' + params['lon']
-    elsif not params['radius'].blank? and not params['lat'].blank?
-      query_string_url += '&' + 'lat=' + params['lat'] + '&' + 'lon=' + params['lon'] + '&' + 'radius=' + params['radius']
+      query_string_url += '&' + 'lat=' + params['lat'] + '&' 
+      query_string_url += 'lon=' + params['lon']
+    elsif not params['radius'].blank? and !params['lat'].blank?
+      query_string_url += '&' + 'lat=' + params['lat'] + '&' 
+      query_string_url += 'lon=' + params['lon'] + '&' 
+      query_string_url += 'radius=' + params['radius']
     end
 
     return query_string_url
@@ -75,7 +78,8 @@ class DiscoveryController < ApplicationController
       end
 
       if (not params['radius'].blank? and params['lon'].blank? and params['lat'].blank?)
-        error_message = +'To use radius Latitude and Longitude must be specified \n'
+        error_message += 'To use radius Latitude and' 
+        error_message += 'Longitude must be specified \n'
       end
 
     else
