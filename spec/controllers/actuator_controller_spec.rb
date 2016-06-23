@@ -12,6 +12,10 @@ describe ActuatorController, :type => :controller do
       ActuatorValue.delete_all
       HasCapability.delete_all
 
+      @controller = ActuatorsControl.new
+
+      allow(@controller).to receive(:call_to_actuator_cap_status).and_return({})
+
       res = Resource.create(name: "trafficlight", uri: "traffic_light_url", uuid: "1")
       cap = res.capabilities.create(name: 'trafficlight')
 
@@ -40,9 +44,12 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 200. Client request for a resource status.' do
       url_params = {uuid: '1', capability: 'trafficlight'}
-      get :value, params: url_params
+      actuator_response = {uuid:'1',capabilities: [name:'trafficlight',value:'green']}
+      allow(@controller).to receive(:call_to_actuator_cap_status).and_return(actuator_response)
+
+      get :cap_status, params: url_params
       expect(response.status).to eq(200)
-      expect(response.body).to eq ('green')
+      expect(response.body).to eq (actuator_response)
     end
 
     it 'Should return status 400 because a wrong capability was used' do

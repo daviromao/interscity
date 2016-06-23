@@ -27,7 +27,7 @@ Expected put body:
    "capability": {value:'green'}
 }
 
-* get 'actuator/resources/:uuid/status/:capability''
+* get 'actuator/resources/:uuid/cap_status/:capability''
 
 Data catalog interaction
 * post 'resources'

@@ -2,61 +2,56 @@ require 'rest-client'
 require 'json'
 require 'tools/validate_params'
 require 'mocks/resource_adaptor_mock'
-require 'aspects/actuator_persistence_aspect'
-require 'aspects/json_validation_aspect'
 require 'exceptions/actuator_exception'
 
 class ActuatorController < ApplicationController
 
-  before_action JsonValidationAspect,:only=>[:actuate]
-  #before_action :json_validation, :only=>[:actuate]
-  #after_action ActuatorPersistenceAspect.new(:only=>[:actuate])
-
-  attr_accessor :request_status
+  before_action :actuate_json_validation, :only=>[:actuate]
+  before_action :validate_url_params, :only=>[:cap_status]
+  after_action :actuator_capability_persistence,:only => [:actuate]
 
   def initialize
 
   end
 
   def actuate
-    debugger
-    @request_status = 0
+    response = String.new
     begin
       actuate_params = params[:data]
       res=Resource.find_by(uuid: actuate_params['uuid'])
 
-      if not res.blank?
-        @request_status = ResourceAdaptorMock.execute_actuator_capability(actuate_params, res.uri)
+      if !res.blank?
+        response = call_to_actuator_actuate res.uri
+        render response
       else
         raise ActuatorException.new(404)
       end
-    rescue ActuatorException => e
-      render error_payload(e.message, e.request_status)
     rescue Exception => e
-      render error_payload(e.message, 500)
-    else
-      render json: {request_status: @request_status}, request_status: @request_status
+      render error_payload(e.message, e.request_status)
     end
   end
 
-  def value
-    debugger
-    error_message = validate_url_params
-    if not error_message.blank?
+  def cap_status
+    response = String.new
+    begin
       res=Resource.find_by(uuid: params['uuid'])
-      response = ResourceAdaptorMock.actuator_status_mock(params, res.uri)
-      if response!=400
-        render json: response
+
+      if !res.blank?
+        response=call_to_actuator_cap_status res.uri
+        if response.code==200
+          render json: Json.parse(response), status: response.code
+        else
+          raise ActuatorException.new(response.code)
+        end
       else
-        render json: response, status: response
+        raise ActuatorException.new(404)
       end
-    else
-      render error_payload(error_message, 400)
+    rescue Exception => e
+      render error_payload(e.message, e.request_status)
     end
   end
 
   def create
-    debugger
     status =''
     begin
       execParams = params[:data]
@@ -76,7 +71,6 @@ class ActuatorController < ApplicationController
   end
 
   def update
-    debugger
     status =''
     begin
       updateParams = params[:data]
@@ -98,36 +92,63 @@ class ActuatorController < ApplicationController
   end
 
 
-
   private
 
-  def respond_error (exception,code)
-    render error_payload(exception, code)
+  def respond_error (exception, code)
+    render error_payload(exception.messsage, code)
   end
 
-  def json_validation ()
+  #TODO complete resource adaptor url
+  def call_to_actuator_cap_status(actuator_url)
+    request_url = actuator_url + '/componentes/'
+    RestClient.get(request_url)
+  end
+
+  #TODO complete resource adaptor url
+  def call_to_actuator_actuate(actuator_url)
+    request_url = actuator_url + '/componentes/'
+    RestClient.put(request_url)
+  end
+
+  def actuate_json_validation
     begin
-      debugger
-      params.require(:data).permit(:uuid,:capability => [:name,:value])
+      params.require(:data).permit(:uuid, :capability => [:name, :value])
     rescue Exception => e
       respond_error e, 400
       return false
     end
   end
 
+
+
+  def actuator_capability_persistence
+    begin
+      if request_status==200
+        actuate_params = controller.params[:data]
+        res = Resource.find_by(uuid: actuate_params['uuid'])
+        cap = res.capabilities.find_by(name: actuate_params['capability']['name'])
+        ActuatorValue.create(value: actuate_params['capability']['value'], capability_id: cap.id, resource_id: res.id)
+      end
+    rescue Exception => e
+      puts e.message
+    end
+  end
+
   def validate_url_params
     error_message = ''
-    debugger
-    if request.GET.size != 0
+    if !request.GET.empty?
       if params['uuid'].blank?
         error_message = +'UUID has to be Specified \n'
       end
-      if (not params['capability'].blank?)
+      if params['capability'].blank?
         error_message = +'Capability has not been specified \n'
       end
     else
       error_message = 'The capability and UUID must be defined'
     end
-    return error_message
+    if !error_message.blank?
+      respond_error error_message, 404
+    end
+
   end
 end
