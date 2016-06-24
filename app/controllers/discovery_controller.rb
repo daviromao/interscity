@@ -114,7 +114,7 @@ class DiscoveryController < ApplicationController
 
   def call_to_data_collector(uuids)
     filters = {
-      data: {
+      sensor_value: {
         uuids: uuids,
         capabilities: [params['capability']],
         range: {
@@ -126,7 +126,7 @@ class DiscoveryController < ApplicationController
         }
       }
     }
-    response = JSON.parse(RestClient.post(COLLECTOR_URL, filters, content_type: 'application/json'))
+    response = JSON.parse(RestClient.post(@COLLECTOR_URL, filters, content_type: 'application/json'))
   end
 
 end

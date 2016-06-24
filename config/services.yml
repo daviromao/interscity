@@ -2,5 +2,5 @@
 
 # do not include a final slash after the URL
 services:
-  collector: "http://localhost:8080"
+  collector: "http://localhost:3002"
   catalog: "http://localhost:3001"
