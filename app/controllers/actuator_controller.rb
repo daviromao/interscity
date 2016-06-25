@@ -15,20 +15,54 @@ class ActuatorController < ApplicationController
   end
 
   def actuate
-    response = String.new
+
+    response = Hash.new
+    response['success'] = []
+    response['failure'] = []
+
     begin
       actuate_params = params[:data]
-      res=Resource.find_by(uuid: actuate_params['uuid'])
+      execute_actuation(actuate_params, response)
 
-      if !res.blank?
-        response = call_to_actuator_actuate res.uri
-        render response
-      else
-        raise ActuatorException.new(404)
-      end
     rescue Exception => e
-      render error_payload(e.message, e.request_status)
+      debugger
+      render error_payload(e.message, 500)
+    else
+      debugger
+      render json: response, status: 200
     end
+  end
+
+  def execute_actuation(actuate_params, response)
+    actuate_params.each { |actuator|
+      begin
+        res=Resource.find_by(uuid: actuator['uuid'])
+        if !res.blank?
+
+          actuator_response = call_to_actuator_actuate res.uri
+
+          if (actuator_response[:code] == 200)
+            actuator_response['uuid'] = actuator['uuid']
+            response['success'] << actuator_response
+          else
+
+            actuator_response['uuid'] = actuator['uuid']
+            actuator_response['error_code'] = actuator_response[:code]
+            response['failure'] << actuator_response
+          end
+        else
+          raise ActuatorException.new(404)
+        end
+      rescue ActuatorException => e
+        response['failure'] << JSON.parse({uuid:actuator['uuid'],error_code:e.request_status})
+      rescue Exception => e
+        response['failure'] << JSON.parse({uuid:actuator['uuid'],error_code:500})
+      end
+    }
+  end
+
+  def make_it_json_like(actuator_response)
+     JSON.parse(actuator_response)
   end
 
   def cap_status
@@ -95,7 +129,7 @@ class ActuatorController < ApplicationController
   private
 
   def respond_error (exception, code)
-    render error_payload(exception.messsage, code)
+    render error_payload(exception.message, code)
   end
 
   #TODO complete resource adaptor url
@@ -106,20 +140,22 @@ class ActuatorController < ApplicationController
 
   #TODO complete resource adaptor url
   def call_to_actuator_actuate(actuator_url)
-    request_url = actuator_url + '/componentes/'
-    RestClient.put(request_url)
+    request_url = actuator_url + '/actuate/'+params[:capability]
+    response = RestClient.put(request_url,{value:''})
+    {json:JSON.parse(response.body),code:response.code}
   end
 
   def actuate_json_validation
     begin
-      params.require(:data).permit(:uuid, :capability => [:name, :value])
+      params.require(:data).each { |actuator|
+        actuator.permit(:uuid, :capability => {})
+      }
+      debugger
     rescue Exception => e
       respond_error e, 400
       return false
     end
   end
-
-
 
   def actuator_capability_persistence
     begin
