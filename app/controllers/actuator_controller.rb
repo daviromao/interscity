@@ -15,7 +15,6 @@ class ActuatorController < ApplicationController
   end
 
   def actuate
-
     response = Hash.new
     response['success'] = []
     response['failure'] = []
@@ -29,7 +28,7 @@ class ActuatorController < ApplicationController
       render error_payload(e.message, 500)
     else
       debugger
-      render json: response, status: 200
+      render json: response
     end
   end
 
@@ -38,16 +37,15 @@ class ActuatorController < ApplicationController
       begin
         res=Resource.find_by(uuid: actuator['uuid'])
         if !res.blank?
+debugger
+          actuator_response = JSON.parse(call_to_actuator_actuate res.uri)
 
-          actuator_response = call_to_actuator_actuate res.uri
-
-          if (actuator_response[:code] == 200)
+          if (actuator_response['code'] == 200)
             actuator_response['uuid'] = actuator['uuid']
             response['success'] << actuator_response
           else
-
             actuator_response['uuid'] = actuator['uuid']
-            actuator_response['error_code'] = actuator_response[:code]
+            actuator_response['error_code'] = actuator_response['code']
             response['failure'] << actuator_response
           end
         else
@@ -142,7 +140,9 @@ class ActuatorController < ApplicationController
   def call_to_actuator_actuate(actuator_url)
     request_url = actuator_url + '/actuate/'+params[:capability]
     response = RestClient.put(request_url,{value:''})
-    {json:JSON.parse(response.body),code:response.code}
+    json_response = JSON.parse(response.body)
+    json_response[:code] = response.code
+    json_response.to_json
   end
 
   def actuate_json_validation

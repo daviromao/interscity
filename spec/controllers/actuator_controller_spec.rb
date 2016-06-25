@@ -16,18 +16,18 @@ describe ActuatorController, :type => :controller do
       ActuatorValue.create(value: 'green', capability_id: cap.id, resource_id: res.id)
     end
 
-    it 'Should return status 400 (Bad Request). A traffic light can not turn blue.' do
+    it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
       json_request = {data: [{uuid: '1', trafficlight: 'blue'}]}
-      actuator_response = {success:[],failure:[{json:{message:'',code:400}, code:400,uuid:1} ]}
+      actuator_response = {capability: {name: 'trafficlight', value: 'blue'},code:405}.to_json
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
       put :actuate, json_request, format: :json
       expect(response.status).to eq(200)
-      expect(JSON.parse(response.body)).to eq(actuator_response)
+      expect(response.body).to eq(actuator_response)
     end
 
-    it 'Should return status 200. The traffic light actuator should be able to turn green.' do
+    it 'Should return status 200. Traffic light actuator should be able to turn green.' do
       json_request = {data: [{uuid: '1', trafficlight: 'green'}]}
-      actuator_response = {failure:[],success:[{capability: {name: 'trafficlight', value: 'green'},code:200,uuid:1}]}
+      actuator_response = {capability: {name: 'trafficlight', value: 'green'},code:200}.to_json
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
       put :actuate, json_request, format: :json
       debugger
