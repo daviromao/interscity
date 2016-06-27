@@ -8,7 +8,7 @@ class ActuatorController < ApplicationController
 
   before_action :actuate_json_validation, :only=>[:actuate]
   before_action :validate_url_params, :only=>[:cap_status]
-  after_action :actuator_capability_persistence,:only => [:actuate]
+ # after_action :actuator_capability_persistence,:only => [:actuate]
 
   def actuate
     response = Hash.new
@@ -17,10 +17,9 @@ class ActuatorController < ApplicationController
     begin
       actuate_params = params[:data]
       execute_actuation(actuate_params, response)
+      render json: response
     rescue Exception => e
       render error_payload(e.message, 500)
-    else
-      render json: response
     end
   end
 
@@ -53,38 +52,35 @@ class ActuatorController < ApplicationController
   def execute_actuation(actuate_params, response)
     actuate_params.each { |actuator|
       begin
-        res=PlatformResource.find_by(uuid: actuator['uuid'])
+        uuid = actuator['uuid']
+        capabilities = actuator['capabilities']
+        res = PlatformResource.find_by(uuid: uuid)
         if !res.blank?
-          actuator_response = JSON.parse(call_to_actuator_actuate res.uri)
+          actuator_response = JSON.parse(call_to_actuator_actuate(res.uri, capabilities.first))
 
-          if (actuator_response['code'] == 200)
-            actuator_response['uuid'] = actuator['uuid']
-            response['success'] << actuator_response
-          else
-            actuator_response['uuid'] = actuator['uuid']
-            response['failure'] << actuator_response
-          end
+          resource = actuator_response['data']
+          resource['code'] = actuator_response['code']
+          resource['uuid'] = uuid
+          response['success'] << resource
         else
-          raise ActuatorException.new(404)
+          response['failure'] << {uuid:actuator['uuid'], code: 404, message: "Resource not found"}
         end
-      rescue ActuatorException => e
-        response['failure'] << {uuid:actuator['uuid'],error_code:e.request_status}
-      rescue Exception => e
-        response['failure'] << {uuid:actuator['uuid'],error_code:500}
+      rescue RestClient::ExceptionWithResponse => e
+        response['failure'] << {uuid: actuator['uuid'], code: e.response.code, message: e.response.message }
       end
     }
   end
 
   #TODO complete resource adaptor url
   def call_to_actuator_cap_status(actuator_url)
-    request_url = actuator_url + '/componentes/' + params[:capability]
+    request_url = actuator_url + '/actuate/' + params[:capability]
     RestClient.get(request_url)
   end
 
   #TODO complete resource adaptor url
-  def call_to_actuator_actuate(actuator_url)
-    request_url = actuator_url + '/actuate/'+params[:capability]
-    response = RestClient.put(request_url,{value:''})
+  def call_to_actuator_actuate(actuator_url, capability)
+    request_url = actuator_url + '/actuate/'+ capability.first.to_s
+    response = RestClient.put(request_url,{data: {value: capability.second}})
     json_response = JSON.parse(response.body)
     json_response[:code] = response.code
     json_response.to_json
@@ -93,25 +89,25 @@ class ActuatorController < ApplicationController
   def actuate_json_validation
     begin
       params.require(:data).each { |actuator|
-        actuator.permit(:uuid, :capability => {})}
+        actuator.permit(:uuid, :capabilities => {})}
     rescue Exception => e
       render error_payload(e.message, 400)
       return false
     end
   end
 
-  def actuator_capability_persistence
-    begin
-      if request_status==200
-        actuate_params = controller.params[:data]
-        res = PlatformResource.find_by(uuid: actuate_params['uuid'])
-        cap = res.capabilities.find_by(name: actuate_params['capability']['name'])
-        ActuatorValue.create(value: actuate_params['capability']['value'], capability_id: cap.id, resource_id: res.id)
-      end
-    rescue Exception => e
-      puts e.message
-    end
-  end
+ # def actuator_capability_persistence
+ #   begin
+ #     if request_status==200
+ #       actuate_params = controller.params[:data]
+ #       res = PlatformResource.find_by(uuid: actuate_params['uuid'])
+ #       cap = res.capabilities.find_by(name: actuate_params['capability']['name'])
+ #       ActuatorValue.create(value: actuate_params['capability']['value'], capability_id: cap.id, resource_id: res.id)
+ #     end
+ #   rescue Exception => e
+ #     puts e.message
+ #   end
+ # end
 
   def validate_url_params
     error_message = ''
