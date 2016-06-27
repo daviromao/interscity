@@ -13,7 +13,6 @@ describe ActuatorController, :type => :controller do
       res = PlatformResource.create!(uri: 'traffic_light_url', uuid: '1', collect_interval: 60, status: 'running')
       cap = res.capabilities.create!(name: 'trafficlight')
       ActuatorValue.create!(value: 'green', capability_id: cap.id, platform_resource_id: res.id)
-
     end
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
@@ -60,5 +59,6 @@ describe ActuatorController, :type => :controller do
       expect(response.status).to eq(404)
       expect(response.body).to eq(service_response.to_json)
     end
+
   end
 end
