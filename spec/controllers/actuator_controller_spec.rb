@@ -10,9 +10,9 @@ describe ActuatorController, :type => :controller do
 
       allow(@controller).to receive(:call_to_actuator_cap_status).and_return({})
 
-      res = Resource.create(name: 'Traffic Light', uri: 'traffic_light_url', uuid: '1')
-      cap = res.capabilities.create(name: 'trafficlight')
-      ActuatorValue.create(value: 'green', capability_id: cap.id, resource_id: res.id)
+      res = PlatformResource.create!(uri: 'traffic_light_url', uuid: '1', collect_interval: 60, status: 'running')
+      cap = res.capabilities.create!(name: 'trafficlight')
+      ActuatorValue.create!(value: 'green', capability_id: cap.id, platform_resource_id: res.id)
 
     end
 
@@ -57,48 +57,8 @@ describe ActuatorController, :type => :controller do
       url_params = {uuid: '1', capability: 'temperature'}
       service_response = {code:'NotFound',message:'Actuator not found'}
       get :cap_status, params: url_params
-      debugger
       expect(response.status).to eq(404)
       expect(response.body).to eq(service_response.to_json)
     end
-
-=begin
-    it 'Should return 201. Successful resource creation from the BasicResource Catalog.' do
-      json_request = {data:{uuid: '10', name: 'trafficlight', uri: '123.123.123.2'}}
-      post :create, json_request, format: :json
-      expect(response.status).to eq(201)
-    end
-
-    it 'Should return 400. BasicResource creation needs the uuid.' do
-      json_request = {data:{name: 'trafficlight', uri: '123.123.123.2'}}
-      post :create, json_request, format: :json
-      expect(response.status).to eq(400)
-    end
-
-    it 'Should return 400. Wrong json format for the resource creation form.' do
-      json_request = "{capabilit afficlight',value:'green'}}"
-      post :create, json_request, format: :json
-      expect(response.status).to eq(400)
-    end
-
-    it 'Should return 200 and update the resource data' do
-      json_request = {data:{uuid: '1', name: 'trafficlight', uri: '123.123.123.2'}}
-      put :update, json_request,format: :json
-      expect(response.status).to eq(200)
-    end
-
-    it 'Should return 400. Wrong json format for the resource data update.' do
-      json_request = "{capabilit afficlight',value:'green'}}"
-      put :update, json_request,format: :json
-      expect(response.status).to eq(400)
-    end
-
-    it 'Should return 400, missing uuid' do
-      json_request = {data:{name: 'trafficlight', uri: '123.123.123.2'}}
-      put :update,json_request,format: :json
-      expect(response.status).to eq(400)
-    end
-=end
-
   end
 end

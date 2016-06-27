@@ -10,13 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621203224) do
+ActiveRecord::Schema.define(version: 20160627125918) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "actuator_values", force: :cascade do |t|
+    t.integer  "platform_resource_id"
+    t.integer  "capability_id"
+    t.string   "value"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["capability_id"], name: "index_actuator_values_on_capability_id", using: :btree
+    t.index ["platform_resource_id"], name: "index_actuator_values_on_platform_resource_id", using: :btree
+  end
 
   create_table "capabilities", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_capabilities_on_name", unique: true
+    t.index ["name"], name: "index_capabilities_on_name", unique: true, using: :btree
   end
 
   create_table "platform_resource_capabilities", force: :cascade do |t|
@@ -24,9 +37,9 @@ ActiveRecord::Schema.define(version: 20160621203224) do
     t.integer  "platform_resource_id"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
-    t.index ["capability_id"], name: "index_platform_resource_capabilities_on_capability_id"
-    t.index ["platform_resource_id", "capability_id"], name: "index_platform_resource_capabilities", unique: true
-    t.index ["platform_resource_id"], name: "index_platform_resource_capabilities_on_platform_resource_id"
+    t.index ["capability_id"], name: "index_platform_resource_capabilities_on_capability_id", using: :btree
+    t.index ["platform_resource_id", "capability_id"], name: "index_platform_resource_capabilities", unique: true, using: :btree
+    t.index ["platform_resource_id"], name: "index_platform_resource_capabilities_on_platform_resource_id", using: :btree
   end
 
   create_table "platform_resources", force: :cascade do |t|
@@ -36,7 +49,7 @@ ActiveRecord::Schema.define(version: 20160621203224) do
     t.integer  "collect_interval"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
-    t.index ["uuid"], name: "index_platform_resources_on_uuid", unique: true
+    t.index ["uuid"], name: "index_platform_resources_on_uuid", unique: true, using: :btree
   end
 
 end

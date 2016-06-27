@@ -47,46 +47,6 @@ class ActuatorController < ApplicationController
     end
   end
 
-  def create
-    status =''
-    begin
-      execParams = params[:data]
-      if (ValidateParams.validate_resource_catalog_creation(execParams))
-        #Create a new resource
-        Resource.create(name: execParams['name'], uuid: execParams['uuid'], uri: execParams['uri'])
-        #Sucessfull creation
-        status = 201
-      else
-        status =400
-      end
-    rescue Exception => e
-      render error_payload(e.message, 400)
-    else
-      render json: {request_status: status}, request_status: status
-    end
-  end
-
-  def update
-    status =''
-    begin
-      updateParams = params[:data]
-      if (ValidateParams.validate_resource_catalog_update(updateParams))
-        #find resource url in local database with uuid
-        res=Resource.find_by(uuid: updateParams['uuid'])
-        res.uri = updateParams['uri']
-        res.name = updateParams['name']
-        res.save
-        status = 200
-      else
-        status = 400
-      end
-    rescue Exception => e
-      render error_payload(e.message, 400)
-    else
-      render json: {request_status: status}, request_status: status
-    end
-  end
-
 
   private
 
