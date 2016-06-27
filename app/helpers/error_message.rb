@@ -1,5 +1,5 @@
+# Global constants for error messages
 module ErrorMessage
-
   ERROR_CODE = {}
 
   ERROR_CODE[200] = 'OK'
@@ -20,12 +20,10 @@ module ErrorMessage
 
   def error_payload(message, status)
     payload = {
-        code: ERROR_CODE[status],
-        message: message
+      code: ERROR_CODE[status],
+      message: message
     }
 
-    {json: payload, status: status}
+    { json: payload, status: status }
   end
-
-
 end

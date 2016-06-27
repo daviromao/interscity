@@ -1,9 +1,7 @@
 require 'rails_helper'
 
-describe DiscoveryController, :type =>:controller do
-
-  describe '#resources'do
-
+describe DiscoveryController, type: 'controller' do
+  describe '#resources' do
     before do
       @controller = DiscoveryController.new
       allow(@controller).to receive(:call_to_resource_catalog).and_return({})
@@ -33,12 +31,13 @@ describe DiscoveryController, :type =>:controller do
     end
 
     it 'when inform a capability, should return OK and a set of id or ids given a capability' do
-      catalog_response = {'resources' => [{ 'uuid' => '1', 'lat' => '10', 'lon' => '10' }, 
-        {'uuid' => '2', 'lat' => '20', 'lon' => '20' }, { 'uuid' => '3', 'lat' => '30', 'lon' => '30' } ] }
+      catalog_response = { 'resources' => [{ 'uuid' => '1', 'lat' => '10', 'lon' => '10' },
+                                           { 'uuid' => '2', 'lat' => '20', 'lon' => '20' },
+                                           { 'uuid' => '3', 'lat' => '30', 'lon' => '30' }] }
 
       allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
 
-      get 'resources', params: {capability: 'temp' }
+      get 'resources', params: { capability: 'temp' }
       hash_response_uuids = JSON.parse(response.body)
 
       expect(response.status).to eq(200)
@@ -46,12 +45,12 @@ describe DiscoveryController, :type =>:controller do
     end
 
     it 'when inform a cap/lat/lon, should return OK and data from data collector for specific params' do
-      catalog_response = { 'resources' => [{'uuid' => '2', 'lat' => '20', 'lon' => '20' }, 
-        { 'uuid' => '3', 'lat' => '30', 'lon' => '30' } ] }
+      catalog_response = { 'resources' => [{ 'uuid' => '2', 'lat' => '20', 'lon' => '20' },
+                                           { 'uuid' => '3', 'lat' => '30', 'lon' => '30' }] }
 
       allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
 
-      get 'resources', params: {capability: 'temp', lat: '12.34', lon: '43.21' }
+      get 'resources', params: { capability: 'temp', lat: '12.34', lon: '43.21' }
       hash_response_uuids = JSON.parse(response.body)
 
       expect(response.status).to eq(200)
@@ -59,14 +58,15 @@ describe DiscoveryController, :type =>:controller do
     end
 
     it 'when inform a cap/rad without coordinates, should fail' do
-      get 'resources', params: {capability: 'temp', radius: '100' }
+      get 'resources', params: { capability: 'temp', radius: '100' }
 
       expect(response.status).to eq(400)
     end
 
     it 'when inform a cap/lat/lon/rad, should return OK and resources based on lat lon within a radius' do
-      catalog_response = {'resources' => [{ 'uuid' => '4', 'lat' => '40', 'lon' => '40' }, 
-        { 'uuid' => '5', 'lat' => '40', 'lon' => '40' }, { 'uuid' => '7', 'lat' => '40', 'lon' => '40' } ] }
+      catalog_response = { 'resources' => [{ 'uuid' => '4', 'lat' => '40', 'lon' => '40' },
+                                           { 'uuid' => '5', 'lat' => '40', 'lon' => '40' },
+                                           { 'uuid' => '7', 'lat' => '40', 'lon' => '40' }] }
 
       allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
 
@@ -96,33 +96,37 @@ describe DiscoveryController, :type =>:controller do
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
 
-        get 'resources', params: { capability: 'temp', lat: '12.34', lon: '43.21', radius: '100', min_cap_value: 20, max_cap_value: 30 }
+        get 'resources', params: { capability: 'temp',
+                                   lat: '12.34', lon: '43.21',
+                                   radius: '100',
+                                   min_cap_value: 20, max_cap_value: 30 }
         hash_response_uuids = JSON.parse(response.body)
 
         expect(response.status).to eq(200)
-        expect(hash_response_uuids).to eq({ 'resources' => ['uuid' => '7', 'lat' => '40', 'lon' => '40'] })
+        expect(hash_response_uuids).to eq('resources' => ['uuid' => '7', 'lat' => '40', 'lon' => '40'])
       end
 
       it 'properly returns only resources found by catalog that match with collector results' do
         catalog_response = {  'resources' =>
                               [{ 'uuid' => '4', 'lat' => '40', 'lon' => '40' },
-                              { 'uuid' => '5', 'lat' => '40', 'lon' => '40' },
-                              { 'uuid' => '7', 'lat' => '40', 'lon' => '40' }]}
+                               { 'uuid' => '5', 'lat' => '40', 'lon' => '40' },
+                               { 'uuid' => '7', 'lat' => '40', 'lon' => '40' }] }
         collector_response = { 'resources' =>
-                                [{ 'uuid' => '7', 'capabilities' =>
-                                      {
-                                        'temp' => [{ 'value' => '28.31', 'date' => '2016-06-21T23:27:35.000Z' } ]
-                                      }
-                                }]}
+                                [{ 'uuid' => '7',
+                                   'capabilities' => { 'temp' => [{ 'value' => '28.31',
+                                                                    'date' => '2016-06-21T23:27:35.000Z' }] } }] }
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
 
-        get 'resources', params: { capability: 'temp', lat: '12.34', lon: '43.21', radius: '100',  min_cap_value: 20, max_cap_value: 30 }
+        get 'resources', params: { capability: 'temp',
+                                   lat: '12.34', lon: '43.21',
+                                   radius: '100',
+                                   min_cap_value: 20, max_cap_value: 30 }
         hash_response_uuids = JSON.parse(response.body)
 
         expect(response.status).to eq(200)
-        expect(hash_response_uuids).to eq({ 'resources' => [{ 'uuid' => '7', 'lat' => '40', 'lon' => '40' } ] })
+        expect(hash_response_uuids).to eq('resources' => [{ 'uuid' => '7', 'lat' => '40', 'lon' => '40' }])
       end
     end
 
