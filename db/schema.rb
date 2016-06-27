@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,39 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160608210349) do
-
-  create_table "actuator_values", force: :cascade do |t|
-    t.integer  "resource_id"
-    t.integer  "capability_id"
-    t.string   "value"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["capability_id"], name: "index_actuator_values_on_capability_id"
-    t.index ["resource_id"], name: "index_actuator_values_on_resource_id"
-  end
+ActiveRecord::Schema.define(version: 20160621203224) do
 
   create_table "capabilities", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_capabilities_on_name", unique: true
   end
 
-  create_table "has_capabilities", force: :cascade do |t|
-    t.integer  "resource_id"
+  create_table "platform_resource_capabilities", force: :cascade do |t|
     t.integer  "capability_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["capability_id"], name: "index_has_capabilities_on_capability_id"
-    t.index ["resource_id"], name: "index_has_capabilities_on_resource_id"
+    t.integer  "platform_resource_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["capability_id"], name: "index_platform_resource_capabilities_on_capability_id"
+    t.index ["platform_resource_id", "capability_id"], name: "index_platform_resource_capabilities", unique: true
+    t.index ["platform_resource_id"], name: "index_platform_resource_capabilities_on_platform_resource_id"
   end
 
-  create_table "resources", force: :cascade do |t|
-    t.string   "name"
-    t.string   "uuid"
+  create_table "platform_resources", force: :cascade do |t|
     t.string   "uri"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "uuid"
+    t.string   "status"
+    t.integer  "collect_interval"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["uuid"], name: "index_platform_resources_on_uuid", unique: true
   end
 
 end
