@@ -27,7 +27,7 @@ class ActuatorController < ApplicationController
   def cap_status
     response = String.new
     begin
-      res = Resource.find_by(uuid: params['uuid'])
+      res = PlatformResource.find_by(uuid: params['uuid'])
       cap = res.capabilities.find_by(name:params['capability'])
 
       if !res.blank? and !cap.blank?
@@ -53,7 +53,7 @@ class ActuatorController < ApplicationController
   def execute_actuation(actuate_params, response)
     actuate_params.each { |actuator|
       begin
-        res=Resource.find_by(uuid: actuator['uuid'])
+        res=PlatformResource.find_by(uuid: actuator['uuid'])
         if !res.blank?
           actuator_response = JSON.parse(call_to_actuator_actuate res.uri)
 
@@ -104,7 +104,7 @@ class ActuatorController < ApplicationController
     begin
       if request_status==200
         actuate_params = controller.params[:data]
-        res = Resource.find_by(uuid: actuate_params['uuid'])
+        res = PlatformResource.find_by(uuid: actuate_params['uuid'])
         cap = res.capabilities.find_by(name: actuate_params['capability']['name'])
         ActuatorValue.create(value: actuate_params['capability']['value'], capability_id: cap.id, resource_id: res.id)
       end
