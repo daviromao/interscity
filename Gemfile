@@ -42,3 +42,8 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bundler'
 gem 'rest-client'
+
+group :production do
+  gem 'pg'
+end
+
