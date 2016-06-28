@@ -131,7 +131,7 @@ describe DiscoveryController, type: 'controller' do
     end
 
     it 'when any service is unavailable, should fail' do
-      allow(@controller).to receive(:call_to_resource_catalog).and_return(nil)
+      allow(@controller).to receive(:call_to_resource_catalog).and_raise
 
       get 'resources', params: { capability: 'temp' }
 
