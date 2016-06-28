@@ -50,7 +50,41 @@ describe ActuatorController, :type => :controller do
             'state' => 'green',
             'code' => 200,
             'uuid' => '1'
-          }],'failure' => []}
+          }],
+          'failure' => []}
+
+      actuator_response = {
+        data: {
+          state: 'green'
+        },
+        code: 200
+      }.to_json
+
+
+      allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
+      put :actuate, params: json_request
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body)).to eq(service_response)
+    end
+
+    it 'Should return status 404. Not existing resource.' do
+      json_request = {
+        data: [
+          {
+            uuid: '-1',
+            capabilities: {trafficlight: 'green'}
+          }
+        ]
+      }
+
+      service_response = {
+        'success' => [],
+        'failure' => [{
+          'capability' => 'trafficlight',
+          'code' => 404,
+          'uuid' => '-1',
+          'message' => 'Resource not found'
+        }]}
 
       actuator_response = {
         data: {
@@ -83,7 +117,7 @@ describe ActuatorController, :type => :controller do
       expect(response.body).to eq (actuator_response.to_json)
     end
 
-    it 'Should return status 400. Wrong capability name.' do
+    it 'Should return status 404 - Not existing resource.' do
       url_params = {uuid: '1', capability: 'temperature'}
       service_response = {code:'NotFound',message:'Actuator not found'}
       get :cap_status, params: url_params

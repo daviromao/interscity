@@ -51,14 +51,14 @@ class ActuatorController < ApplicationController
 
   def execute_actuation(actuate_params, response)
     actuate_params.each { |actuator|
+      uuid = actuator['uuid']
+      capabilities = actuator['capabilities']
+      capability = capabilities.first.first
+      value = capabilities.first.second
       begin
-        uuid = actuator['uuid']
-        capabilities = actuator['capabilities']
         res = PlatformResource.find_by(uuid: uuid)
         if !res.blank?
-          capability = capabilities.first.first
-          value = capabilities.first.second
-
+        
           actuator_response = JSON.parse(call_to_actuator_actuate(res.uri, capability, value))
 
           resource = actuator_response['data']
@@ -67,7 +67,7 @@ class ActuatorController < ApplicationController
           resource['uuid'] = uuid
           response['success'] << resource
         else
-          response['failure'] << {uuid:actuator['uuid'], code: 404, message: "Resource not found"}
+          response['failure'] << {uuid:actuator['uuid'], capability: capability, code: 404, message: "Resource not found"}
         end
       rescue RestClient::ExceptionWithResponse=>e
         response['failure'] << {uuid: actuator['uuid'], capability: capability, code: e.response.code, message: e.response.message }
