@@ -17,9 +17,17 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
       json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
-      service_response = {success:[],failure:[{capability: 'trafficlight', code:405, uuid:'1', message: "Error"}]}.to_json
-      actuator_response = {code:405, message: "Error"}.to_json
-      allow(@controller).to receive(:call_to_actuator_actuate).and_raise(RestClient::ExceptionWithResponse)
+      service_response = {success:[],failure:[{uuid:'1',capability: {trafficlight:'blue'}, code:405,  message: "Error"}]}.to_json
+
+      fake_exception = RestClient::ExceptionWithResponse.new
+      resp = RestClient::Response
+      resp.class.module_eval { attr_accessor :code}
+      resp.class.module_eval { attr_accessor :message}
+      resp.code = 405
+      resp.message = 'Error'
+      fake_exception.response = resp
+
+      allow(@controller).to receive(:call_to_actuator_actuate).and_raise(fake_exception)
       put :actuate, json_request, format: :json
       expect(response.status).to eq(200)
       expect(response.body).to eq(service_response)
@@ -29,6 +37,9 @@ describe ActuatorController, :type => :controller do
       json_request = {data: [{uuid: '1', capabilities: {trafficlight: 'green'}}]}
       service_response = {success:[{capability: {name: 'trafficlight', value: 'green'},code:200,uuid:'1'}],failure:[]}.to_json
       actuator_response = {capability: {name: 'trafficlight', value: 'green'},code:200}.to_json
+
+
+
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
       put :actuate, json_request, format: :json
       expect(response.status).to eq(200)
