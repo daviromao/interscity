@@ -17,7 +17,7 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
       json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
-      service_response = {success:[],failure:[{uuid:'1',capability: {trafficlight:'blue'}, code:405,  message: "Error"}]}.to_json
+      service_response = {success:[],failure:[{uuid:'1', capability: 'trafficlight', code:405,  message: "Error"}]}.to_json
 
       fake_exception = RestClient::ExceptionWithResponse.new
       resp = RestClient::Response
@@ -28,27 +28,47 @@ describe ActuatorController, :type => :controller do
       fake_exception.response = resp
 
       allow(@controller).to receive(:call_to_actuator_actuate).and_raise(fake_exception)
-      put :actuate, json_request, format: :json
+      put :actuate, params: json_request
       expect(response.status).to eq(200)
       expect(response.body).to eq(service_response)
     end
 
     it 'Should return status 200. Traffic light actuator should be able to turn green.' do
-      json_request = {data: [{uuid: '1', capabilities: {trafficlight: 'green'}}]}
-      service_response = {success:[{capability: {name: 'trafficlight', value: 'green'},code:200,uuid:'1'}],failure:[]}.to_json
-      actuator_response = {capability: {name: 'trafficlight', value: 'green'},code:200}.to_json
+      json_request = {
+        data: [
+          {
+            uuid: '1',
+            capabilities: {trafficlight: 'green'}
+          }
+        ]
+      }
 
+      service_response = {
+        'success' => [
+          {
+            'capability' => 'trafficlight',
+            'state' => 'green',
+            'code' => 200,
+            'uuid' => '1'
+          }],'failure' => []}
+
+      actuator_response = {
+        data: {
+          state: 'green'
+        },
+        code: 200
+      }.to_json
 
 
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
-      put :actuate, json_request, format: :json
+      put :actuate, params: json_request
       expect(response.status).to eq(200)
-      expect(response.body).to eq(service_response)
+      expect(JSON.parse(response.body)).to eq(service_response)
     end
 
     it 'Should return 400. Wrong json format to update a resource state.' do
-      json_request = "{capabilit afficlight',value:'green'}}"
-      put :actuate, json_request, format: :json
+      json_request = {capability: 'trafficlight', value: 'green'}
+      put :actuate, params: json_request
       expect(response.status).to eq(400)
     end
 

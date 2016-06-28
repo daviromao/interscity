@@ -52,26 +52,27 @@ class ActuatorController < ApplicationController
   def execute_actuation(actuate_params, response)
     actuate_params.each { |actuator|
       begin
-        debugger
         uuid = actuator['uuid']
         capabilities = actuator['capabilities']
         res = PlatformResource.find_by(uuid: uuid)
         if !res.blank?
-          actuator_response = JSON.parse(call_to_actuator_actuate(res.uri, capabilities.first))
+          capability = capabilities.first.first
+          value = capabilities.first.second
+
+          actuator_response = JSON.parse(call_to_actuator_actuate(res.uri, capability, value))
 
           resource = actuator_response['data']
           resource['code'] = actuator_response['code']
+          resource['capability'] = capability
           resource['uuid'] = uuid
           response['success'] << resource
         else
           response['failure'] << {uuid:actuator['uuid'], code: 404, message: "Resource not found"}
         end
       rescue RestClient::ExceptionWithResponse=>e
-        debugger
-        response['failure'] << {uuid: actuator['uuid'], capability: capabilities,code: e.response.code, message: e.response.message }
+        response['failure'] << {uuid: actuator['uuid'], capability: capability, code: e.response.code, message: e.response.message }
       rescue Exception => e
-        debugger
-        response['failure'] << {uuid: actuator['uuid'], code: 500, message: e.message }
+        response['failure'] << {uuid: actuator['uuid'], capability: capability, code: 500, message: e.message }
       end
     }
   end
@@ -83,9 +84,9 @@ class ActuatorController < ApplicationController
   end
 
   #TODO complete resource adaptor url
-  def call_to_actuator_actuate(actuator_url, capability)
-    request_url = actuator_url + '/actuate/'+ capability.first.to_s
-    response = RestClient.put(request_url,{data: {value: capability.second}})
+  def call_to_actuator_actuate(actuator_url, capability, value)
+    request_url = actuator_url + '/actuate/'+ capability.to_s
+    response = RestClient.put(request_url,{data: {value: value}})
     json_response = JSON.parse(response.body)
     json_response[:code] = response.code
     json_response.to_json
