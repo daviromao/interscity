@@ -100,6 +100,26 @@ describe ActuatorController, :type => :controller do
       expect(JSON.parse(response.body)).to eq(service_response)
     end
 
+    it 'Should return 200. Respond with error 500 when occur an internal server error while proccessing a resource actuation.' do
+      json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
+      service_response = {success:[],failure:[{uuid:'1', capability: 'trafficlight', code:500,  message: "Exception"}]}.to_json
+
+      allow(@controller).to receive(:call_to_actuator_actuate).and_raise(Exception)
+      put :actuate, params: json_request
+      expect(response.status).to eq(200)
+      expect(response.body).to eq(service_response)
+    end
+
+    it 'Should return 500. Respond with error 500 when occur a general internal server error.' do
+      json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
+      service_response = {code:'InternalError',  message: "Exception"}.to_json
+
+      allow(@controller).to receive(:execute_actuation).and_raise(Exception)
+      put :actuate, params: json_request
+      expect(response.status).to eq(500)
+      expect(response.body).to eq(service_response)
+    end 
+
     it 'Should return 400. Wrong json format to update a resource state.' do
       json_request = {capability: 'trafficlight', value: 'green'}
       put :actuate, params: json_request
