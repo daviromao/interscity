@@ -11,8 +11,9 @@ describe ActuatorController, :type => :controller do
       allow(@controller).to receive(:call_to_actuator_cap_status).and_return({})
 
       res = PlatformResource.create!(uri: 'traffic_light_url', uuid: '1', collect_interval: 60, status: 'running')
-      cap = res.capabilities.create!(name: 'trafficlight')
+      cap = Capability.create!(name: 'trafficlight')
       ActuatorValue.create!(value: 'green', capability_id: cap.id, platform_resource_id: res.id)
+      PlatformResourceCapability.create!(capability_id: cap.id, platform_resource_id: res.id)
     end
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
@@ -35,29 +36,29 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 200. Traffic light actuator should be able to turn green.' do
       json_request = {
-        data: [
-          {
-            uuid: '1',
-            capabilities: {trafficlight: 'green'}
-          }
-        ]
+          data: [
+              {
+                  uuid: '1',
+                  capabilities: {trafficlight: 'green'}
+              }
+          ]
       }
 
       service_response = {
-        'success' => [
-          {
-            'capability' => 'trafficlight',
-            'state' => 'green',
-            'code' => 200,
-            'uuid' => '1'
-          }],
+          'success' => [
+              {
+                  'capability' => 'trafficlight',
+                  'state' => 'green',
+                  'code' => 200,
+                  'uuid' => '1'
+              }],
           'failure' => []}
 
       actuator_response = {
-        data: {
-          state: 'green'
-        },
-        code: 200
+          data: {
+              state: 'green'
+          },
+          code: 200
       }.to_json
 
 
@@ -67,30 +68,73 @@ describe ActuatorController, :type => :controller do
       expect(JSON.parse(response.body)).to eq(service_response)
     end
 
+    it 'create actuator value of successful actuations' do
+      json_request = {
+          data: [
+              {
+                  uuid: '1',
+                  capabilities: {trafficlight: 'green'}
+              }
+          ]
+      }
+
+      actuator_response = {
+          data: {
+              state: 'green'
+          },
+          code: 200
+      }.to_json
+
+      allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
+      expect{put :actuate, params: json_request}.to change{ActuatorValue.count}.by(1)
+      expect(ActuatorValue.last.value).to eq('green')
+    end
+
+    it 'does not create actuator value of successful actuations' do
+      json_request = {
+          data: [
+              {
+                  uuid: '1',
+                  capabilities: {trafficlight: 'green'}
+              }
+          ]
+      }
+
+      actuator_response = {
+          data: {
+              state: 'green'
+          },
+          code: 200
+      }.to_json
+      allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
+      allow(Capability).to receive(:find_by).and_raise(Exception)
+      expect{put :actuate, params: json_request}.to_not change{ActuatorValue.count}
+    end
+
     it 'Should return status 404. Not existing resource.' do
       json_request = {
-        data: [
-          {
-            uuid: '-1',
-            capabilities: {trafficlight: 'green'}
-          }
-        ]
+          data: [
+              {
+                  uuid: '-1',
+                  capabilities: {trafficlight: 'green'}
+              }
+          ]
       }
 
       service_response = {
-        'success' => [],
-        'failure' => [{
-          'capability' => 'trafficlight',
-          'code' => 404,
-          'uuid' => '-1',
-          'message' => 'Resource not found'
-        }]}
+          'success' => [],
+          'failure' => [{
+                            'capability' => 'trafficlight',
+                            'code' => 404,
+                            'uuid' => '-1',
+                            'message' => 'Resource not found'
+                        }]}
 
       actuator_response = {
-        data: {
-          state: 'green'
-        },
-        code: 200
+          data: {
+              state: 'green'
+          },
+          code: 200
       }.to_json
 
 
@@ -118,7 +162,7 @@ describe ActuatorController, :type => :controller do
       put :actuate, params: json_request
       expect(response.status).to eq(500)
       expect(response.body).to eq(service_response)
-    end 
+    end
 
     it 'Should return 400. Wrong json format to update a resource state.' do
       json_request = {capability: 'trafficlight', value: 'green'}
