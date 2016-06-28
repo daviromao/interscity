@@ -9,6 +9,7 @@ module ErrorMessage
   ERROR_CODE[401] = 'Unauthorized'
   ERROR_CODE[403] = 'Forbidden'
   ERROR_CODE[404] = 'NotFound'
+  ERROR_CODE[405] = 'MethodNotAllowed'
   ERROR_CODE[422] = 'UnprocessableEntry'
   ERROR_CODE[429] = 'TooManyRequests'
 

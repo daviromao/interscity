@@ -1,6 +1,5 @@
 require 'rest-client'
 require 'json'
-require 'tools/validate_params'
 require 'mocks/resource_adaptor_mock'
 require 'exceptions/actuator_exception'
 
@@ -24,23 +23,20 @@ class ActuatorController < ApplicationController
   end
 
   def cap_status
-    response = String.new
     begin
-      res = PlatformResource.find_by(uuid: params['uuid'])
-      cap = res.capabilities.find_by(name: params['capability'])
+      value_register = ActuatorValue.where(capability_id: @capability.id,
+                            platform_resource_id: @resource.id).order('created_at DESC').first
 
-      if !res.blank? and !cap.blank?
-        response=call_to_actuator_cap_status res.uri
-        if response[:code]==200
-          render json: response
-        else
-          raise ActuatorException.new(response.code)
-        end
+      response = {}
+      if value_register.blank?
+        response = call_to_actuator_cap_status
       else
-        raise ActuatorException.new(404)
+        response[:data] = value_register.value
+        response[:updated_at] = value_register.created_at
       end
-    rescue ActuatorException => e
-      render error_payload('Actuator not found', e.request_status)
+      render json: response
+    rescue RestClient::ExceptionWithResponse => e
+      render error_payload(e.response.message, e.response.code)
     rescue Exception => e
       render error_payload(e.message, 500)
     end
@@ -78,9 +74,9 @@ class ActuatorController < ApplicationController
   end
 
   #TODO complete resource adaptor url
-  def call_to_actuator_cap_status(actuator_url)
-    request_url = actuator_url + '/actuate/' + params[:capability]
-    RestClient.get(request_url)
+  def call_to_actuator_cap_status
+    request_url = @resource.uri + '/collect/' + @capability.name
+    JSON.parse(RestClient.get(request_url))
   end
 
   #TODO complete resource adaptor url
@@ -110,23 +106,20 @@ class ActuatorController < ApplicationController
         ActuatorValue.create(capability_id: cap.id, platform_resource_id: res.id, value: actuator_success['state'])
       end
     rescue Exception => e
-      puts '='*100, e.message,'='*100
     end
   end
 
   def validate_url_params
-    error_message = ''
-
-    if params['uuid'].blank?
-      error_message = +'UUID has to be Specified \n'
+    if(!params['uuid'].blank? and !params['capability'].blank?)
+      @resource = PlatformResource.find_by(uuid: params['uuid'])
+      if (@resource)
+        @capability = @resource.capabilities.find_by(name: params['capability'])
+        if(!@capability)
+          render error_payload('Capability not found', 404)
+        end
+      else
+        render error_payload('Actuator not found', 404)
+      end
     end
-    if params['capability'].blank?
-      error_message = +'Capability has not been specified \n'
-    end
-
-    if !error_message.blank?
-      render error_payload(error_message, 400)
-    end
-
   end
 end

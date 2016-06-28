@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   put 'resources/actuate', to: 'actuator#actuate'
   get 'resources/:uuid/:capability', to: 'actuator#cap_status'
+
   resources :platform_resources,
             only: [:create, :update],
             param: :uuid, path: 'resources'

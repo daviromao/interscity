@@ -10,10 +10,10 @@ describe ActuatorController, :type => :controller do
 
       allow(@controller).to receive(:call_to_actuator_cap_status).and_return({})
 
-      res = PlatformResource.create!(uri: 'traffic_light_url', uuid: '1', collect_interval: 60, status: 'running')
-      cap = Capability.create!(name: 'trafficlight')
-      ActuatorValue.create!(value: 'green', capability_id: cap.id, platform_resource_id: res.id)
-      PlatformResourceCapability.create!(capability_id: cap.id, platform_resource_id: res.id)
+      @res = PlatformResource.create!(uri: 'traffic_light_url', uuid: '1', collect_interval: 60, status: 'running')
+      @cap = Capability.create!(name: 'trafficlight')
+      ActuatorValue.create!(value: 'green', capability_id: @cap.id, platform_resource_id: @res.id)
+      PlatformResourceCapability.create!(capability_id: @cap.id, platform_resource_id: @res.id)
     end
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
@@ -171,23 +171,53 @@ describe ActuatorController, :type => :controller do
     end
 
     it 'Should return status 200. Client requests a resource status.' do
-      url_params = {uuid: '1', capability: 'trafficlight'}
-      actuator_response = {uuid:'1',capabilities:[name:'trafficlight',value:'green'],code:200}
-      allow(@controller).to receive(:call_to_actuator_cap_status).and_return(actuator_response)
+      ActuatorValue.create!(value: 'red', capability_id: @cap.id, platform_resource_id: @res.id)
+      updated_at = Time.now
+      url_params = {'uuid' => '1', 'capability' => 'trafficlight'}
+      actuator_response = {'data' => 'red', 'updated_at' => @res.created_at.utc.to_s}
 
       get :cap_status, params: url_params
 
       expect(response.status).to eq(200)
-      expect(response.body).to eq (actuator_response.to_json)
+      expect(JSON.parse(response.body)['data']).to eq (actuator_response['data'])
+      expect(Time.parse(JSON.parse(response.body)['updated_at']).utc.to_s).to eq (actuator_response['updated_at'])
+    end
+
+    it 'Should return status 404 - Not existing capability.' do
+      url_params = {uuid: '1', capability: 'temperature'}
+      service_response = {code:'NotFound',message:'Capability not found'}
+      get :cap_status, params: url_params
+      expect(response.status).to eq(404)
+      expect(response.body).to eq(service_response.to_json)
     end
 
     it 'Should return status 404 - Not existing resource.' do
-      url_params = {uuid: '1', capability: 'temperature'}
+      url_params = {uuid: '2', capability: 'temperature'}
       service_response = {code:'NotFound',message:'Actuator not found'}
       get :cap_status, params: url_params
       expect(response.status).to eq(404)
       expect(response.body).to eq(service_response.to_json)
     end
 
+    it 'Should return Resource adaptor status - when there is no ActuatorValue.' do
+      cap = Capability.create!(name: 'led')
+      PlatformResourceCapability.create!(capability_id: cap.id, platform_resource_id: @res.id)
+
+      url_params = {uuid: '1', capability: 'led'}
+      service_response = {'code' => 'MethodNotAllowed', 'message' => 'Error'}
+
+      fake_exception = RestClient::ExceptionWithResponse.new
+      resp = RestClient::Response
+      resp.class.module_eval { attr_accessor :code}
+      resp.class.module_eval { attr_accessor :message}
+      resp.code = 405
+      resp.message = 'Error'
+      fake_exception.response = resp
+
+      allow(@controller).to receive(:call_to_actuator_cap_status).and_raise(fake_exception)
+      get :cap_status, params: url_params
+      expect(response.status).to eq(405)
+      expect(response.body).to eq(service_response.to_json)
+    end
   end
 end
