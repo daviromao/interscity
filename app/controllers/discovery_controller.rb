@@ -3,51 +3,62 @@ require 'json'
 
 # Controller that process clients requests
 class DiscoveryController < ApplicationController
+  before_action :validate_url_params
+  before_action :find_resources
+
   def initialize
-    @CATALOG_URL = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
-    @COLLECTOR_URL = SERVICES_CONFIG['services']['collector'] + '/resources/data/last'
+    @catalog_url = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
+    @collector_url = SERVICES_CONFIG['services']['collector'] + '/resources/data/last'
   end
 
   def resources
-    error_message = validate_url_params
+    if !@found_resources.blank? && validate_collector_url
+      uuids = ids_from_catalog
+      collector_uuids = data_from_collector(uuids)
+      matched_resources(collector_uuids)
+    end
+    if !@found_resources.blank?
+      render json: @found_resources
+    else
+      render error_payload('No resources have been found', 404)
+    end
+  end
+
+  private
+
+  def matched_resources(collector_uuids)
+    @found_resources['resources'].select! do |resource|
+      collector_uuids.include?(resource['uuid'])
+    end
+  end
+
+  def data_from_collector(uuids)
     begin
-      if error_message.blank?
-        found_resources = call_to_resource_catalog(build_resource_catalog_url)
+      collector_response = call_to_data_collector(uuids)
+    rescue
+      render error_payload('Service Unavailable', 503)
+    end
+    collector_response['resources'].map do |resource|
+      resource['uuid']
+    end
+  end
 
-        if !found_resources.blank? && validate_collector_url
-          uuids = []
-          found_resources['resources'].each do |resource|
-            uuids << resource['uuid']
-          end
-
-          collector_response = call_to_data_collector(uuids)
-
-          collector_uuids = []
-          collector_response['resources'].each do |resource|
-            collector_uuids << resource['uuid']
-          end
-
-          found_resources['resources'].select! do |resource|
-            collector_uuids.include?(resource['uuid'])
-          end
-        end
-      else
-        render error_payload(error_message, 400)
-        return true
-      end
-
-      if !found_resources.empty?
-        render json: found_resources
-      else
-        render error_payload('No resources have been found', 404)
-      end
+  def find_resources
+    begin
+      @found_resources = call_to_resource_catalog(build_resource_catalog_url)
     rescue
       render error_payload('Service Unavailable', 503)
     end
   end
 
+  def ids_from_catalog
+    @found_resources['resources'].map do |resource|
+      resource['uuid']
+    end
+  end
+
   def build_resource_catalog_url
-    query_string_url = @CATALOG_URL + 'capability=' + params['capability']
+    query_string_url = @catalog_url + 'capability=' + params['capability']
 
     if params['radius'].blank? && !params['lat'].blank?
       query_string_url += '&' + 'lat=' + params['lat'] + '&'
@@ -55,7 +66,7 @@ class DiscoveryController < ApplicationController
     elsif !params['radius'].blank? && !params['lat'].blank?
       query_string_url += '&' + 'lat=' + params['lat'] + '&'
       query_string_url += 'lon=' + params['lon'] + '&'
-      query_string_url += 'radius=' + params['radius']
+      query_string_url + 'radius=' + params['radius']
     end
   end
 
@@ -85,10 +96,8 @@ class DiscoveryController < ApplicationController
       error_message = 'At least a capability must be defined to query for resources'
     end
 
-    error_message
+    render error_payload(error_message, 400) unless error_message.blank?
   end
-
-  private
 
   def validate_collector_url
     if url_param_checker(['min_cap_value']) || url_param_checker(['max_cap_value']) || url_param_checker(['cap_value'])
@@ -98,12 +107,12 @@ class DiscoveryController < ApplicationController
 
   def url_param_checker(args)
     valid_url = true
-    args.each { |arg|
+    args.each do |arg|
       if params[arg].blank?
         valid_url = false
         break
       end
-    }
+    end
     valid_url
   end
 
@@ -125,7 +134,6 @@ class DiscoveryController < ApplicationController
         }
       }
     }
-    JSON.parse(RestClient.post(@COLLECTOR_URL, filters, content_type: 'application/json'))
+    JSON.parse(RestClient.post(@collector_url, filters, content_type: 'application/json'))
   end
-
 end
