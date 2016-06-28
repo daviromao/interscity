@@ -1,6 +1,5 @@
 require 'rest-client'
 require 'json'
-require 'mocks/resource_adaptor_mock'
 require 'exceptions/actuator_exception'
 
 class ActuatorController < ApplicationController
