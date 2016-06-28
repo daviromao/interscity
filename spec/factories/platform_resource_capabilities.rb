@@ -7,12 +7,12 @@ FactoryGirl.define do
 
     capability do
       Capability.find_by(name: capability_name) ||
-        FactoryGirl.create(:capability, name: capability_name)
+          FactoryGirl.create(:capability, name: capability_name)
     end
 
     platform_resource do
       PlatformResource.find_by(uuid: resource_uuid) ||
-        FactoryGirl.create(:empty_capability, uuid: resource_uuid)
+          FactoryGirl.create(:empty_capability, uuid: resource_uuid)
     end
   end
 end

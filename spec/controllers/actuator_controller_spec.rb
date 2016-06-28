@@ -17,13 +17,13 @@ describe ActuatorController, :type => :controller do
     end
 
     it 'Should return status 405 code for the specific resource. Traffic light can not turn blue.' do
-      json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
-      service_response = {success:[],failure:[{uuid:'1', capability: 'trafficlight', code:405,  message: "Error"}]}.to_json
+      json_request = {data: [{uuid: '1', capabilities: {trafficlight: 'blue'}}]}
+      service_response = {success: [], failure: [{uuid: '1', capability: 'trafficlight', code: 405, message: "Error"}]}.to_json
 
       fake_exception = RestClient::ExceptionWithResponse.new
       resp = RestClient::Response
-      resp.class.module_eval { attr_accessor :code}
-      resp.class.module_eval { attr_accessor :message}
+      resp.class.module_eval { attr_accessor :code }
+      resp.class.module_eval { attr_accessor :message }
       resp.code = 405
       resp.message = 'Error'
       fake_exception.response = resp
@@ -86,7 +86,7 @@ describe ActuatorController, :type => :controller do
       }.to_json
 
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
-      expect{put :actuate, params: json_request}.to change{ActuatorValue.count}.by(1)
+      expect { put :actuate, params: json_request }.to change { ActuatorValue.count }.by(1)
       expect(ActuatorValue.last.value).to eq('green')
     end
 
@@ -108,7 +108,7 @@ describe ActuatorController, :type => :controller do
       }.to_json
       allow(@controller).to receive(:call_to_actuator_actuate).and_return(actuator_response)
       allow(Capability).to receive(:find_by).and_raise(Exception)
-      expect{put :actuate, params: json_request}.to_not change{ActuatorValue.count}
+      expect { put :actuate, params: json_request }.to_not change { ActuatorValue.count }
     end
 
     it 'Should return status 404. Not existing resource.' do
@@ -145,8 +145,8 @@ describe ActuatorController, :type => :controller do
     end
 
     it 'Should return 200. Respond with error 500 when occur an internal server error while proccessing a resource actuation.' do
-      json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
-      service_response = {success:[],failure:[{uuid:'1', capability: 'trafficlight', code:500,  message: "Exception"}]}.to_json
+      json_request = {data: [{uuid: '1', capabilities: {trafficlight: 'blue'}}]}
+      service_response = {success: [], failure: [{uuid: '1', capability: 'trafficlight', code: 500, message: "Exception"}]}.to_json
 
       allow(@controller).to receive(:call_to_actuator_actuate).and_raise(Exception)
       put :actuate, params: json_request
@@ -155,8 +155,8 @@ describe ActuatorController, :type => :controller do
     end
 
     it 'Should return 500. Respond with error 500 when occur a general internal server error.' do
-      json_request = {data: [{uuid: '1', capabilities:{trafficlight: 'blue'}}]}
-      service_response = {code:'InternalError',  message: "Exception"}.to_json
+      json_request = {data: [{uuid: '1', capabilities: {trafficlight: 'blue'}}]}
+      service_response = {code: 'InternalError', message: "Exception"}.to_json
 
       allow(@controller).to receive(:execute_actuation).and_raise(Exception)
       put :actuate, params: json_request
@@ -172,7 +172,6 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 200. Client requests a resource status.' do
       ActuatorValue.create!(value: 'red', capability_id: @cap.id, platform_resource_id: @res.id)
-      updated_at = Time.now
       url_params = {'uuid' => '1', 'capability' => 'trafficlight'}
       actuator_response = {'data' => 'red', 'updated_at' => @res.created_at.utc.to_s}
 
@@ -185,7 +184,7 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 404 - Not existing capability.' do
       url_params = {uuid: '1', capability: 'temperature'}
-      service_response = {code:'NotFound',message:'Capability not found'}
+      service_response = {code: 'NotFound', message: 'Capability not found'}
       get :cap_status, params: url_params
       expect(response.status).to eq(404)
       expect(response.body).to eq(service_response.to_json)
@@ -193,7 +192,7 @@ describe ActuatorController, :type => :controller do
 
     it 'Should return status 404 - Not existing resource.' do
       url_params = {uuid: '2', capability: 'temperature'}
-      service_response = {code:'NotFound',message:'Actuator not found'}
+      service_response = {code: 'NotFound', message: 'Actuator not found'}
       get :cap_status, params: url_params
       expect(response.status).to eq(404)
       expect(response.body).to eq(service_response.to_json)
@@ -208,8 +207,8 @@ describe ActuatorController, :type => :controller do
 
       fake_exception = RestClient::ExceptionWithResponse.new
       resp = RestClient::Response
-      resp.class.module_eval { attr_accessor :code}
-      resp.class.module_eval { attr_accessor :message}
+      resp.class.module_eval { attr_accessor :code }
+      resp.class.module_eval { attr_accessor :message }
       resp.code = 405
       resp.message = 'Error'
       fake_exception.response = resp

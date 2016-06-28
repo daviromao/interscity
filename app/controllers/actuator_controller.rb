@@ -25,7 +25,7 @@ class ActuatorController < ApplicationController
   def cap_status
     begin
       value_register = ActuatorValue.where(capability_id: @capability.id,
-                            platform_resource_id: @resource.id).order('created_at DESC').first
+                                           platform_resource_id: @resource.id).order('created_at DESC').first
 
       response = {}
       if value_register.blank?
@@ -110,11 +110,11 @@ class ActuatorController < ApplicationController
   end
 
   def validate_url_params
-    if(!params['uuid'].blank? and !params['capability'].blank?)
+    if (!params['uuid'].blank? and !params['capability'].blank?)
       @resource = PlatformResource.find_by(uuid: params['uuid'])
       if (@resource)
         @capability = @resource.capabilities.find_by(name: params['capability'])
-        if(!@capability)
+        if (!@capability)
           render error_payload('Capability not found', 404)
         end
       else

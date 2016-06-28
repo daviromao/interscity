@@ -14,7 +14,7 @@ RSpec.describe Capability, type: :model do
     expect(capability.name).not_to be_nil
     expect(capability.name).not_to eq('')
 
-    expect(FactoryGirl.build(:capability , name: '')).not_to be_valid
-    expect(FactoryGirl.build(:capability , name: nil)).not_to be_valid
+    expect(FactoryGirl.build(:capability, name: '')).not_to be_valid
+    expect(FactoryGirl.build(:capability, name: nil)).not_to be_valid
   end
 end
