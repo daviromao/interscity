@@ -19,15 +19,44 @@ All tests should pass =)
 Provides
 --------
 
-* put 'actuator/resources/:uuid/exec/:capability'
+* put 'actuator/resources'
 
-Expected put body:
+    Expected put body:
+        {
+            "data": [{
+                "uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b",
+                "capabilities": {
+                    "traffic_light_status": true
+                }
+            }, {
+                "uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
+                "capabilities": {
+                    "traffic_light_status": "blue"
+                }
+            }]
+        }
+    The response will look like:
+        {
+        	"success": [{
+        		"state": true,
+        		"updated_at": "2016-06-27T19:47:57.456Z",
+        		"code": 200,
+        		"uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b"
+        	}],
+        	"failure": [{
+        		"uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
+        		"code": 422,
+        		"message": "Unprocessable Entity"
+        	}]
+        }
 
-{
-   "capability": {value:'green'}
-}
+* get 'actuator/resources/:uuid/cap_status/:capability'
 
-* get 'actuator/resources/:uuid/cap_status/:capability''
+    The get response will look like:
+       {
+           'data' => 'red',
+           'updated_at' => @res.created_at.utc.to_s
+       }
 
 Data catalog interaction
 * post 'resources'
