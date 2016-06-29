@@ -6,6 +6,8 @@ class DiscoveryController < ApplicationController
   before_action :validate_url_params
   before_action :find_resources
 
+  attr_accessor :catalog_url
+
   def initialize
     @catalog_url = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
     @collector_url = SERVICES_CONFIG['services']['collector'] + '/resources/data/last'
@@ -14,7 +16,12 @@ class DiscoveryController < ApplicationController
   def resources
     if !@found_resources.blank? && validate_collector_url
       uuids = ids_from_catalog
-      collector_uuids = data_from_collector(uuids)
+      begin
+        collector_uuids = data_from_collector(uuids)
+      rescue
+        render error_payload('The data collector service is unavailable', 503)
+        return
+      end
       matched_resources(collector_uuids)
     end
     if !@found_resources.blank?
@@ -33,21 +40,18 @@ class DiscoveryController < ApplicationController
   end
 
   def data_from_collector(uuids)
-    begin
-      collector_response = call_to_data_collector(uuids)
-    rescue
-      render error_payload('Service Unavailable', 503)
-    end
+    collector_response = call_to_data_collector(uuids)
     collector_response['resources'].map do |resource|
       resource['uuid']
     end
   end
 
+  # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def find_resources
     begin
       @found_resources = call_to_resource_catalog(build_resource_catalog_url)
-    rescue
-      render error_payload('Service Unavailable', 503)
+    rescue Exception => e
+      render error_payload('The resource catalog service is unavailable', 503)
     end
   end
 
@@ -59,15 +63,15 @@ class DiscoveryController < ApplicationController
 
   def build_resource_catalog_url
     query_string_url = @catalog_url + 'capability=' + params['capability']
-
     if params['radius'].blank? && !params['lat'].blank?
       query_string_url += '&' + 'lat=' + params['lat'] + '&'
       query_string_url += 'lon=' + params['lon']
     elsif !params['radius'].blank? && !params['lat'].blank?
       query_string_url += '&' + 'lat=' + params['lat'] + '&'
       query_string_url += 'lon=' + params['lon'] + '&'
-      query_string_url + 'radius=' + params['radius']
+      query_string_url += 'radius=' + params['radius']
     end
+    query_string_url
   end
 
   def validate_url_params
@@ -120,19 +124,20 @@ class DiscoveryController < ApplicationController
     JSON.parse(RestClient.get(discovery_query))
   end
 
+  # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def call_to_data_collector(uuids)
     filters = {
-      sensor_value: {
-        uuids: uuids,
-        capabilities: [params['capability']],
-        range: {
-          params['capability'] => {
-            max: params['max_cap_value'],
-            min: params['min_cap_value'],
-            equal: params['cap_value']
-          }
+        sensor_value: {
+            uuids: uuids,
+            capabilities: [params['capability']],
+            range: {
+                params['capability'] => {
+                    max: params['max_cap_value'],
+                    min: params['min_cap_value'],
+                    equal: params['cap_value']
+                }
+            }
         }
-      }
     }
     JSON.parse(RestClient.post(@collector_url, filters, content_type: 'application/json'))
   end
