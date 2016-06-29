@@ -1,6 +1,5 @@
 require 'rest-client'
 require 'json'
-require 'exceptions/actuator_exception'
 
 class ActuatorController < ApplicationController
 

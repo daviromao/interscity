@@ -218,5 +218,16 @@ describe ActuatorController, :type => :controller do
       expect(response.status).to eq(405)
       expect(response.body).to eq(service_response.to_json)
     end
+    
+    it 'Should return http error 500 - when there is Internal Error.' do
+      cap = Capability.create!(name: 'led')
+      PlatformResourceCapability.create!(capability_id: cap.id, platform_resource_id: @res.id)
+
+      url_params = {uuid: '1', capability: 'led'}
+
+      allow(@controller).to receive(:call_to_actuator_cap_status).and_raise Exception
+      get :cap_status, params: url_params
+      expect(response.status).to eq(500)
+    end
   end
 end
