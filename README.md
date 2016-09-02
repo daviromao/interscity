@@ -16,6 +16,17 @@ Environment Setup
 
 All tests should pass =)
 
+Docker Setup
+------------
+
+* Install Docker: (google it)
+* Run on terminal: ```$ docker pull debian:unstable```
+	* ```$ docker build -t smart-cities/actuator-controller . ```
+	* ```$ docker run -d -p 3001:3000 smart-cities/actuator-controller```
+
+Now you can access the application on http://localhost:3001
+
+
 Provides
 --------
 
