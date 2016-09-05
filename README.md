@@ -6,7 +6,13 @@
 * Install Docker: (google it)                                                                                   
 * Run on terminal: $ docker pull debian:unstable                                   
   $ docker build -t smart-cities/resource-discover .                                
-  $ docker run -d -p 3003:3000 smart-cities/resource-discover                       
+  $ docker run -d -v <path_to_your_source_code>:/resource-discoverer/ -p 3003:3000 smart-cities/resource-discoverer
+
+Docker flags:
+
+* -d : run the container as a daemon
+* -v : mount a volume from your host to container (share your source code with container)
+* -p : map the exposed port to your host (<host_port>:<container_port>)
                                                                                    
 Now you can access the application on http://localhost:3003 
 
