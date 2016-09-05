@@ -22,7 +22,13 @@ Docker Setup
 * Install Docker: (google it)
 * Run on terminal: ```$ docker pull debian:unstable```
 	* ```$ docker build -t smart-cities/actuator-controller . ```
-	* ```$ docker run -d -p 3001:3000 smart-cities/actuator-controller```
+	* ```$ docker run -d -v <path_to_your_source_code>:/actuator-controller/ -p 3001:3000 smart-cities/actuator-controller```
+
+Docker flags:
+
+* -d : run the container as a daemon
+* -v : mount a volume from your host to container (share your source code with container)
+* -p : map the exposed port to your host (<host_port>:<container_port>)
 
 Now you can access the application on http://localhost:3001
 
