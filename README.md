@@ -1,6 +1,15 @@
 ![Build Status](https://gitlab.com/smart-city-platform/discovery-service/badges/master/build.svg)
 ---
 
+## Docker Setup                                                                    
+                                                                                   
+* Install Docker: (google it)                                                                                   
+* Run on terminal: $ docker pull debian:unstable                                   
+  $ docker build -t smart-cities/resource-discover .                                
+  $ docker run -d -p 3003:3000 smart-cities/resource-discover                       
+                                                                                   
+Now you can access the application on http://localhost:3003 
+
 # Welcome to Discovery Service API
 
 > The *Discovery Service*'s main goal is to provide methods to find resources uuids collected
