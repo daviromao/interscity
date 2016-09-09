@@ -20,7 +20,8 @@ Docker Setup
 ------------
 
 * Install Docker: (google it)
-* Run on terminal: ```$ docker pull debian:unstable```
+* Run on terminal: 
+    * ```$ docker pull debian:unstable```
 	* ```$ docker build -t smart-cities/actuator-controller . ```
 	* ```$ docker run -d -v <path_to_your_source_code>:/actuator-controller/ -p 3001:3000 smart-cities/actuator-controller```
 
