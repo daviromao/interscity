@@ -4,9 +4,10 @@
 ## Docker Setup                                                                    
                                                                                    
 * Install Docker: (google it)                                                                                   
-* Run on terminal: $ docker pull debian:unstable                                   
-  $ docker build -t smart-cities/resource-discover .                                
-  $ docker run -d -v <path_to_your_source_code>:/resource-discoverer/ -p 3003:3000 smart-cities/resource-discoverer
+* Run on terminal: 
+    * ```$ docker pull debian:unstable```           
+    * ```$ docker build -t smart-cities/resource-discover .```
+    * ```$ docker run -d -v <path_to_your_source_code>:/resource-discoverer/ -p 3003:3000 smart-cities/resource-discoverer```
 
 Docker flags:
 
