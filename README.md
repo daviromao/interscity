@@ -1,6 +1,6 @@
-![Build Status](https://gitlab.com/smart-city-software-platform/actuators-control/badges/master/build.svg)
+![Build Status](https://gitlab.com/smart-city-software-platform/actuator-controller/badges/master/build.svg)
 
-Actuators-Control API
+Actuator-Controller API
 =====================
 
 Environment Setup
