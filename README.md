@@ -1,4 +1,4 @@
-![Build Status](https://gitlab.com/smart-city-platform/actuators-control/badges/master/build.svg)
+![Build Status](https://gitlab.com/smart-city-software-platform/actuators-control/badges/master/build.svg)
 
 Actuators-Control API
 =====================
@@ -37,9 +37,10 @@ Now you can access the application on http://localhost:3001
 Provides
 --------
 
-* put 'actuator/resources'
+## put 'actuator/resources'
 
-    Expected put body:
+**Expected put body:**
+```
         {
             "data": [{
                 "uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b",
@@ -53,7 +54,10 @@ Provides
                 }
             }]
         }
-    The response will look like:
+```
+
+**The response will look like:**
+```
         {
         	"success": [{
         		"state": true,
@@ -67,52 +71,51 @@ Provides
         		"message": "Unprocessable Entity"
         	}]
         }
+```
 
-* get 'actuator/resources/:uuid/cap_status/:capability'
+## get 'actuator/resources/:uuid/cap_status/:capability'
 
-    The get response will look like:
+**The get response will look like:**
+```
        {
            'data' => 'red',
            'updated_at' => @res.created_at.utc.to_s
        }
+```
 
-Data catalog interaction
-* post 'resources'
 
+## post 'resources'
+
+**Service post content:**
+```
+    {
+        "uuid": "value"
+        "capabilities": {name:}
+    }
+```
+
+**How this service responds**
+    * on successful execution: return code 201
+    * on failure: return code 400
+
+## put 'resources/:uuid'
+
+```
     Service post content:
     {
         "uuid": "value"
         "capabilities": {name:}
     }
+```
 
-    How this service responds
-        on successful execution
-            return code 201
-        on failure
-            return code 400
+**How this service responds**
+    * on successful execution: return code 200
+    * on failure: return code 400
 
-* put 'resources/:uuid'
-
-    Service post content:
-    {
-        "uuid": "value"
-        "capabilities": {name:}
-    }
-    How this service responds
-        on successful execution
-            return code 200
-        on failure
-            return code 400
-
-Needs
------
-
-* resource_adaptor 		put /resources-adaptor/execute/:capability
 
 Useful links
 ============
 
 * [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes) @ STOA
-* [Actuators-control description](https://social.stoa.usp.br/poo2016/projeto/grupo-5-middleware-cidade-inteligente) @ STOA
-* [Group Repository](https://gitlab.com/groups/smart-city-platform)
+* [Group Repository](https://gitlab.com/groups/smart-city-software-platform)
 * [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
