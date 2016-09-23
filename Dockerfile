@@ -4,7 +4,5 @@ RUN mkdir -p /actuator-controller/
 ADD . /actuator-controller/
 WORKDIR /actuator-controller/
 RUN bundle install
-RUN bundle exec rake db:create
-RUN bundle exec rake db:migrate
-EXPOSE 3000
+RUN bundle exec rake db:migrate:reset
 CMD [ "bundle","exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
