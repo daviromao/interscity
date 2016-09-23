@@ -2,5 +2,5 @@
 
 # do not include a final slash after the URL
 services:
-  collector: "http://107.170.158.70:3002"
-  catalog: "http://107.170.158.70:3000"
+  collector: "data-collector:3000"
+  catalog: "resource-cataloguer:3000"
