@@ -2,20 +2,19 @@
 ---
 
 ## Docker Setup
-                                                                                   
-* Install Docker: (google it)                                                                                   
-* Run on terminal: 
-    * ```$ docker pull debian:unstable```
-    * ```$ docker build -t smart-cities/resource-discover .```
-    * ```$ docker run -d -v <path_to_your_source_code>:/resource-discoverer/ -p 3003:3000 smart-cities/resource-discoverer```
 
-Docker flags:
+* Install Docker: (google it)
+* Run on terminal:
+  * ```$ sh script/quick-start.sh```
+  * ```$ sh script/development.sh start``` # start the container
+  * ```$ sh script/development.sh stop```  # stop the container
 
-* -d : run the container as a daemon
-* -v : mount a volume from your host to container (share your source code with container)
-* -p : map the exposed port to your host (<host_port>:<container_port>)
-                                                                                   
-Now you can access the application on http://localhost:3003 
+When the container is running you can access the application on
+http://localhost:3003
+
+To execute commands into the started container you can run:
+
+```$ sudo docker exec resource-discoverer <command>```
 
 # Welcome to Discovery Service API
 
