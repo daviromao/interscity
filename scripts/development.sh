@@ -1,5 +1,5 @@
-FILE_DIR=`dirname $0`
-BASE_DIR=`readlink -f $FILE_DIR/../`
+FILE_DIR=`perl -e 'use Cwd "abs_path";print abs_path(shift)' $0`
+BASE_DIR=`dirname $FILE_DIR`
 
 PROJECT_NAME="actuator-controller"
 NETWORK="platform"
