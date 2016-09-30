@@ -41,7 +41,7 @@ if [ "$1" = "start" ]; then
   echo "${CYAN}"
   echo "############################################################"
   echo "     To execute commands in container you must run"
-  echo "     $ sudo docker exec $PROJECT_NAME <command>"
+  echo "     $ scripts/development exec <command>"
   echo "############################################################"
   echo "${NC}"
 fi
