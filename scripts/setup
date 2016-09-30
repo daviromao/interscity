@@ -1,14 +1,24 @@
-FILE_DIR=`dirname $0`
-BASE_DIR=`readlink -f $FILE_DIR/../`
-PROJECT_NAME='resource-discoverer'
+#!/bin/sh
+
+FILE_DIR=`perl -e 'use Cwd "abs_path";print abs_path(shift)' $0`
+BASE_DIR=`dirname $FILE_DIR`
+PROJECT_NAME="resource-discoverer"
 IMAGE_NAME=smart-cities/$PROJECT_NAME
 NETWORK='platform'
+
+CYAN='\033[0;36m'
+NC='\033[0m'
+RED='\033[0;31m'
+
 verify () {
   if [ $? != 0 ]; then
-    echo $1
+    echo "${RED}$1${NC}"
     exit 2
   fi
 }
+
+CURRENT_DIR=`pwd`
+cd $BASE_DIR/..
 
 sudo docker -v > /dev/null
 verify "Error: You need to install docker first!"
@@ -24,5 +34,11 @@ verify "Error: building docker image."
 echo "Creating shared network."
 sudo docker network create $PLATFORM 2> /dev/null
 
-echo "To start the service run :"
-echo "   $ sh scripts/development.sh start"
+cd $CURRENT_DIR
+
+echo "${CYAN}"
+echo "####################################"
+echo "    To start the service run :"
+echo "    $ scripts/development start"
+echo "####################################"
+echo "${NC}"

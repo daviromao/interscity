@@ -5,16 +5,16 @@
 
 * Install Docker: (google it)
 * Run on terminal:
-  * ```$ sh script/quick-start.sh```
-  * ```$ sh script/development.sh start``` # start the container
-  * ```$ sh script/development.sh stop```  # stop the container
+  * ```$ script/setup```
+  * ```$ script/development start``` # start the container
+  * ```$ script/development stop```  # stop the container
 
 When the container is running you can access the application on
 http://localhost:3003
 
 To execute commands into the started container you can run:
 
-```$ sudo docker exec resource-discoverer <command>```
+```$ development exec <command>```
 
 # Welcome to Discovery Service API
 
