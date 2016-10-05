@@ -16,6 +16,31 @@ To execute commands into the started container you can run:
 
 ```$ development exec <command>```
 
+## Workaround
+
+Please, try the following approaches to fix possible errors raised when 
+trying to start docker services:
+
+### Bind problem
+
+If you have bind errors while trying to start a docker service, try
+to remove the docker-network **platform** and create it again. If this not fix
+the problem, run the following commands:
+
+* Stop docker deamon: ```sudo service docker stop```
+* Remova o arquivo local-kv: ```sudo rm /var/lib/docker/network/files/local-kv.db```
+* Start docker deamon: ```sudo service docker start```
+* Create the network again: ```sudo docker network create platform```
+* Run the container: ```./script/development start```
+
+### Name problem
+
+If get any name conflicts while trying to run a docker container, try to 
+follow these steps:
+
+* Stop current container: ```./script/development stop```
+* Start the container: ```./script/development start```
+
 # Welcome to Discovery Service API
 
 The *Discovery Service*'s main goal is to provide methods to find resources uuids collected
