@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  redis:
+    image: 'redis'
+    container_name: resource-discoverer-redis
+  resource-discoverer:
+    container_name: resource-discoverer
+    depends_on:
+      - 'redis'
+    build: .
+    ports:
+      - 3004:3000
+    volumes:
+      - '.:/resource-discoverer'
+    environment:
+      REDIS_HOST: 'resource-discoverer-redis:6379'
+      DATACOLLECTOR_HOST: 'data-collector:3000'
+      CATALOGUER_HOST: 'resource-cataloguer:3000'
+      RABBITMQ_HOST: 'rabbitmq'
+
+networks:
+  default:
+    external:
+      name: platform 

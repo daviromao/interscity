@@ -1,6 +1,6 @@
-# Be sure to restart your server when you modify this file
+---
 
-# do not include a final slash after the URL
 services:
-  collector: "data-collector:3000"
-  catalog: "resource-cataloguer:3000"
+  catalog: <%= ENV['CATALOGUER_HOST'] %>
+  collector: <%= ENV['DATACOLLECTOR_HOST'] %>
+  rabbitmq: <%= ENV['RABBITMQ_HOST'] %>

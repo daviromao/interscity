@@ -1,13 +1,12 @@
 source 'https://rubygems.org'
 
-ruby '2.3.1'
 group :development, :test do
   gem 'rspec-rails'
   gem 'simplecov', require: false, group: :test
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.0.0.rc1', '< 5.1'
+gem 'rails', '>= 5.0.0', '< 5.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 gem 'pg'
