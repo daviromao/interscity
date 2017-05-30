@@ -1,0 +1,4 @@
+supervisor = WorkerSupervisor.instance
+
+supervisor.start_resource_creation
+supervisor.start_resource_update
