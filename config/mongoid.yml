@@ -3,7 +3,7 @@ development:
   clients:
     # Defines the default client. (required)
     default:
-      database: data_collector_development
+      database: actuator_controller_development
       hosts:
         - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
       options:
@@ -15,7 +15,7 @@ production:
   clients:
     # Defines the default client. (required)
     default:
-      database: data_collector_development
+      database: actuator_controller_development
       hosts:
         - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
       options:
@@ -60,7 +60,7 @@ production:
 test:
   clients:
     default:
-      database: data_collector_test
+      database: actuator_controller_test
       hosts:
         - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
       options:

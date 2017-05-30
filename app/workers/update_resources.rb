@@ -9,7 +9,7 @@ class UpdateResources
   sidekiq_options queue: 'update_resources', backtrace: true
 
   TOPIC = 'resource_update'
-  QUEUE = 'data_collection_resource_update'
+  QUEUE = 'actuator_controller_resource_update'
 
   def initialize
     @conn = Bunny.new(hostname: SERVICES_CONFIG['services']['rabbitmq'])
@@ -20,17 +20,15 @@ class UpdateResources
   end
 
   def perform
-    @queue.bind(@topic, routing_key: '#.sensor.#')
+    @queue.bind(topic, routing_key: '#.actuator.#')
 
     begin
       @queue.subscribe(:block => true) do |delivery_info, properties, body|
         routing_keys = delivery_info.routing_key.split('.')
         json = JSON.parse(body)
         resource_attributes = json.slice(
-          'uri',
           'uuid',
           'status',
-          'collect_interval',
           'created_at',
           'updated_at',
           'capabilities'
