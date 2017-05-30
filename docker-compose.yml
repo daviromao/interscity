@@ -1,0 +1,51 @@
+version: '2'
+
+services:
+  mongo:
+    container_name: actuator-controller-mongo
+    image: 'mongo:3.4'
+    environment:
+      AUTH: 'no'
+
+  redis:
+    image: 'redis'
+    container_name: actuator-controller-redis
+
+  actuator-controller:
+    container_name: actuator-controller 
+    depends_on:
+      - 'mongo'
+      - 'redis'
+    build: .
+    ports:
+      - 5000:3000
+    volumes:
+      - '.:/actuator-controller'
+    environment:
+      MONGO_USER: 'admin'
+      MONGO_PASSWORD: 'admin'
+      MONGO_HOST: 'actuator-controller-mongo'
+      MONGO_PORT: 27017
+      RABBITMQ_HOST: 'rabbitmq'
+
+  sidekiq:
+    container_name: actuator-controller-sidekiq
+    links:
+      - 'mongo'
+      - 'redis'
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    volumes:
+      - '.:/actuator-controller'
+    environment:
+      RAILS_ENV: 'development'
+      MONGO_USER: 'admin'
+      MONGO_PASSWORD: 'admin'
+      MONGO_HOST: 'actuator-controller-mongo'
+      MONGO_PORT: 27017
+      RABBITMQ_HOST: 'rabbitmq'
+
+networks:
+  default:
+    external:
+      name: platform 
