@@ -18,12 +18,6 @@ gem 'thin'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-# Sidekiq and redis
-gem 'sidekiq'
-gem 'redis'
-gem 'redis-namespace'
-gem 'rest-client'
-
 # RabbitMQ
 gem 'bunny', '~> 2.5.1'
 

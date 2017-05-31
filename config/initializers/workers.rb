@@ -1,4 +1,14 @@
-supervisor = WorkerSupervisor.instance
+WORKERS_LOGGER ||= Logger.new("#{Rails.root}/log/workers.log")
 
-supervisor.start_resource_creation
-supervisor.start_resource_update
+$conn = Bunny.new(
+  hostname: SERVICES_CONFIG['services']['rabbitmq'],
+  logger: WORKERS_LOGGER,
+)
+$conn.start
+
+resource_creator_worker = ResourceCreator.new(2, 2)
+resource_creator_worker.perform
+
+resource_updater_worker = ResourceUpdater.new(1, 1)
+resource_updater_worker.perform
+

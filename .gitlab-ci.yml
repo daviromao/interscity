@@ -16,7 +16,6 @@ before_script:
   - cp config/mongoid-ci.yml config/mongoid.yml
   - ruby -v
   - which ruby
-  - sh setup.sh
   - gem install bundler --no-ri --no-rdoc
   - bundle check || bundle install
 
