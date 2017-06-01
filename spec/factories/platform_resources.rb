@@ -6,7 +6,6 @@ FactoryGirl.define do
     initialize_with { PlatformResource.find_or_create_by(uuid: uuid)}
     # Factory with not all necessary attributes
     factory :missing_args do
-      uri 'http://localhost:3000/basic_resources/1/components/1/collect'
       uuid 'ab631116-2837-11e6-b67b-9e71128cae77'
       status 'on'
 
@@ -17,12 +16,9 @@ FactoryGirl.define do
 
       factory :resource_default_2 do
         uuid '9f77c561-3046-4363-87c4-6a4cc3c61c6e'
-        collect_interval 30
       end
       # Resource with all necessary attributes
       factory :essential_args do
-        collect_interval 30
-
         # Factory with 'capabilities' as an empty array
         factory :empty_capability do
           capabilities []

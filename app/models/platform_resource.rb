@@ -8,4 +8,5 @@ class PlatformResource
   field :capabilities, type: Array, default: []
 
   validates :uuid, :status, presence: true
+  has_many :actuator_commands, dependent: :delete
 end

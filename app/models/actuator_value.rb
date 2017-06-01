@@ -1,2 +1,0 @@
-class ActuatorValue < ApplicationRecord
-end
