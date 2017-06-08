@@ -10,7 +10,69 @@ describe ActuatorController, :type => :controller do
     PlatformResource.create!(uuid: '2', status: 'active', capabilities: ['illuminate'])
   end
 
-  describe '#actuate' do
+  describe '#index' do
+    before do
+      allow_any_instance_of(ActuatorCommand).to receive(:notify_command_request).and_return(true)
+      FactoryGirl.create(:valid_actuator_command, uuid: "1234", capability: "semaphore")
+      FactoryGirl.create(:processed_actuator_command, uuid: "1234", capability: "illuminate")
+      FactoryGirl.create(:processed_actuator_command, uuid: "XPTO", capability: "semaphore")
+      FactoryGirl.create(:failed_actuator_command, uuid: "XPTO", capability: "semaphore")
+      FactoryGirl.create(:rejected_actuator_command, uuid: "1234", capability: "semaphore")
+      FactoryGirl.create(:rejected_actuator_command, uuid: "1234", capability: "semaphore")
+    end
+
+    it "returns all commands" do
+      get :index
+      expect(json['commands'].count).to eq(6)
+    end
+
+    it "returns commands sorted by creation date" do
+      get :index
+      commands = json['commands']
+      more_recent = nil
+      commands.each do |current_command|
+        if more_recent.nil?
+          more_recent = current_command
+          next
+        end
+
+        expect(more_recent["created_at"]).to be >= current_command["created_at"]
+        more_recent = current_command
+      end
+    end
+
+    it "returns processed commands for resource with uuid 1234" do
+      params = {status: "processed", uuid: "1234"}
+      get :index, params: params
+      expect(json['commands'].count).to eq(1)
+    end
+
+    it "return semaphore commands for resource with uuid 1234" do
+      params = {capability: "semaphore", uuid: "1234"}
+      get :index, params: params
+      expect(json['commands'].count).to eq(3)
+    end
+
+    it "returns rejected semaphore commands" do
+      params = {capability: "semaphore", status: "rejected"}
+      get :index, params: params
+      expect(json['commands'].count).to eq(2)
+    end
+
+    it "does not return any command" do
+      params = {capability: "random", status: "rejected"}
+      get :index, params: params
+      expect(json['commands'].count).to eq(0)
+    end
+
+    it "returns all commands for unpermitted params" do
+      params = {random_filter: "nothing", stts: "rejected"}
+      get :index, params: params
+      expect(json['commands'].count).to eq(6)
+    end
+  end
+
+  describe '#create' do
     before(:each) do
       @semaphore = semaphore
       @lamppost = lamppost
@@ -28,7 +90,7 @@ describe ActuatorController, :type => :controller do
             {uuid: "-1", capabilities: {semaphore: "green"}},
           ]
         }
-        process :actuate, method: :put, params: params, as: :json
+        process :create, method: :put, params: params, as: :json
       end
  
       it "returns success" do
@@ -96,7 +158,7 @@ describe ActuatorController, :type => :controller do
             },
           ]
         }
-        process :actuate, method: :put, params: params, as: :json
+        process :create, method: :put, params: params, as: :json
       end
   
       it "returns success" do
@@ -147,7 +209,7 @@ describe ActuatorController, :type => :controller do
 
     context "with invalid parameters" do
       it "requires 'data' key" do
-        process :actuate,
+        process :create,
           method: :put,
           params: {uuid: '1',capabilities: {semaphore: 'green'}}
 

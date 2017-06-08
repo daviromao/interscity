@@ -1,7 +1,9 @@
 require 'json'
 
 class ActuatorController < ApplicationController
-  def actuate
+
+  # POST /commands
+  def create
     @response = Hash.new
     @response['success'] = []
     @response['failure'] = []
@@ -18,6 +20,13 @@ class ActuatorController < ApplicationController
       render json: {error: e.message}, status: 400
       return false
     end
+  end
+
+  # GET /commands
+  # GET /commands?status=pending&uuid=1234&capability=semaphore
+  def index
+    @commands = ActuatorCommand.filter(params.slice(:status, :uuid, :capability)).recent
+    render json: {commands: @commands}, status: 200
   end
 
   private
