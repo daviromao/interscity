@@ -1,6 +1,7 @@
 require 'json'
 
 class ActuatorController < ApplicationController
+  before_action :set_page_params, only: [:index]
 
   # POST /commands
   def create
@@ -25,7 +26,10 @@ class ActuatorController < ApplicationController
   # GET /commands
   # GET /commands?status=pending&uuid=1234&capability=semaphore
   def index
-    @commands = ActuatorCommand.filter(params.slice(:status, :uuid, :capability)).recent
+    @commands = ActuatorCommand.
+      filter(params.slice(:status, :uuid, :capability)).
+      recent.page(@page).per(@per_page)
+
     render json: {commands: @commands}, status: 200
   end
 
@@ -64,5 +68,10 @@ class ActuatorController < ApplicationController
         add_failure(resource.uuid, 400,  "This resource does not have such cappability", capability, value)
       end
     end
+  end
+
+  def set_page_params
+    @page = params[:page].blank? ? 1 : params[:page].to_i
+    @per_page = params[:per_page].blank? ? 40 : params[:per_page].to_i
   end
 end

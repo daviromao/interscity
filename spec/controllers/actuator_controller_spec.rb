@@ -26,6 +26,24 @@ describe ActuatorController, :type => :controller do
       expect(json['commands'].count).to eq(6)
     end
 
+    it "set 2 commands per page on results" do
+      params = {page: 1, per_page: 2}
+      get :index, params: params
+      expect(json['commands'].count).to eq(2)
+    end
+
+    it "returns the second page of results" do
+      params = {page: 2, per_page: 5}
+      get :index, params: params
+      expect(json['commands'].count).to eq(1)
+    end
+
+    it "returns an empty array for big page number" do
+      params = {page: 1000, per_page: 3}
+      get :index, params: params
+      expect(json['commands'].count).to eq(0)
+    end
+
     it "returns commands sorted by creation date" do
       get :index
       commands = json['commands']
