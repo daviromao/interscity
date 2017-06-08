@@ -18,6 +18,7 @@ describe ActuatorController, :type => :controller do
 
     context "with valid parameters" do
       before do
+          allow_any_instance_of(ActuatorCommand).to receive(:notify_command_request).and_return(true)
         params = {
           data: [
             {uuid: "1", capabilities: {illuminate: "moderate"}},
@@ -78,6 +79,7 @@ describe ActuatorController, :type => :controller do
 
     context "with multiple valid requests" do
       before do
+        allow_any_instance_of(ActuatorCommand).to receive(:notify_command_request).and_return(true)
         params = {
           data: [
             {
