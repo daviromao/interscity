@@ -61,81 +61,135 @@ follow these steps:
 Provides
 --------
 
-## put 'actuator/resources'
+## post '/commands'
 
 **Expected put body:**
 ```
-        {
-            "data": [{
-                "uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b",
-                "capabilities": {
-                    "traffic_light_status": true
-                }
-            }, {
-                "uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
-                "capabilities": {
-                    "traffic_light_status": "blue"
-                }
-            }]
-        }
+{
+  "data": [{
+    "uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b",
+      "capabilities": {
+        "traffic_light_status": true
+      }
+  }, {
+    "uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
+      "capabilities": {
+        "traffic_light_status": "blue"
+      }
+  }]
+}
 ```
 
 **The response will look like:**
 ```
-        {
-        	"success": [{
-        		"state": true,
-        		"updated_at": "2016-06-27T19:47:57.456Z",
-        		"code": 200,
-        		"uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b"
-        	}],
-        	"failure": [{
-        		"uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
-        		"code": 422,
-        		"message": "Unprocessable Entity"
-        	}]
-        }
+{
+  "success": [{
+    "state": true,
+      "updated_at": "2016-06-27T19:47:57.456Z",
+      "code": 200,
+      "uuid": "0a841272-c823-4dd6-9bcf-441a7ab27e4b"
+  }],
+    "failure": [{
+      "uuid": "b0d1fd3a-c394-472d-a77c-17a93a17a1fd",
+      "code": 422,
+      "message": "Unprocessable Entity"
+    }]
+}
 ```
 
-## get 'actuator/resources/:uuid/cap_status/:capability'
+## get '/commands'
 
 **The get response will look like:**
 ```
-       {
-           'data' => 'red',
-           'updated_at' => @res.created_at.utc.to_s
-       }
+{
+  "commands": [{
+    "_id": {
+      "$oid": "59395c1329d4b10379bed679"
+    },
+      "capability": "name",
+      "created_at": "2017-06-08T14:15:47.215Z",
+      "platform_resource_id": {
+        "$oid": "592f33252d895e0001562ee3"
+      },
+      "status": "pending",
+      "updated_at": "2017-06-08T19:22:17.968Z",
+      "uuid": "hashudhu",
+      "value": {
+        "a": [123, 32],
+        "b": 32
+      }
+  }, {
+    "_id": {
+      "$oid": "59385f1029d4b1006418d10c"
+    },
+      "capability": "uma",
+      "created_at": "2017-06-07T20:16:16.348Z",
+      "platform_resource_id": {
+        "$oid": "592f33252d895e0001562ee3"
+      },
+      "status": "processed",
+      "updated_at": "2017-06-07T20:16:16.348Z",
+      "uuid": "1234",
+      "value": "10"
+  }, {
+    "_id": {
+      "$oid": "59385efd29d4b1006418d10b"
+    },
+      "capability": "uma",
+      "created_at": "2017-06-07T20:15:57.454Z",
+      "platform_resource_id": {
+        "$oid": "592f33252d895e0001562ee3"
+      },
+      "status": "processed",
+      "updated_at": "2017-06-08T19:22:49.744Z",
+      "uuid": "1234",
+      "value": "10"
+  }]
+}
 ```
 
+It is also possible to filter commands, as well as paginate the results.
+The filters includes:
+* capability
+* uuid
+* status => ['processed', 'failed', 'rejected', 'pending']
 
-## post 'resources'
+The following request demonstrates the use of these filters:
 
-**Service post content:**
+## get '/commands?page=1&per_page=30&status=processed
+
+**The get response will look like:**
 ```
-    {
-        "uuid": "value"
-        "capabilities": {name:}
-    }
+{
+  "commands": [{
+    "_id": {
+      "$oid": "59385f1029d4b1006418d10c"
+    },
+      "capability": "uma",
+      "created_at": "2017-06-07T20:16:16.348Z",
+      "platform_resource_id": {
+        "$oid": "592f33252d895e0001562ee3"
+      },
+      "status": "processed",
+      "updated_at": "2017-06-07T20:16:16.348Z",
+      "uuid": "1234",
+      "value": "10"
+  }, {
+    "_id": {
+      "$oid": "59385efd29d4b1006418d10b"
+    },
+      "capability": "uma",
+      "created_at": "2017-06-07T20:15:57.454Z",
+      "platform_resource_id": {
+        "$oid": "592f33252d895e0001562ee3"
+      },
+      "status": "processed",
+      "updated_at": "2017-06-08T19:22:49.744Z",
+      "uuid": "1234",
+      "value": "10"
+  }]
+}
 ```
-
-**How this service responds**
-    * on successful execution: return code 201
-    * on failure: return code 400
-
-## put 'resources/:uuid'
-
-```
-    Service post content:
-    {
-        "uuid": "value"
-        "capabilities": {name:}
-    }
-```
-
-**How this service responds**
-    * on successful execution: return code 200
-    * on failure: return code 400
-
 
 Useful links
 ============
