@@ -12,4 +12,7 @@ if Rails.env.development? || Rails.env.production?
 
   resource_updater_worker = ResourceUpdater.new(1, 1)
   resource_updater_worker.perform
+
+  actuator_command_updater_worker = ActuatorCommandUpdater.new(1, 1)
+  actuator_command_updater_worker.perform
 end
