@@ -17,6 +17,7 @@ Capability.create_sensor(name: "parking-occupancy")
 Capability.create_sensor(name: "video")
 Capability.create_sensor(name: "queue-length")
 Capability.create_actuator(name: "semaphore")
+Capability.create_actuator(name: "illuminate")
 Capability.create_information(name: "parking-type")
 
 # Health Facilities
