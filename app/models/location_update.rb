@@ -6,10 +6,10 @@ require "#{File.dirname(__FILE__)}/../models/basic_resource"
 
 class LocationUpdate
 
-  TOPIC = 'data_stream' # Data_stream
-  QUEUE = 'resource_cataloguer_resource_update' # something
+  TOPIC = 'data_stream'
+  QUEUE = 'resource_cataloguer_resource_update'
 
-  def initialize #Algo assim
+  def initialize
     @conn = Bunny.new(hostname: SERVICES_CONFIG['services']['rabbitmq'])
     @conn.start
     @channel = @conn.create_channel
@@ -18,7 +18,7 @@ class LocationUpdate
   end
 
   def perform
-    @queue.bind(@topic, routing_key: '#') # is our key
+    @queue.bind(@topic, routing_key: '#')
 
     begin
       @queue.subscribe(:block => false) do |delivery_info, properties, body|
@@ -40,7 +40,7 @@ class LocationUpdate
 
       end
     rescue Exception => e
-      logger.error("LocationUpdate: channel closed - #{e.message}")
+      LOGGER.error("LocationUpdate: channel closed - #{e.message}")
       @conn.close
       LocationUpdate.perform_in(2.seconds)
     end
