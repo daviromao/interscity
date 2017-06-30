@@ -2,7 +2,7 @@
 #              Docker Compose file that starts Kong              #
 ##################################################################
 
-version: '2'
+version: '3'
 
 services:
   # Load Balancing
@@ -10,7 +10,6 @@ services:
     image: progrium/consul:latest
     command: -server -bootstrap -ui-dir /ui
     restart: always
-    mem_limit: 128m
     ports:
       - 8500:8500
     expose:
@@ -25,7 +24,6 @@ services:
 
   nginx-lb:
     build: nginx/
-    mem_limit: 128m
     ports:
       - 8000:8000
       - 8443:8443
@@ -77,6 +75,15 @@ services:
       - 8080:8080
     environment:
       - KONG_URL=http://kong:8001
+
+  swagger-docs:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8888:8080
+    volumes:
+      - './api:/api'
+    environment:
+      - SWAGGER_JSON=/api/swagger.json
 
 networks:
   default:

@@ -1,0 +1,801 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Resource Adaptor API",
+    "description": "A proxy API to integrate city's resources to InterSCity Platform",
+    "version": "1.0.0"
+  },
+  "host": "resource-adaptor.interscity.org",
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/resources": {
+      "post": {
+        "summary": "Register new resources",
+        "description": "Register a new city resource. This action will return a new UUID\nto the registered resource, which must be used in future requests\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "city resource",
+            "description": "The city resource to create.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "lat",
+                    "lon",
+                    "status"
+                  ],
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "resource's description",
+                      "example": "A public bus"
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "a list with all the resource's capabilities.",
+                      "example": [
+                        "temperature",
+                        "humidity",
+                        "illuminate"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "the current status of the resource. Currently, we only support the 'active' status",
+                      "example": "active"
+                    },
+                    "lat": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "resource's latitude",
+                      "example": -23.559616
+                    },
+                    "lon": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "resource's longitude",
+                      "example": -46.731386
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "The created resource",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Validation failed: Status can't be blank"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/{uuid}": {
+      "put": {
+        "summary": "Update an existing resource",
+        "description": "Update an existing city resource. This action will return the updated resource\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "type": "string",
+            "required": true,
+            "description": "Resource's uuid"
+          },
+          {
+            "in": "body",
+            "name": "city resource data",
+            "description": "The city resource data to update.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "resource's description",
+                  "example": "A public bus"
+                },
+                "capabilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "a list with all the resource's capabilities.",
+                  "example": [
+                    "temperature",
+                    "humidity",
+                    "illuminate"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "description": "the current status of the resource. Currently, we only support the 'active' status",
+                  "example": "active"
+                },
+                "lat": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "resource's latitude",
+                  "example": -23.559616
+                },
+                "lon": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "resource's longitude",
+                  "example": -46.731386
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "The updated resource",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource not found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Validation failed: Status can't be blank"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources/{uuid}/data": {
+      "post": {
+        "summary": "Post several context data",
+        "description": "Post a set of data collected by city resources. Resources may\ncollect observations about the city environment through sensor\ndevices, which provide its sensor capabilities, such as\ntemperature, humidity, to cite a few. It is possible to post\nseveral observed data by time. Thus, the body must specify the\ncorrespondent capability for each observation.\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "type": "string",
+            "required": true,
+            "description": "Resource's uuid"
+          },
+          {
+            "in": "body",
+            "name": "context data",
+            "description": "Post several data collected by sensors of a city resource.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "temperature": {
+                      "type": "array",
+                      "description": "The list of observed data for a given resource capability",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "example": 10,
+                            "description": "the observed value can be of any type"
+                          },
+                          "timestamp": {
+                            "type": "string",
+                            "description": "the timestamp of the observation",
+                            "format": "date-time"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "value": 10,
+                          "timestamp": "2017-06-14T17:52:25.428Z"
+                        },
+                        {
+                          "value": 20,
+                          "timestamp": "2017-06-14T17:57:25.428Z"
+                        }
+                      ]
+                    },
+                    "position": {
+                      "type": "array",
+                      "description": "The list of observed data for a given resource capability",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "object",
+                            "properties": {
+                              "lat": {
+                                "type": "number",
+                                "format": "double",
+                                "example": -10.00032
+                              },
+                              "lon": {
+                                "type": "number",
+                                "format": "double",
+                                "example": -23.200223
+                              }
+                            },
+                            "description": "the observed value can be of any type"
+                          },
+                          "timestamp": {
+                            "type": "string",
+                            "description": "the timestamp of the observation",
+                            "format": "date-time"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "value": {
+                            "lat": -10.00032,
+                            "lon": -23.200223
+                          },
+                          "timestamp": "2017-06-14T17:52:25.428Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/resources/{uuid}/data/{capability}": {
+      "post": {
+        "summary": "Post context data for a single capability",
+        "description": "Rost a data collected by city resources from a specific sensor\ndevice (for a single capability).\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "type": "string",
+            "required": true,
+            "description": "Resource's uuid"
+          },
+          {
+            "in": "path",
+            "name": "capability",
+            "type": "string",
+            "required": true,
+            "description": "Resource's capability"
+          },
+          {
+            "in": "body",
+            "name": "context data",
+            "description": "Post data collected for a single capability of a city resource.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "example": 10,
+                        "description": "the observed value can be of any type"
+                      },
+                      "timestamp": {
+                        "type": "string",
+                        "description": "the timestamp of the observation",
+                        "format": "date-time"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "value": 10,
+                      "timestamp": "2017-06-14T17:52:25.428Z"
+                    },
+                    {
+                      "value": 20,
+                      "timestamp": "2017-06-14T17:57:25.428Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "post": {
+        "summary": "Subscribe to receive actuation commands",
+        "description": "When you register a resource with actuator capabilities, such as\n**illuminate** or **semaphore**, you must subscribe to the platform\nto receive notifications whenever an application send a new command\nfor this resource. We will notify you through a Webhook \narchitecture. To do so, you must provide an HTTP server to receive\na POST command with the notification.\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "subscription",
+            "description": "The subscription datails to create.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscription": {
+                  "type": "object",
+                  "required": [
+                    "uuid",
+                    "url",
+                    "capabilities"
+                  ],
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "resource's uuid",
+                      "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "a list with the resource's actuator capabilities that you want to receive notifications about.",
+                      "example": [
+                        "semaphore",
+                        "illuminate"
+                      ]
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+                      "example": "http://myendpoint.com"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "The created subscription",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource not found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": [
+                    "Url can't be blank",
+                    "Capabilities can't be blank"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource Cataloguer service is unavailable"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all subscriptions",
+        "description": "This endpoint can be used to get data of all subscriptions.\nFurthermore, one may filter results for a specific uuid\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "uuid",
+            "type": "string",
+            "description": "Parameter to filter subscriptions by resource's uuid"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of subscriptions",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscriptions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Subscription"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Subscription not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{id}": {
+      "put": {
+        "summary": "Update a specific subscription",
+        "description": "This endpoint can be used to update an existing subscription.\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "Subscription's id"
+          },
+          {
+            "in": "body",
+            "name": "subscription",
+            "description": "The subscription datails to update.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subscription": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+                      "example": "http://newendpoint.com"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated subscription",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Subscription not found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": [
+                    "Url can't be blank",
+                    "Capabilities can't be blank"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource Cataloguer service is unavailable"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get data about a specific subscription",
+        "description": "This endpoint can be used to get data of an existing subscription.\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "Subscription's id"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested subscription",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Subscription not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "uuid": {
+              "type": "string",
+              "description": "resource's uuid",
+              "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+            },
+            "description": {
+              "type": "string",
+              "description": "resource's description",
+              "example": "A public bus"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "a list with all the resource's capabilities.",
+              "example": [
+                "temperature",
+                "humidity",
+                "illuminate"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "description": "the current status of the resource. Currently, we only support the 'active' status",
+              "example": "active"
+            },
+            "lat": {
+              "type": "number",
+              "format": "double",
+              "description": "resource's latitude",
+              "example": -23.559616
+            },
+            "lon": {
+              "type": "number",
+              "format": "double",
+              "description": "resource's longitude",
+              "example": -46.731386
+            },
+            "country": {
+              "type": "string",
+              "description": "country name discovered automatically from the resource's position",
+              "example": "Brazil"
+            },
+            "state": {
+              "type": "string",
+              "description": "state name discovered automatically from the resource's position",
+              "example": "São Paulo"
+            },
+            "city": {
+              "type": "string",
+              "description": "state name discovered automatically from the resource's position",
+              "example": "São Paulo"
+            },
+            "neighborhood": {
+              "type": "string",
+              "description": "neighborhood name discovered automatically from the resource's position",
+              "example": "Butantã"
+            },
+            "postal_code": {
+              "type": "string",
+              "description": "postal code discovered automatically from the resource's position",
+              "example": null
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of resource creation"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of the last resource update"
+            },
+            "id": {
+              "type": "integer",
+              "description": "internal id (not used by clients)",
+              "example": 10
+            }
+          }
+        }
+      }
+    },
+    "Subscription": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "subscription id. This must be used in future requests",
+              "example": 23
+            },
+            "active": {
+              "type": "boolean",
+              "description": "subscription status. Non active endpoints will not longer receive notifications",
+              "example": true
+            },
+            "uuid": {
+              "type": "string",
+              "description": "resource's uuid related to the subscription",
+              "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "a list with the resource's actuator capabilities that you want to receive notifications about.",
+              "example": [
+                "semaphore",
+                "illuminate"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+              "example": "http://myendpoint.com"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of subscription creation"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of the last subscription update"
+            }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
