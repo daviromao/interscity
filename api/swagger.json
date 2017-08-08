@@ -1449,6 +1449,157 @@
           }
         }
       }
+    },
+    "/actuator/commands": {
+      "get": {
+        "tags": [
+          "Actuator Controller"
+        ],
+        "summary": "Get all actuator commands requested to the platform by client applications",
+        "description": "This endpoint can be used to get the list of actuation commands requested by client applications for resources with actuation capabilities. It is also possible to filter the results by status, uuid of the target resource, and the actuation capability. Actuation commands may have one of the following status:\n* pending - the command was received by the platform, but not by the resource yet\n* failed - the command could not be sended to the target resource\n* processed - the command was processed by the target resource\n* rejected - the command was rejected by the target resource, probrably because it does not konw how to process the input\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "description": "Parameter to paginate the resources list. By default it returns the 1st page.",
+            "default": 1
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "type": "integer",
+            "description": "Parameter to paginate the resources list. The default value is 40.",
+            "default": 40
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "type": "string",
+            "description": "Filter by status. This value should be in ['pending', 'failed', 'processed', 'rejected']"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "type": "string",
+            "description": "Filter by target's uuid"
+          },
+          {
+            "in": "query",
+            "name": "capability",
+            "type": "string",
+            "description": "Filter by capability's name"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of actuation commands",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "commands": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Command"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Actuator Controller"
+        ],
+        "summary": "Send commands to city resources",
+        "description": "One may use this endpoint to send commands to underlying city resources. This API allows you to send multiple commands at once rather than perform several requests to change multiple resources. Whenever a command is requested by a client application, it's status is pending. As a result, the response of this endpoint is divided in success commands (which passed in all validations) and failed commands (with validation or input issues).\n\nActuation commands may have one of the following status:\n* pending - the command was received by the platform, but not by the resource yet\n* failed - the command could not be sended to the target resource\n* processed - the command was processed by the target resource\n* rejected - the command was rejected by the target resource, probrably because it does not konw how to process the input\n",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "set of commands",
+            "description": "The set of commands for city resources.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "uuid": {
+                        "type": "string",
+                        "description": "resource's uuid",
+                        "example": "b0ae6f76-521d-4199-9595-f52c99361052"
+                      },
+                      "capabilities": {
+                        "type": "object",
+                        "description": "a hash with the capabilities and their values",
+                        "example": {
+                          "semaphore": "green",
+                          "illuminate": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of successful and failed commands",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Command"
+                  }
+                },
+                "failure": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "example": [
+                    {
+                      "error": "Invalid command [\"Value can't be blank\"]",
+                      "value": null,
+                      "capability": "illuminate",
+                      "uuid": "b0ae6f76-521d-4199-9595-f52c99361052",
+                      "code": 400
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Parameter data is missing"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1623,11 +1774,63 @@
         }
       }
     },
-    "Error": {
+    "Command": {
       "type": "object",
       "properties": {
-        "error": {
-          "type": "string"
+        "subscription": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "object",
+              "properties": {
+                "$oid": {
+                  "type": "string",
+                  "description": "internal id",
+                  "example": "598a183c913ccd0001a8cb65"
+                }
+              }
+            },
+            "capability": {
+              "type": "string",
+              "description": "capability's name",
+              "example": "illuminate"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of subscription creation"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "timestamp of the last subscription update"
+            },
+            "platform_resource_id": {
+              "type": "object",
+              "properties": {
+                "$oid": {
+                  "type": "string",
+                  "description": "platform resource's internal id",
+                  "example": "598a17e4913ccd0001a8cb5f"
+                }
+              }
+            },
+            "uuid": {
+              "type": "string",
+              "description": "target resource's uuid",
+              "example": "b0ae6f76-521d-4199-9595-f52c99361052"
+            },
+            "value": {
+              "type": "object",
+              "description": "the input value/command to be used by the resource to perform the actuation command",
+              "example": "low"
+            },
+            "status": {
+              "type": "string",
+              "description": "the current status of the command",
+              "example": "pending"
+            }
+          }
         }
       }
     }
