@@ -198,7 +198,7 @@ describe BasicResourcesController do
     it { expect(response.status).to eq(200) }
 
     it 'is expected to return an empty JSON list' do
-      expect(response.body).to eq("[]")
+      expect(json['resources']).to eq([])
     end
 
   end
@@ -211,7 +211,7 @@ describe BasicResourcesController do
     it { expect(response.status).to eq(200) }
 
     it 'is expected to return an empty JSON list' do
-      expect(response.body).to eq("[]")
+      expect(json['resources']).to eq([])
     end
 
   end

@@ -61,12 +61,16 @@ class BasicResourcesController < ApplicationController
 
   # GET /resources/sensors
   def index_sensors
-    render json: BasicResource.all_sensors.order('created_at DESC').page(@page).per_page(@per_page)
+    render json: {
+      resources: BasicResource.all_sensors.order('created_at DESC').page(@page).per_page(@per_page)
+    }
   end
 
   # GET /resources/actuators
   def index_actuators
-    render json: BasicResource.all_actuators.order('created_at DESC').page(@page).per_page(@per_page)
+    render json: {
+      resources: BasicResource.all_actuators.order('created_at DESC').page(@page).per_page(@per_page)
+    }
   end
 
   # GET /resources/:uuid
@@ -75,7 +79,7 @@ class BasicResourcesController < ApplicationController
       render json: { data: BasicResource.find_by_uuid!(params[:uuid]).to_json }
     rescue
       render json: {
-        error: "Resource with given uuid not found"
+        error: "Resource not found"
       }, status: 404
     end
   end
