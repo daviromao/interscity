@@ -23,12 +23,12 @@ To run this template execute:
 $ ./scripts/development start
 ```
 
-Kong will be available through the `nginx-lb` instance on ports:
+Kong will be available through on the following ports:
 * `8000` - HTTP API Gateway
 * `8443` - HTTPS API Gateway
 * `8001` - Kong Admin API
 
-To stop the running containers of this template execute:
+To stop running containers of this template execute:
 
 ```shell
 $ ./scripts/development stop
@@ -36,9 +36,9 @@ $ ./scripts/development stop
 
 
 Each microservice must register itself in Kong as a target for its
-upstream API.
-Moreover, it also start the
-[Kong Dashboard](https://github.com/PGBI/kong-dashboard) which can be
+upstream API through [Kong's API](https://getkong.org/docs/0.10.x/getting-started/adding-your-api/).
+Alternatively, you may use the [Kong Dashboard](https://github.com/PGBI/kong-dashboard)
+which is started through the above mentioned Docker Compose template. It can be
 accessed through the address `http://localhost:8080` in a web browser.
 Kong Dashboard is a UI panel to facilitate the interaction with Kong
 Admin API. When required,
