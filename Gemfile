@@ -8,6 +8,8 @@ gem 'kaminari-mongoid'
 
 gem 'puma', '~> 3.0'
 
+gem 'rest-client'
+
 gem 'sass-rails', '~> 5.0'
 
 gem 'jquery-rails'
