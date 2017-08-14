@@ -24,6 +24,8 @@ services:
       DATACOLLECTOR_HOST: 'data-collector:3000'
       ACTUATORCONTROLLER_HOST: 'actuator-controller:3000'
       RABBITMQ_HOST: 'rabbitmq'
+      KONG_HOST: 'kong:8001'
+      SELF_HOST: 'resource-cataloguer:3000'
 
 networks:
   default:
