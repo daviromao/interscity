@@ -8,7 +8,8 @@ implement the
 For this purpose, we use a Docker Compose template that provides a Kong
 container with a Postgres
 database plus an instance of Swagger UI to provide
-a dynamic web page for InterSCity API's documentation.
+a dynamic web page for InterSCity API's documentation, which is placed at
+*api* folder.
 
 To setup this template execute:
 
