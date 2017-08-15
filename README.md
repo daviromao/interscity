@@ -61,11 +61,13 @@ while registering them on Kong.
 
 # API Docs
 
-This folder contains the [Swagger](https://swagger.io/) documentation of the InterSCity's
+The `/dist` folder contains [Swagger](https://swagger.io/) documentation of
+the InterSCity's
 REST APIs. This documentation considerers that you are running the InterSCity
 with Kong. However, the documentation also divide the endpoints by microservice
 and therefore also documents the individual APIs of each microservice.
 
+In the `/dist/api` folder, you'll find the specifications of the api.
 Those who need to edit the documentation file  must use the Swagger Online
 Editor, import one of the files (swagger.yml or swagger.json), and, after
 finish editing, download the new docs in both extensions.
