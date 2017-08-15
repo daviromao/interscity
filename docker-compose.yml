@@ -43,13 +43,25 @@ services:
 
   swagger-docs:
     container_name: swagger-docs
-    image: swaggerapi/swagger-ui
+    image: nginx
     ports:
-      - 8888:8080
+      - 8888:80
     volumes:
-      - './api:/api'
-    environment:
-      - SWAGGER_JSON=/api/swagger.json
+      - './dist:/usr/share/nginx/html:ro'
+
+
+#  swagger-docs:
+#    container_name: swagger-docs
+#    image: swaggerapi/swagger-ui:latest
+#    ports:
+#      - 8888:8080
+#    volumes:
+#      - './api:/usr/share/nginx/html/api'
+#    environment:
+#      - FOLDER=swagger-ui-3.1.5
+#      - VERSION=3.1.5
+#      - VALIDATOR_URL=null
+#      - API_URL=http://localhost:8888/api/v1/swagger.json
 
 networks:
   default:
