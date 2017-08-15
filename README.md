@@ -80,4 +80,6 @@ Web page from the Swagger specification, with the visual documentation.
 * [Swagger OpenAPI 3.0 Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)
 * [Online Swagger Editor](http://editor.swagger.io/)
 * [Swagger UI](https://swagger.io/swagger-ui/)
+* [Kong](https://getkong.org/)
+* [Kong Dashboard](https://github.com/PGBI/kong-dashboard)
 
