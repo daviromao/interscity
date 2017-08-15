@@ -23,7 +23,7 @@ To run this template execute:
 $ ./scripts/development start
 ```
 
-Kong will be available through on the following ports:
+Kong will be available on the following ports:
 * `8000` - HTTP API Gateway
 * `8443` - HTTPS API Gateway
 * `8001` - Kong Admin API

@@ -34,6 +34,7 @@ services:
       - kong-database
 
   kong-dashboard:
+    container_name: kong-dashboard
     image: pgbi/kong-dashboard:v2
     ports:
       - 8080:8080
@@ -41,6 +42,7 @@ services:
       - KONG_URL=http://kong:8001
 
   swagger-docs:
+    container_name: swagger-docs
     image: swaggerapi/swagger-ui
     ports:
       - 8888:8080

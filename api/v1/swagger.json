@@ -16,12 +16,12 @@
   },
   "servers": [
     {
-      "url": "http://platform.interscity.org",
-      "description": "Oficial server"
+      "url": "http://localhost:8000/v1",
+      "description": "Localhost server"
     },
     {
-      "url": "http://localhost:8000",
-      "description": "Localhost server"
+      "url": "http://platform.interscity.org/v1",
+      "description": "Oficial server"
     }
   ],
   "paths": {
