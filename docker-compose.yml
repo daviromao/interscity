@@ -18,6 +18,8 @@ services:
       DATACOLLECTOR_HOST: 'data-collector:3000'
       CATALOGUER_HOST: 'resource-cataloguer:3000'
       RABBITMQ_HOST: 'rabbitmq'
+      KONG_HOST: 'kong:8001'
+      SELF_HOST: 'resource-discoverer:3000'
 
 networks:
   default:
