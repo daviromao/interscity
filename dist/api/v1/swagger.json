@@ -2281,6 +2281,106 @@
           }
         }
       }
+    },
+    "/discovery/resources": {
+      "get": {
+        "tags": [
+          "Resource Discovery"
+        ],
+        "summary": "Context-aware search endpoint to discovery city resources",
+        "description": "This endpoint can be used to search for city resources based context data. One may combine static and dynamic filters to discovery existing resources.\nOne may use the following context-based filters for resource discovery:\n\n* **capability** - If this parameter is used alone, the system will filter the results by resources with the given capability. However, you may also combine it with the following parameters:\n  * **min_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at least the value informed. It should **not** be used with the parameter **cap_value**.\n  * **max_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at most the value informed. It should **not** be used with the parameter **cap_value**.\n  * **cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is exactly the value informed. It should **not** be used either with the parameter **max_cap_value** or **min_cap_value**.\n\n* **location** - To discovery resources based on location data, you must always provide both **lat** and **lon** parameters. With these two parameters, the system will discovery resources which are located exactly at the point informed. However, you may also combine them with the following parameter:\n  * **radius**: Tell the system to include resources near to the location formed by **lat** and **lon** considering the radius (in meters) informed.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "capability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resources with a given capability",
+            "example": "temperature"
+          },
+          {
+            "in": "query",
+            "name": "min_cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at least the informed *min_cap_value*",
+            "example": 20
+          },
+          {
+            "in": "query",
+            "name": "max_cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at most the informed *max_cap_value*",
+            "example": 24
+          },
+          {
+            "in": "query",
+            "name": "cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is exactly the informed *cap_value*",
+            "example": 23.5
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose location has the latitude informed",
+            "example": -23.558253
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose location has the longitude informed",
+            "example": -46.730903
+          },
+          {
+            "in": "query",
+            "name": "radius",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose near to the location formed by *lat* and *lon* considering the informed radius(in meters)",
+            "example": 100
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
