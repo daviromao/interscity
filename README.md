@@ -1,10 +1,34 @@
+# Resource Cataloguer
+
 ![Build Status](https://gitlab.com/smart-city-software-platform/resource-cataloguer/badges/master/build.svg)
 
-Resource Cataloguer API
-====================
+Resource Cataloguer is a microservice of the
+[InterSCity platform](http://interscity.org/). It is designed to store 
+static and meta data of all city resources.
 
-Environment Setup
------------------
+Resource Cataloguer API enables the creation and update of city resources
+on the InterSCity platform, storing some static data such as description 
+and their capabilities. It also offers endpoints to manage the
+available capabilities used on the platform. So, if you want to register a
+new resource that has a capability which does not currently exist on the 
+platform, you should first register this new capability and then
+register the city resource.
+
+# How to use
+
+You must see:
+* Setup the Environment
+  * [Using Docker](#docker-setup) (recommended).
+  * [Using RVM](#rvm-setup).
+* [Request examples](requests.md) to understand the Resource Cataloguer
+API. 
+In this manual you will find a set of requests and responses examples with *curl*,
+and the required data structures.
+
+## RVM Setup
+
+By using this option, you will have additional overhead to properly configure
+the
 
 * Install RVM
 * Run on terminal: ```$ rvm install 2.3.1```
@@ -18,8 +42,7 @@ Environment Setup
 
 You should see all tests passing =)
 
-Docker Setup
-------------
+## Docker Setup
 
 * Install Docker: (google it)
 * Run on terminal:
@@ -30,16 +53,20 @@ Docker Setup
 When the container is running you can access the application on
 http://localhost:3000
 
-To execute commands into the started container you can run:
+* To execute commands into the started container you can run:
 
-```$ scripts/development exec <command>```
+```$ scripts/development exec resource-cataloguer <command>```
 
-## Workaround
+* Run the tests with:
+
+```$ scripts/development exec resource-cataloguer rspec```
+
+### Workaround
 
 Please, try the following approaches to fix possible errors raised when 
 trying to start docker services:
 
-### Bind problem
+#### Bind problem
 
 If you have bind errors while trying to start a docker service, try
 to remove the docker-network **platform** and create it again. If this not fix
@@ -51,41 +78,10 @@ the problem, run the following commands:
 * Create the network again: ```sudo docker network create platform```
 * Run the container: ```./script/development start```
 
-### Name problem
+#### Name problem
 
 If get any name conflicts while trying to run a docker container, try to 
 follow these steps:
 
 * Stop current container: ```./script/development stop```
 * Start the container: ```./script/development start```
-
-Provides
---------
-
-* POST /resources
-* PUT /resources/:uuid
-* GET /resources/:uuid
-* GET /resources/sensors
-* GET /resources/actuators
-* GET /resources/search
-
-Needs
------
-
-* resources GET /status
-* consumers POST /resources/
-* consumers PUT /resources/:uuid
-
-
-Useful links
-============
-
-* [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes)
-* [Resources caralog service description](https://gitlab.com/smart-city-software-platform/resource-cataloguer/wikis/home) 
-* [Group Repository](https://gitlab.com/groups/smart-city-software-platform)
-* [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
-
-Design questions
-==============
-
-* Should we notify external services upon resource creation or wait for them to query for new resources? We could notify the service right after its creation.
