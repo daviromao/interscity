@@ -1,9 +1,5 @@
 source 'https://rubygems.org'
 
-# Sidekiq and redis
-gem 'sidekiq'
-gem 'redis'
-gem 'redis-namespace'
 gem 'rest-client'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
