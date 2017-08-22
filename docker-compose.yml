@@ -24,6 +24,7 @@ services:
       - LC_CTYPE=en_US.UTF-8
       - LC_ALL=en_US.UTF-8
     restart: always
+    command: bash -c "kong migrations up && kong start"
     ports:
       - "8000:8000"
       - "8443:8443"
