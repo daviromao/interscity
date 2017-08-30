@@ -1,25 +1,16 @@
 require "rest-client"
 
-kong = SERVICES_CONFIG['services']['kong'] || 'kong:8001'
-self_host = SERVICES_CONFIG['services']['self'] || 'resource-discoverer:3000'
+if Rails.env.development? || Rails.env.production?
+  register_method = ENV['REGISTER_METHOD'] || 'target'
+  self_host = SERVICES_CONFIG['services']['self'] || 'resource-discoverer:3000'
 
-self_host = 'http://' + self_host unless self_host.start_with?('http')
+  wrapper = Kong::Wrapper.new(self_host)
 
-begin
-  response = RestClient.post(
-    kong + '/apis',
-    {
-      name: 'resource-discoverer',
-      upstream_url: self_host,
-      uris: ['/discovery'],
-      strip_uri: true
-    }.to_json,
-    {content_type: :json, accept: :json}
-  )
-
-  Rails.logger.error "API was succesfully registered to Kong: #{response}"
-rescue RestClient::ExceptionWithResponse => e
-  Rails.logger.error "Could not register API to Kong #{e.response}"
-rescue StandardError => e
-  Rails.logger.error "Could not register API to Kong #{e.message}"
+  if register_method == 'target'
+    wrapper.register_as_target('discovery', 'discovery.v1.service', weight = 100)
+  elsif register_method == 'api'
+    wrapper.register_as_api('resource-discovery', ['/discovery'])
+  else
+    Rails.logger.error "Registration method not supported: #{register_method}"
+  end
 end

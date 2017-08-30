@@ -5,4 +5,3 @@ services:
   collector: <%= ENV['DATACOLLECTOR_HOST'] %>
   rabbitmq: <%= ENV['RABBITMQ_HOST'] %>
   self: <%= ENV['SELF_HOST'] %>
-  kong: <%= ENV['KONG_HOST'] %>
