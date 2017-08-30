@@ -34,5 +34,6 @@ module ResourcesCatalog
       end
     end
     config.middleware.use CatchJsonParseErrors
+    config.autoload_paths << Rails.root.join('lib')
   end
 end

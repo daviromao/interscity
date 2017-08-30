@@ -6,4 +6,3 @@ services:
   collector: <%= ENV['DATACOLLECTOR_HOST'] %>
   actuator: <%= ENV['ACTUATORCONTROLLER_HOST'] %>
   rabbitmq: <%= ENV['RABBITMQ_HOST'] %>
-  kong: <%= ENV['KONG_HOST'] %>
