@@ -23,7 +23,7 @@ services:
       MONGO_HOST: 'actuator-controller-mongo'
       MONGO_PORT: 27017
       RABBITMQ_HOST: 'rabbitmq'
-      KONG_HOST: 'kong:8001'
+      KONG_URI: 'kong:8001'
       SELF_HOST: 'actuator-controller:3000'
       REGISTER_METHOD: 'target'
 
