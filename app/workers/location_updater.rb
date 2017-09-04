@@ -8,18 +8,18 @@ class LocationUpdater
   TOPIC = 'data_stream'
   QUEUE = 'resource_cataloguer_data_stream'
 
-  def initialize(consumers_size = 1, thread_pool = 1, capability_name = 'location')
+  def initialize(consumers_size = 1, thread_pool = 1, location_attr = 'location')
     @consumers_size = consumers_size
     @consumers = []
     @channel = $conn.create_channel(nil, thread_pool)
     @channel.prefetch(2)
     @topic = @channel.topic(TOPIC)
     @queue = @channel.queue(QUEUE)
-    @capability = capability_name
+    @location_attr = location_attr
   end
 
   def perform
-    @queue.bind(@topic, routing_key: "#." + @capability + ".#")
+    @queue.bind(@topic, routing_key: "#." + @location_attr + ".#")
 
     @consumers_size.times do
       @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
@@ -29,10 +29,16 @@ class LocationUpdater
           uuid = routing_keys[0]
           capability = routing_keys[1]
           value = JSON.parse(body)
+          lat = value["location"]["lat"]
+          lon = value["location"]["lon"]
+
+          if lat.blank? || lon.blank?
+            raise "Could not read latitude or longitude data"
+          end
 
           resource_attributes = {
-            lat: value["value"][0],
-            lon: value["value"][1]
+            lat: lat,
+            lon: lon
           }
           update_location(resource_attributes, uuid)
 
