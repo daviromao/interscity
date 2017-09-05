@@ -2202,7 +2202,7 @@
           "Resource Discovery"
         ],
         "summary": "Context-aware search endpoint to discovery city resources",
-        "description": "This endpoint can be used to search for city resources based context data. One may combine static and dynamic filters to discovery existing resources.\nOne may use the following context-based filters for resource discovery:\n\n* **capability** - If this parameter is used alone, the system will filter the results by resources with the given capability. However, you may also combine it with the following parameters:\n  * **min_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at least the value informed. It should **not** be used with the parameter **cap_value**.\n  * **max_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at most the value informed. It should **not** be used with the parameter **cap_value**.\n  * **cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is exactly the value informed. It should **not** be used either with the parameter **max_cap_value** or **min_cap_value**.\n\n* **location** - To discovery resources based on location data, you must always provide both **lat** and **lon** parameters. With these two parameters, the system will discovery resources which are located exactly at the point informed. However, you may also combine them with the following parameter:\n  * **radius**: Tell the system to include resources near to the location formed by **lat** and **lon** considering the radius (in meters) informed.\n",
+        "description": "This endpoint can be used to search for city resources based context data. One may combine static and dynamic filters to discovery existing resources.\nOne may use the following context-based filters for resource discovery:\n\n* **capability** - The system will filter the results by resources with the given capability.\n* **matchers of value** - Filter the data collected based on the current context data of resources through value matchers. This filter must be used to perform dynamic data-based queries by specifying the attribute of context data and their matching rules. You can combine several matchers in a single request. The following operators are available:\n  * **eq** - Specifies equality condition\n  * **gt** - Selects those data where the value of the specified attribute\n  is greater than a specified value\n  * **gte** - Selects those data where the value of the specified attribute\n  is greater than or equal a specified value\n  * **lt** - Selects those data where the value of the specified attribute\n  is less than a specified value\n  * **lte** - Selects those data where the value of the specified attribute\n  is less than or equal a specified value\n  * **in** - Selects those data where the value of the specified attribute\n  equals any value in the specified array\n  * **ne** - Selects those data where the value of the specified attribute\n  is not equal to a specified value. It's is a good idea to use this\n  filter combined with the **capabilities** to avoid returning data that do\n  not even have this attribute\n\n* **location** - To discovery resources based on location data, you must always provide both **lat** and **lon** parameters. With these two parameters, the system will discovery resources which are located exactly at the point informed. However, you may also combine them with the following parameter:\n  * **radius**: Tell the system to include resources near to the location formed by **lat** and **lon** considering the radius (in meters) informed.\n  \nSee the following examples using curl:\n* Search for resources which have the ability to monitor the environment:\n```shell\ncurl http://localhost:8000/discovery/resources?capability=environment_monitoring\n```\n* Search for resources that provides context data related to medical procedures and whose last procedure was carried out in the specialty of either cardiology or psychiatry, in male patients and over the age of 18 years:\n```shell\ncurl --globoff -L \"http://localhost:8000/discovery/resources?specialty.in[]=cardiology&specialty.in[]=psychiatry&patient.age.gte=18&patient.genre.eq=male\"\n```\n* Search for resources with the capability of environment monitoring and whose last data regarding the temperature is between 18 and 30 degrees celcius:\n```shell\ncurl --globoff  -L 'http://localhost:8000/discovery/resources?capability=environment_monitoring&temperature.gte=18&temperature.lte=30'\n```\n* Search for resources near to the Galeria do Rock (located at -23.543750, -46.638736), considering a radius of 500 meters:\n```shell\ncurl --globoff  -L \"http://localhost:8000/discovery/resources?lat=-23.543750&lon=-46.638736&radius=500\"\n```\n",
         "parameters": [
           {
             "in": "query",
@@ -2212,36 +2212,6 @@
             },
             "description": "Filter by resources with a given capability",
             "example": "temperature"
-          },
-          {
-            "in": "query",
-            "name": "min_cap_value",
-            "schema": {
-              "type": "number",
-              "format": "double"
-            },
-            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at least the informed *min_cap_value*",
-            "example": 20
-          },
-          {
-            "in": "query",
-            "name": "max_cap_value",
-            "schema": {
-              "type": "number",
-              "format": "double"
-            },
-            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at most the informed *max_cap_value*",
-            "example": 24
-          },
-          {
-            "in": "query",
-            "name": "cap_value",
-            "schema": {
-              "type": "number",
-              "format": "double"
-            },
-            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is exactly the informed *cap_value*",
-            "example": 23.5
           },
           {
             "in": "query",
@@ -2272,6 +2242,16 @@
             },
             "description": "Filter by resources whose near to the location formed by *lat* and *lon* considering the informed radius(in meters)",
             "example": 100
+          },
+          {
+            "in": "query",
+            "name": "attr.operator",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose the most recent value of the specified context data follows the rule defined by the operator, i.e.: genre.in[]=male | temperature.eq=10 | temperature.gte=8 | temperature.lte=12",
+            "example": 20
           }
         ],
         "responses": {
