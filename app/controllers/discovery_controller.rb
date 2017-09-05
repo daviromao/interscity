@@ -140,17 +140,6 @@ class DiscoveryController < ApplicationController
     @informed_matchers_params = @informed_search_params - @basic_params
   end
 
-  def url_param_checker(args)
-    valid_url = true
-    args.each do |arg|
-      if params[arg].blank?
-        valid_url = false
-        break
-      end
-    end
-    valid_url
-  end
-
   def call_to_resource_catalog(discovery_query)
     JSON.parse(RestClient.get(discovery_query))
   end

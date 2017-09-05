@@ -13,9 +13,16 @@ describe DiscoveryController, type: 'controller' do
       expect(response.status).to eq(400)
     end
 
-    it 'fails when capability has no value found' do
-      get 'resources', params: {capability: ''}
+    it 'returns 400 when has empty/blank parameters' do
+      params = {capability: "", lat: nil, lon: nil, radius: nil, dynamic_value: ""}
+
+      get 'resources', params: params
       expect(response.status).to eq(400)
+
+      messages = JSON.parse(response.body)["message"]
+      params.each do |name, value|
+        expect(messages).to include("The parameter #{name} can't be blank or empty")
+      end
     end
 
     it 'when lat has no value found, should fail' do
@@ -26,6 +33,18 @@ describe DiscoveryController, type: 'controller' do
 
     it 'when lon has no value found, should fail' do
       get 'resources', params: {capability: 'temp', lat: '212121', lon: ''}
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns 400 when a dynamic parameter has no operator' do
+      get 'resources', params: {capability: 'temp',  dynamic_field: 10}
+
+      expect(response.status).to eq(400)
+    end
+
+    it 'returns 400 when a dynamic parameter has an invalid operator' do
+      get 'resources', params: {capability: 'temp',  "dynamic_field.invalid": 10}
 
       expect(response.status).to eq(400)
     end
