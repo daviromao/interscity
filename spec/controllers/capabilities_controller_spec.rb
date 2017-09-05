@@ -202,6 +202,50 @@ describe CapabilitiesController do
       end
     end
 
+    describe '#show' do
+
+      let!(:capability1) {
+           Capability.create_sensor(name: "Sensor1",
+             description: "first sensor")
+      }
+      let!(:capability2) {
+           Capability.create_actuator(name: "Actuator1",
+             description: "first actuator")
+      }
+      let!(:capability3) {
+           Capability.create_information(name: "Info1",
+             description: "first information")
+      }
+
+      context 'Successful' do
+        it "returns success status" do
+          get 'show', params: {id: capability1.id}, format: :json
+          expect(response.status).to eq(200)
+        end
+
+        it "is expected to find the correct capatility - 1" do
+          get 'show', params: {id: capability2.id}, format: :json
+          
+          expect(json["name"]).to eq capability2.name
+          expect(json["description"]).to eq capability2.description
+        end
+
+        it "is expected to find the correct capatility - 2" do
+          get 'show', params: {id: capability3.id}, format: :json
+          
+          expect(json["name"]).to eq capability3.name
+          expect(json["description"]).to eq capability3.description
+        end
+
+        it "is expected to not find any capability for an invalid id" do
+          get 'show', params: {id: 999999}, format: :json
+          expect(response.status).to eq(200)
+          expect(json).to eq nil
+        end
+      end
+    end
+
+
     describe '#update' do
       before :each do
         Capability.create_sensor(name: "Sensor1",

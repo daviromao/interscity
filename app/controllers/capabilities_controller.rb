@@ -12,6 +12,18 @@ class CapabilitiesController < ApplicationController
     render json: {capabilities: capabilities}, status: 200
   end
 
+  # GET /capabilities/:id
+  def show
+    begin
+      capability = Capability.find_by_id(params[:id])
+      status = 200
+    rescue Exception => e
+      result =  { error: e }
+      status =  400
+    end
+    render json: capability, status: status
+  end
+
   #POST /capabilities
   def create
     begin
