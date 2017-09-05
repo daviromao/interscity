@@ -80,3 +80,14 @@ if [ "$1" = "exec" ]; then
   $command
   verify "Cannot execute command into the container. Please verify logs"
 fi
+
+if [ "$1" = "test" ]; then
+  echo "${CYAN}"
+  echo "Executing command into the container's work directory"
+  echo "${NC}"
+
+  command="sudo docker-compose exec ${PROJECT_NAME} rspec"
+  
+  $command
+  verify "Cannot execute command into the container. Please verify logs"
+fi
