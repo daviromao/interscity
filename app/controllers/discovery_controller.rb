@@ -3,8 +3,10 @@ require 'json'
 
 # Controller that process clients requests
 class DiscoveryController < ApplicationController
+  prepend_before_action :set_parameter_variables
   before_action :validate_url_params
   before_action :find_resources
+
 
   attr_accessor :catalog_url
 
@@ -14,7 +16,7 @@ class DiscoveryController < ApplicationController
   end
 
   def resources
-    if !@found_resources.blank? && validate_collector_url
+    if !@found_resources.blank?
       uuids = ids_from_catalog
       begin
         collector_uuids = data_from_collector(uuids)
@@ -40,6 +42,7 @@ class DiscoveryController < ApplicationController
   end
 
   def data_from_collector(uuids)
+    return [] if @informed_matchers_params.blank?
     collector_response = call_to_data_collector(uuids)
     collector_response['resources'].map do |resource|
       resource['uuid']
@@ -62,51 +65,79 @@ class DiscoveryController < ApplicationController
   end
 
   def build_resource_catalog_url
-    query_string_url = @catalog_url + 'capability=' + params['capability']
-    if params['radius'].blank? && !params['lat'].blank?
-      query_string_url += '&' + 'lat=' + params['lat'] + '&'
-      query_string_url += 'lon=' + params['lon']
-    elsif !params['radius'].blank? && !params['lat'].blank?
-      query_string_url += '&' + 'lat=' + params['lat'] + '&'
-      query_string_url += 'lon=' + params['lon'] + '&'
-      query_string_url += 'radius=' + params['radius']
+    query_string_url = @catalog_url
+    informed_location_params = @informed_search_params & @location_params
+    capability_param = @informed_params & @capability_params
+    catalog_params = informed_location_params + capability_param
+    catalog_params.each do |name|
+      query_string_url += "#{name}=#{params[name]}&"
     end
+
     query_string_url
   end
 
   def validate_url_params
-    error_message = ''
+    error_message = []
 
     if !request.GET.empty?
-
-      if params['capability'].blank?
-        error_message = + 'Capability has to be Specified \n'
-      end
-
-      if !params['lat'].blank? && params['lon'].blank?
-        error_message = +'Longitude has not been specified \n'
-      end
-
-      if params['lat'].blank? && !params['lon'].blank?
-        error_message = +'Latitude has not been specified \n'
-      end
-
-      if !params['radius'].blank? && params['lon'].blank? && params['lat'].blank?
-        error_message += 'To use radius Latitude and'
-        error_message += 'Longitude must be specified \n'
-      end
-
+      error_message += verify_nil_params
+      error_message += verify_matchers_params
+      error_message += verify_location_params
     else
-      error_message = 'At least a capability must be defined to query for resources'
+      error_message << 'At least one filter parameter must be defined to query for resources'
     end
 
     render error_payload(error_message, 400) unless error_message.blank?
   end
 
-  def validate_collector_url
-    if url_param_checker(['min_cap_value']) || url_param_checker(['max_cap_value']) || url_param_checker(['cap_value'])
-      return true
+  def verify_nil_params
+    error_message = []
+    @informed_search_params.each do |name|
+      if params[name].blank?
+        error_message << "The parameter #{name} can't be blank or empty"
+      end
     end
+    error_message
+  end
+
+  def verify_matchers_params
+    error_message = []
+    @informed_matchers_params.each do |key, value|
+      index = key.to_s.rindex('.')
+      if index.nil?
+        error_message << "The parameter #{key} is missing an operator"
+        next
+      end
+      name = key.to_s[0..index-1]
+      operator = key.to_s[index+1..-1]
+      unless @available_matchers.include?(operator)
+        error_message << "The operator '#{operator}' in the parameter '#{key}' is not supported"
+      end
+    end
+    error_message
+  end
+
+  def verify_location_params
+    error_message = []
+    if !params['lat'].blank? && params['lon'].blank?
+      error_message << 'Longitude (lon) has not been specified'
+    elsif params['lat'].blank? && !params['lon'].blank?
+      error_message << 'Latitude (lat) has not been specified'
+    elsif !params['radius'].blank? && params['lon'].blank? && params['lat'].blank?
+      error_message << "You must provide the location (lat and lon) to use the 'radius' parameter"
+    end
+    error_message
+  end
+
+  def set_parameter_variables
+    @location_params = ["lat", "lon", "radius"]
+    @capability_params = ["capability"]
+    @basic_params = @location_params + @capability_params + ["controller", "action"]
+    @available_matchers = ["eq", "gt", "gte", "lt", "lte", "ne", "in", "nin"]
+
+    @informed_params = params.keys
+    @informed_search_params = @informed_params - ["controller", "action"]
+    @informed_matchers_params = @informed_search_params - @basic_params
   end
 
   def url_param_checker(args)
@@ -126,19 +157,10 @@ class DiscoveryController < ApplicationController
 
   # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def call_to_data_collector(uuids)
-    filters = {
-        sensor_value: {
-            uuids: uuids,
-            capabilities: [params['capability']],
-            range: {
-                params['capability'] => {
-                    max: params['max_cap_value'],
-                    min: params['min_cap_value'],
-                    equal: params['cap_value']
-                }
-            }
-        }
-    }
+    filters = {matchers: {}}
+    @informed_matchers_params.each do |matcher|
+      matchers[matcher] = params[matcher]
+    end
     JSON.parse(RestClient.post(@collector_url, filters, content_type: 'application/json'))
   end
 end

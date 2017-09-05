@@ -13,7 +13,7 @@ describe DiscoveryController, type: 'controller' do
       expect(response.status).to eq(400)
     end
 
-    it 'when capability has no value found, should fail' do
+    it 'fails when capability has no value found' do
       get 'resources', params: {capability: ''}
       expect(response.status).to eq(400)
     end
@@ -86,20 +86,20 @@ describe DiscoveryController, type: 'controller' do
       expect(hash_response_uuids).to eq(expected_json)
     end
 
-    context 'when inform a cap/min/max range' do
+    context 'when inform a capability and matchers' do
       it 'properly returns all resources found by both catalog and collector' do
         catalog_response = {'resources' => [{'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
         collector_response = {'resources' =>
                                   [{'uuid' => '7', 'capabilities' =>
-                                      {'temp' => [{'value' => '28.31', 'date' => '2016-06-21T23:27:35.000Z'}]}}]}
+                                      {'environment_monitoring' => [{'temperature' => '28.31', 'date' => '2016-06-21T23:27:35.000Z'}]}}]}
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
 
-        get 'resources', params: {capability: 'temp',
+        get 'resources', params: {capability: 'environment_monitoring',
                                   lat: '12.34', lon: '43.21',
                                   radius: '100',
-                                  min_cap_value: 20, max_cap_value: 30}
+                                  "temperature.gte": 20, "temperature.lte": 30}
         hash_response_uuids = JSON.parse(response.body)
 
         expect(response.status).to eq(200)
@@ -113,20 +113,36 @@ describe DiscoveryController, type: 'controller' do
                                  {'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
         collector_response = {'resources' =>
                                   [{'uuid' => '7',
-                                    'capabilities' => {'temp' => [{'value' => '28.31',
+                                    'capabilities' => {'environment_monitoring' => [{'temperature' => '28.31',
                                                                    'date' => '2016-06-21T23:27:35.000Z'}]}}]}
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
 
-        get 'resources', params: {capability: 'temp',
+        get 'resources', params: {capability: 'environment_monitoring',
                                   lat: '12.34', lon: '43.21',
                                   radius: '100',
-                                  min_cap_value: 20, max_cap_value: 30}
+                                  "temperature.gte": 20, "temperature.lte": 30}
         hash_response_uuids = JSON.parse(response.body)
 
         expect(response.status).to eq(200)
         expect(hash_response_uuids).to eq('resources' => [{'uuid' => '7', 'lat' => '40', 'lon' => '40'}])
+      end
+
+      it 'properly discovery resources even when the capability name is missing' do
+        catalog_response = {'resources' => [{'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
+        collector_response = {'resources' =>
+                                  [{'uuid' => '7', 'capabilities' =>
+                                      {'environment_monitoring' => [{'temperature' => '28.31', 'date' => '2016-06-21T23:27:35.000Z'}]}}]}
+
+        allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
+        allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
+
+        get 'resources', params: {"temperature.gte": 20, "temperature.lte": 30}
+        hash_response_uuids = JSON.parse(response.body)
+
+        expect(response.status).to eq(200)
+        expect(hash_response_uuids).to eq('resources' => ['uuid' => '7', 'lat' => '40', 'lon' => '40'])
       end
     end
 
@@ -146,22 +162,22 @@ describe DiscoveryController, type: 'controller' do
       get 'resources', params: {capability: 'temp',
                                 lat: '12.34', lon: '43.21',
                                 radius: '100',
-                                min_cap_value: 20, max_cap_value: 30}
+                                "temperature.gte": 20, "temperature.lte": 30}
 
       expect(response.status).to eq(503)
     end
 
-    it 'when creating the resource catalog url, should return a valid resource catalog url' do
-
+    it 'builds a valid url for querying resource catalog' do
       get 'resources', params: {capability: 'temp',
                                 lat: '12.34', lon: '43.21',
                                 radius: '100'}
 
       @controller.catalog_url = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
       catalog_url = @controller.send(:build_resource_catalog_url)
-      expected_url =SERVICES_CONFIG['services']['catalog'] + '/resources/search?'+'capability=temp&lat=12.34&lon=43.21&radius=100'
-
-      expect(catalog_url).to eq(expected_url)
+      expect(catalog_url).to include("capability=temp")
+      expect(catalog_url).to include("lat=12.34")
+      expect(catalog_url).to include("lon=43.21")
+      expect(catalog_url).to include("radius=100")
     end
 
     it 'when creating the resource catalog url, should return a valid resource catalog url' do
@@ -171,9 +187,11 @@ describe DiscoveryController, type: 'controller' do
 
       @controller.catalog_url = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
       catalog_url = @controller.send(:build_resource_catalog_url)
-      expected_url =SERVICES_CONFIG['services']['catalog'] + '/resources/search?'+'capability=temp&lat=12.34&lon=43.21'
 
-      expect(catalog_url).to eq(expected_url)
+      expect(catalog_url).to include("capability=temp")
+      expect(catalog_url).to include("lat=12.34")
+      expect(catalog_url).to include("lon=43.21")
+      expect(catalog_url).to_not include("radius")
     end
   end
 end
