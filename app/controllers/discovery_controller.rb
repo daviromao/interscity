@@ -5,7 +5,7 @@ require 'json'
 class DiscoveryController < ApplicationController
   prepend_before_action :set_parameter_variables
   before_action :validate_url_params
-  before_action :find_resources
+  before_action :find_resources_on_catalog
 
 
   attr_accessor :catalog_url
@@ -18,13 +18,11 @@ class DiscoveryController < ApplicationController
   def resources
     if !@found_resources.blank?
       uuids = ids_from_catalog
-      begin
+      unless @informed_matchers_params.blank?
         collector_uuids = data_from_collector(uuids)
-      rescue
-        render error_payload('The data collector service is unavailable', 503)
-        return
+        return nil unless collector_uuids
+        matched_resources(collector_uuids)
       end
-      matched_resources(collector_uuids)
     end
     if !@found_resources.blank?
       render json: @found_resources
@@ -42,15 +40,17 @@ class DiscoveryController < ApplicationController
   end
 
   def data_from_collector(uuids)
-    return [] if @informed_matchers_params.blank?
     collector_response = call_to_data_collector(uuids)
     collector_response['resources'].map do |resource|
       resource['uuid']
     end
+  rescue
+    render error_payload('The data collector service is unavailable', 503)
+    return nil
   end
 
   # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
-  def find_resources
+  def find_resources_on_catalog
     begin
       @found_resources = call_to_resource_catalog(build_resource_catalog_url)
     rescue Exception => e
@@ -159,7 +159,7 @@ class DiscoveryController < ApplicationController
   def call_to_data_collector(uuids)
     filters = {matchers: {}}
     @informed_matchers_params.each do |matcher|
-      matchers[matcher] = params[matcher]
+      filters[:matchers][matcher] = params[matcher]
     end
     JSON.parse(RestClient.post(@collector_url, filters, content_type: 'application/json'))
   end
