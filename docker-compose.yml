@@ -42,6 +42,14 @@ services:
     environment:
       - KONG_URL=http://kong:8001
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.6.5
+    command: bash -c "rabbitmq-plugins enable rabbitmq_management && rabbitmq-server"
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
   swagger-docs:
     container_name: swagger-docs
     image: nginx
