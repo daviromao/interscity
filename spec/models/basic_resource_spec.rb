@@ -19,6 +19,31 @@ RSpec.describe BasicResource, :type => :model do
     it "automatically creates an uuid" do
       expect(resource.uuid).to_not be_nil
     end
+
+    context 'when the uuid is created by the client' do
+      it "saves when the uuid is valid" do
+        new_resource = described_class.new(
+          resource_params.merge({uuid: "2d931510-d99f-494a-8c67-87feb05e1594"})
+        )
+        expect { new_resource.save! }.to change { BasicResource.count }.by(1)
+
+        new_resource.reload
+        expect(new_resource.uuid).to eq("2d931510-d99f-494a-8c67-87feb05e1594")
+      end
+
+      it "does not save when the uuid is invalid - not compatible with RFC 4122" do
+        new_resource = described_class.new(
+          resource_params.merge({uuid: "Not A Valid UUID"})
+        )
+        expect { new_resource.save }.to change { BasicResource.count }.by(0)
+      end
+
+      it "should not save when the uuid is not unique" do
+        new_resource = described_class.new(resource_params.merge({uuid: resource.uuid}))
+        expect { new_resource.save }.to change { BasicResource.count }.by(0)
+        expect(new_resource.errors.full_messages).to include("Uuid has already been taken")
+      end
+    end
   end
 
   describe '.all_sensors' do

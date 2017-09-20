@@ -1,12 +1,15 @@
 require 'geocoder'
 require 'location'
+require 'uuid'
 
 class BasicResource < ApplicationRecord
-  before_create :create_uuid
+  before_validation :create_uuid
   has_and_belongs_to_many :capabilities
   validates :lat, presence: true, numericality: true
   validates :lon, presence: true, numericality: true
   validates :status, presence: true
+  validates :uuid, uniqueness: true
+  validate :uuid_format
 
   def self.all_sensors
     joins(:capabilities).where("capabilities.function" => Capability.sensor_index)
@@ -62,6 +65,12 @@ class BasicResource < ApplicationRecord
   private
 
     def create_uuid
-      self.uuid = SecureRandom.uuid
+      self.uuid = SecureRandom.uuid if self.uuid.blank?
+    end
+
+    def uuid_format
+      unless UUID.validate(self.uuid)
+        errors.add(:uuid, "is not compatible with RFC 4122")
+      end
     end
 end
