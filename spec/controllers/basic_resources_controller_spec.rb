@@ -64,6 +64,81 @@ describe BasicResourcesController do
       end
     end
 
+    context 'when the client provides the uuid' do
+      before :each do
+        allow(controller).to receive(:notify_resource).and_return(true)
+        BasicResource.destroy_all
+      end
+
+      it "saves the resource with valid uuid" do
+        post 'create',
+          params: {
+            data: {
+              uri: "example.com",
+              lat: -23.559616,
+              uuid: "bad85eb9-0713-4da7-8d36-07a8e4b00eab",
+              lon: -46.731386,
+              status: "stopped",
+              collect_interval: 5,
+              description: "I am a dummy sensor",
+              capabilities: ["temperature"]
+            }
+          },
+        format: :json
+
+        expect(response.status).to eq(201)
+        expect(json["data"]["uuid"]).to eq("bad85eb9-0713-4da7-8d36-07a8e4b00eab")
+      end
+
+      it 'does not save the resource when the uuid is invalid' do
+        post 'create',
+          params: {
+            data: {
+              uri: "example.com",
+              lat: -23.559616,
+              uuid: "not_valid_UUID",
+              lon: -46.731386,
+              status: "stopped",
+              collect_interval: 5,
+              description: "I am a dummy sensor",
+              capabilities: ["temperature"]
+            }
+          },
+        format: :json
+
+        expect(response.status).to eq(422)
+      end
+
+      it 'does not save the resource when the uuid is not unique' do
+        a_resource = BasicResource.create!(
+          uri: "example.com",
+          lat: -23.559616,
+          lon: -46.731386,
+          status: "active",
+          uuid: "bad85eb9-0713-4da7-8d36-07a8e4b00eab",
+          description: "I am a dummy sensor",
+          capabilities: [Capability.last]
+        )
+
+        post 'create',
+          params: {
+            data: {
+              uri: "example.com",
+              lat: -23.559616,
+              uuid: "bad85eb9-0713-4da7-8d36-07a8e4b00eab",
+              lon: -46.731386,
+              status: "stopped",
+              collect_interval: 5,
+              description: "I am a dummy sensor",
+              capabilities: ["temperature"]
+            }
+          },
+        format: :json
+
+        expect(response.status).to eq(422)
+      end
+    end
+
     context 'successful in a remote location' do
       before :each do
         allow(controller).to receive(:notify_resource).and_return(true)

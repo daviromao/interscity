@@ -117,7 +117,7 @@ class BasicResourcesController < ApplicationController
     end
 
     def component_params
-      params.require(:data).permit(:description, :lat, :lon, :status, :collect_interval, :uri)
+      params.require(:data).permit(:description, :lat, :lon, :status, :collect_interval, :uri, :uuid)
     end
 
     def capability_params
