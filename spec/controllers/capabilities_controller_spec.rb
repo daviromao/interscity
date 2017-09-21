@@ -243,7 +243,7 @@ describe CapabilitiesController do
       end
       context 'Unsuccessful' do
         it "is expected to not find any capability for an invalid name" do
-          get 'show', params: {error: "Invalid_Capability_name"}, format: :json
+          get 'show', params: {name: "InvalidName"}, format: :json
 
           expect(json["error"]).to eq "Capability not found"
           expect(response.status).to eq(404)
