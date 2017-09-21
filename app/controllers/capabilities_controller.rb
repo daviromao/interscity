@@ -12,16 +12,21 @@ class CapabilitiesController < ApplicationController
     render json: {capabilities: capabilities}, status: 200
   end
 
-  # GET /capabilities/:id
+  # GET /capabilities/:name
   def show
     begin
-      capability = Capability.find_by_id(params[:id])
+      capability = Capability.find_by_name(params[:name])
+      if(capability == nil)
+        status = 404
+        raise Exception.new("Capability not found")
+      end
+
       status = 200
+      render json: capability, status: status
+
     rescue Exception => e
-      result =  { error: e }
-      status =  400
+      render json: {error: e}, status: status
     end
-    render json: capability, status: status
   end
 
   #POST /capabilities

@@ -204,43 +204,49 @@ describe CapabilitiesController do
 
     describe '#show' do
 
-      let!(:capability1) {
-           Capability.create_sensor(name: "Sensor1",
-             description: "first sensor")
+      let!(:capabilitySensor) {
+           Capability.create_sensor(name: "bus_monitoring",
+             description: "Collects data regarding the operation of the bus such as its location and speed")
       }
-      let!(:capability2) {
-           Capability.create_actuator(name: "Actuator1",
-             description: "first actuator")
+      let!(:capabilityActuator) {
+           Capability.create_actuator(name: "semaphore",
+             description: "Collects data regarding the operation of the semaphore such as its current color light and change speed")
       }
-      let!(:capability3) {
-           Capability.create_information(name: "Info1",
-             description: "first information")
+      let!(:capabilityInformation) {
+           Capability.create_information(name: "info_total_capacity",
+             description: "Collects dada from a Health Facility regarding its maximum capacity")
       }
 
       context 'Successful' do
-        it "returns success status" do
-          get 'show', params: {id: capability1.id}, format: :json
+        it "is expected to find the correct sensor capatility and returns success status" do
+          get 'show', params: {name: capabilitySensor.name}, format: :json
+          expect(json["name"]).to eq capabilitySensor.name
+          expect(json["description"]).to eq capabilitySensor.description
           expect(response.status).to eq(200)
         end
 
-        it "is expected to find the correct capatility - 1" do
-          get 'show', params: {id: capability2.id}, format: :json
-          
-          expect(json["name"]).to eq capability2.name
-          expect(json["description"]).to eq capability2.description
-        end
+        it "is expected to find the correct actuator capatility" do
+          get 'show', params: {name: capabilityActuator.name}, format: :json
 
-        it "is expected to find the correct capatility - 2" do
-          get 'show', params: {id: capability3.id}, format: :json
-          
-          expect(json["name"]).to eq capability3.name
-          expect(json["description"]).to eq capability3.description
-        end
-
-        it "is expected to not find any capability for an invalid id" do
-          get 'show', params: {id: 999999}, format: :json
+          expect(json["name"]).to eq capabilityActuator.name
+          expect(json["description"]).to eq capabilityActuator.description
           expect(response.status).to eq(200)
-          expect(json).to eq nil
+        end
+
+        it "is expected to find the correct information capatility" do
+          get 'show', params: {name: capabilityInformation.name}, format: :json
+
+          expect(json["name"]).to eq capabilityInformation.name
+          expect(json["description"]).to eq capabilityInformation.description
+          expect(response.status).to eq(200)
+        end
+      end
+      context 'Unsuccessful' do
+        it "is expected to not find any capability for an invalid name" do
+          get 'show', params: {error: "Invalid_Capability_name"}, format: :json
+
+          expect(json["error"]).to eq "Capability not found"
+          expect(response.status).to eq(404)
         end
       end
     end
