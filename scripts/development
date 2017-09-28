@@ -11,15 +11,15 @@ RED='\033[0;31m'
 
 verify () {
   if [ $? != 0 ]; then
-    echo "${RED}$1${NC}"
+    printf "${RED}$1${NC}"
     exit 2
   fi
 }
 
 if [ "$1" = "start" ]; then
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "Starting service $PROJECT_NAME"
-  echo "${NC}"
+  printf "${NC}"
 
   sudo docker-compose up -d
   verify "Cannot run the container. For more information take a look in docker's log"
@@ -37,20 +37,20 @@ if [ "$1" = "start" ]; then
   sudo docker-compose exec $PROJECT_NAME rake db:seed
   verify "Cannot seed database."
 
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "############################################################"
   echo "     Exposed port is: $EXPOSED_PORT"
   echo "############################################################"
   echo "     To execute commands in container you must run"
   echo "     $ scripts/development exec <command>"
   echo "############################################################"
-  echo "${NC}"
+  printf "${NC}"
 fi
 
 if [ "$1" = "stop" ]; then
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "Stopping service $PROJECT_NAME"
-  echo "${NC}"
+  printf "${NC}"
 
   sudo rm -rf tmp/pids/*
   verify "You have some issue when we try to delete tmp/pids/*. Verify it manually"
@@ -58,17 +58,17 @@ if [ "$1" = "stop" ]; then
   sudo docker-compose stop
   verify "You have some issue when we try to stop the container. Verify it manually"
 
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "####################################"
   echo "     The container is stopped."
   echo "####################################"
-  echo "${NC}"
+  printf "${NC}"
 fi
 
 if [ "$1" = "exec" ]; then
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "Executing command into the container's work directory"
-  echo "${NC}"
+  printf "${NC}"
 
   shift
   command="sudo docker-compose exec"
@@ -82,9 +82,9 @@ if [ "$1" = "exec" ]; then
 fi
 
 if [ "$1" = "test" ]; then
-  echo "${CYAN}"
+  printf "${CYAN}"
   echo "Executing command into the container's work directory"
-  echo "${NC}"
+  printf "${NC}"
 
   command="sudo docker-compose exec ${PROJECT_NAME} rspec"
   
