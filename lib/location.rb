@@ -3,6 +3,7 @@ module SmartCities
   class Location
 
     def self.extract_postal_code(results)
+      return nil if results.blank?
       first_pc = results.first.postal_code
       if first_pc.nil?
         return  nil
