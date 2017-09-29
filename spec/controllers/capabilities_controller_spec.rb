@@ -248,6 +248,15 @@ describe CapabilitiesController do
           expect(json["error"]).to eq "Capability not found"
           expect(response.status).to eq(404)
         end
+
+        it "returns error code 500 when an internal error occurs" do
+          allow(Capability).to receive(:find_by_name).and_raise("Internal Error")
+
+          get 'show', params: {name: "bus_monitoring"}, format: :json
+
+          expect(json["error"]).to eq "Internal Error"
+          expect(response.status).to eq(500)
+        end
       end
     end
 

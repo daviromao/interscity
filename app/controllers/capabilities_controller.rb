@@ -16,16 +16,13 @@ class CapabilitiesController < ApplicationController
   def show
     begin
       capability = Capability.find_by_name(params[:name])
-      if(capability == nil)
-        status = 404
-        raise Exception.new("Capability not found")
+      if capability == nil
+        render json: {error: "Capability not found"}, status: 404
+      else
+        render json: capability, status: 200
       end
-
-      status = 200
-      render json: capability, status: status
-
-    rescue Exception => e
-      render json: {error: e}, status: status
+    rescue StandardError => e
+      render json: {error: e}, status: 500
     end
   end
 
