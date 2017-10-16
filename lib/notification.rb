@@ -20,6 +20,7 @@ module SmartCities
         message = JSON(resource.to_json)
         topic.publish(message, routing_key: key)
       end
+      conn.close
     end
   end
 end
