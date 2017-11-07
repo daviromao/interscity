@@ -1,0 +1,7 @@
+---
+- name: Setup kong
+  hosts: kong
+  user: root
+  become: yes
+  roles:
+    - kong

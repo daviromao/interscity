@@ -1,0 +1,67 @@
+---
+- name: Install basic setup
+  hosts: 
+    - all
+  user: root
+  become: yes
+  roles:
+    - common
+
+- name: Docker setup
+  hosts:
+    - all
+  user: root
+  become: yes
+  roles:
+    - docker
+
+- name: Kong setup
+  hosts:
+    - kong
+  user: root
+  become: yes
+  roles:
+    - kong
+
+- name: Setup rabbitmq
+  hosts: big-machine-1
+  user: root
+  become: yes
+  roles:
+    - rabbitmq
+
+      #- name: install postgres
+      #  hosts: platform
+      #  user: root
+      #  become: yes
+      #  roles:
+      #    - postgres
+      #
+      #
+      #- name: setup resource-adaptor
+      #  hosts: resource-adaptor
+      #  user: root
+      #  become: yes
+      #  roles:
+      #    - resource-adaptor
+      #
+      #- name: setup resource-cataloguer
+      #  hosts: resource-cataloguer
+      #  user: root
+      #  become: yes
+      #  roles:
+      #    - resource-cataloguer
+      #
+      #- name: setup data-collector
+      #  hosts: data-collector
+      #  user: root
+      #  become: yes
+      #  roles:
+      #    - data-collector
+      #
+      #- name: setup nginx
+      #  hosts: nginx
+      #  user: root
+      #  become: yes
+      #  roles:
+      #    - nginx

@@ -1,0 +1,16 @@
+---
+
+# Hosts
+kong: 172.24.5.8
+rabbitmq: 172.24.5.3
+
+# Postgresql 
+postgres_image: 'postgres:9.5'
+postgres_host: 'postgres'
+postgres_port: 5432
+postgres_user: 'postgres'
+postgres_password: 'admin'
+
+# Collectl
+collecting_time: 1m
+collecting_interval: 5

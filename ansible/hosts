@@ -1,0 +1,24 @@
+[gatewayed]
+big-machine-1 ansible_host=172.24.5.3 ansible_port=22 ansible_user=arthur
+big-machine-2 ansible_host=172.24.5.4 ansible_port=22 ansible_user=arthur
+small-machine-1 ansible_host=172.24.5.5 ansible_port=22 ansible_user=arthur
+small-machine-2 ansible_host=172.24.5.6 ansible_port=22 ansible_user=arthur
+
+[gateway]
+gateway-machine ansible_host=143.107.45.126 ansible_port=10134 ansible_user=arthur
+
+[kong]
+kong-web ansible_host=143.107.45.126 ansible_port=10134 ansible_user=arthur
+
+[platform]
+
+[resource-adaptor]
+
+[resource-cataloguer]
+
+[rabbitmq]
+
+[explorer]
+
+[nginx]
+
