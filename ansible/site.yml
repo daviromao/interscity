@@ -54,6 +54,13 @@
   become: yes
   roles:
     - resource-cataloguer
+
+- name: install mongodb
+  hosts: big-machine-2
+  user: root
+  become: yes
+  roles:
+    - mongodb
       #
       #- name: setup data-collector
       #  hosts: data-collector
