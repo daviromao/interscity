@@ -1,57 +1,22 @@
 ---
 
-- name: create redis
-  docker_container:
-    name: redis
-    image: redis
-    state: started
-    restart: yes
-
-- name: create sidekiq service
-  docker_container:
-    name: data-collector-sidekiq
-    image: "{{ docker_image }}"
-    state: started
-    recreate: yes
-    command: bundle exec sidekiq
-    links:
-    - 'postgres'
-    - 'redis'
-    volumes:
-    - /data-collector/
-    env:
-      RAILS_ENV: "{{ rails_env }}"
-      POSTGRES_HOST: "{{ postgres_host }}"
-      POSTGRES_PORT: "{{postgres_port}}"
-      POSTGRES_USER: "{{ postgres_user }}"
-      POSTGRES_PASSWORD: "{{ postgres_password }}"
-      SECRET_KEY_BASE: "{{ secret_key_base }}"
-      RABBITMQ_HOST: "{{ rabbitmq }}"
-
-- name: create data-collector API service
+- name: Create data-collector service
   docker_container:
     name: data-collector
-    image: "{{ docker_image }}"
+    image: "{{ data_collector_docker_image }}"
     state: started
-    recreate: yes
-    links:
-    - 'postgres'
-    - 'redis'
-    volumes:
-    - /data-collector/
     ports:
-    - "3000:3000"
+    - "{{ data_collector_port }}:{{ data_collector_port }}"
+    command: "bundle exec puma -p {{ data_collector_port }} -C config/puma.rb -e production"
     env:
       RAILS_ENV: "{{ rails_env }}"
-      POSTGRES_HOST: "{{ postgres_host }}"
-      POSTGRES_PORT: "{{postgres_port}}"
-      POSTGRES_USER: "{{ postgres_user }}"
-      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      RAILS_MAX_THREADS: 200
+      MONGO_USER: "{{ mongo_user }}"
+      MONGO_PASSWORD: "{{ mongo_password }}"
+      MONGO_HOST: "{{ mongo }}"
+      MONGO_PORT: "{{ mongo_port }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
-
-  #- name: create database
-  #  command: docker exec data-collector rake db:create
-  #
-  #- name: migrate database
-  #  command: docker exec data-collector rake db:migrate
+      REGISTER_METHOD: "target"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ data_collector_port }}"

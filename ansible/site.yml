@@ -61,13 +61,15 @@
   become: yes
   roles:
     - mongodb
-      #
-      #- name: setup data-collector
-      #  hosts: data-collector
-      #  user: root
-      #  become: yes
-      #  roles:
-      #    - data-collector
+      
+- name: setup data-collector
+  hosts:
+    - big-machine-2
+    - small-machine-2
+  user: root
+  become: yes
+  roles:
+    - data-collector
       #
       #- name: setup nginx
       #  hosts: nginx
