@@ -17,7 +17,7 @@
 
 - name: Kong setup
   hosts:
-    - kong
+    - gateway-machine
   user: root
   become: yes
   roles:
@@ -30,20 +30,21 @@
   roles:
     - rabbitmq
 
-      #- name: install postgres
-      #  hosts: platform
-      #  user: root
-      #  become: yes
-      #  roles:
-      #    - postgres
-      #
-      #
-      #- name: setup resource-adaptor
-      #  hosts: resource-adaptor
-      #  user: root
-      #  become: yes
-      #  roles:
-      #    - resource-adaptor
+- name: install postgres
+  hosts: big-machine-1
+  user: root
+  become: yes
+  roles:
+    - postgres
+
+- name: setup resource-adaptor
+  hosts:
+    - big-machine-1
+    - small-machine-2
+  user: root
+  become: yes
+  roles:
+    - resource-adaptor
       #
       #- name: setup resource-cataloguer
       #  hosts: resource-cataloguer

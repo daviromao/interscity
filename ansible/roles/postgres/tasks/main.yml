@@ -1,9 +1,11 @@
 ---
 
-- name: create postgresql
+- name: Create postgresql
   docker_container:
     name: postgres
     image: "{{ postgres_image }}"
+    ports:
+    - "5432:5432"
     env:
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"

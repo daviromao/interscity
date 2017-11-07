@@ -1,12 +1,32 @@
 ---
 
+# General
+rails_env: production
+secret_key_base: 'admin'
+
 # Hosts
 kong: 172.24.5.8
 rabbitmq: 172.24.5.3
 
+# Ports
+resource_catalouger_port: 3000
+resource_adaptor_port: 3001
+data_collector_port: 3002
+actuator_controller_port: 3003
+resource_discovery_port: 3004
+kong_port: 8000
+kong_admin_port: 8001
+
+# Docker
+resource_cataloguer_docker_image: arthurmde/resource-adaptor:0.1-0.4-exp1
+resource_adaptor_docker_image: arthurmde/resource-adaptor:0.2-0.3-exp2
+data_collector_docker_image: arthurmde/resource-adaptor:0.1-0.4-exp1
+actuator_controller_docker_image: arthurmde/resource-adaptor:0.1-0.4-exp1
+resource_discovery_docker_image: arthurmde/resource-adaptor:0.1-0.4-exp1
+
 # Postgresql 
 postgres_image: 'postgres:9.5'
-postgres_host: 'postgres'
+postgres_host: 172.24.5.3
 postgres_port: 5432
 postgres_user: 'postgres'
 postgres_password: 'admin'

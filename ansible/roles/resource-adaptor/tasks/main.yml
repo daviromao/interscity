@@ -1,17 +1,13 @@
 ---
 
-- name: create resource-adaptor service
+- name: Create resource-adaptor service
   docker_container:
     name: resource-adaptor
-    image: "{{ docker_image }}"
+    image: "{{ resource_adaptor_docker_image }}"
     state: started
-    links:
-    - 'postgres'
-    volumes:
-      - /resource-adaptor/
     ports:
-    - "3000:3000"
-    command: bundle exec puma -p 3000 -C config/puma.rb -e production
+    - "{{ resource_adaptor_port }}:{{ resource_adaptor_port }}"
+    command: "bundle exec puma -p {{ resource_adaptor_port }} -C config/puma.rb -e production"
     env:
       RAILS_ENV: "{{ rails_env }}"
       RAILS_MAX_THREADS: 200
@@ -21,11 +17,16 @@
       POSTGRES_PASSWORD: "{{ postgres_password }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
-      CATALOGUER_HOST: "{{ resource_cataloguer }}:{{ resource_cataloguer_port }}"
-      ADAPTOR_HOST: "{{ resource_adaptor_nginx }}:{{ resource_adaptor_nginx_port }}"
+      CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
+      REGISTER_METHOD: "target"
+      ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ resource_adaptor_port }}"
 
 - name: create database
   command: docker exec resource-adaptor rake db:create
+  ignore_errors: yes
 
 - name: migrate database
   command: docker exec resource-adaptor rake db:migrate
+  ignore_errors: yes
