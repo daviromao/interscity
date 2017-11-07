@@ -1,33 +1,34 @@
 ---
 
-- name: create resource-cataloguer API service
+- name: Create resource-cataloguer service
   docker_container:
     name: resource-cataloguer
-    image: "{{ docker_image }}"
+    image: "{{ resource_cataloguer_docker_image }}"
     state: started
-    recreate: yes
-    links:
-    - 'postgres'
-    volumes:
-    - /resource-cataloguer/
     ports:
-    - "3000:3000"
+    - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
+    command: /bin/sh -c "rm tmp/pids/server.pid && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
     env:
       RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
       POSTGRES_HOST: "{{ postgres_host }}"
       POSTGRES_PORT: "{{postgres_port}}"
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
-      DATACOLLECTOR_HOST: "{{ data_collector }}:{{ data_collector_port }}"
-      ACTUATORCONTROLLER_HOST: "actuator"
+      REGISTER_METHOD: "target"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ resource_cataloguer_port }}"
 
 - name: create database
   command: docker exec resource-cataloguer rake db:create
+  ignore_errors: yes
 
 - name: migrate database
   command: docker exec resource-cataloguer rake db:migrate
+  ignore_errors: yes
 
-- name: seed database
-  command: docker exec resource-cataloguer rake db:seed
+  #- name: seed database
+  #  command: docker exec resource-cataloguer rake db:seed
+  #  ignore_errors: yes
