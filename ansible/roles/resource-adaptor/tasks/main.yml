@@ -1,31 +1,33 @@
 ---
-#- name: create redis
-#  docker_container:
-#    name: redis
-#    image: redis
-#    state: started
-#    restart: yes
-#
-#- name: create sidekiq service
-#  docker_container:
-#    name: data-collector-sidekiq
-#    image: "{{ docker_image }}"
-#    state: started
-#    recreate: yes
-#    command: bundle exec sidekiq
-#    links:
-#    - 'postgres'
-#    - 'redis'
-#    volumes:
-#    - /data-collector/
-#    env:
-#      RAILS_ENV: "{{ rails_env }}"
-#      POSTGRES_HOST: "{{ postgres_host }}"
-#      POSTGRES_PORT: "{{postgres_port}}"
-#      POSTGRES_USER: "{{ postgres_user }}"
-#      POSTGRES_PASSWORD: "{{ postgres_password }}"
-#      SECRET_KEY_BASE: "{{ secret_key_base }}"
-#      RABBITMQ_HOST: "{{ rabbitmq }}"
+- name: create redis
+  docker_container:
+    name: redis
+    image: redis
+    state: started
+    restart: yes
+
+- name: create sidekiq service
+  docker_container:
+    name: resource-adaptor-sidekiq
+    image: "{{ resource_adaptor_docker_image }}"
+    state: started
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    links:
+    - 'redis'
+    env:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      POSTGRES_HOST: "{{ postgres_host }}"
+      POSTGRES_PORT: "{{postgres_port}}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: "{{ rabbitmq }}"
+      CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
+      REGISTER_METHOD: "none"
+      ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ resource_adaptor_port }}"
 
 - name: Create resource-adaptor service
   docker_container:
