@@ -79,3 +79,12 @@
   become: yes
   roles:
     - resource-discoverer
+
+- name: setup actuator-controller
+  hosts:
+    - big-machine-2
+    - gateway-machine
+  user: root
+  become: yes
+  roles:
+    - actuator-controller

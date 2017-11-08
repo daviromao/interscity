@@ -1,0 +1,22 @@
+---
+
+- name: Create actuator-controller service
+  docker_container:
+    name: actuator-controller
+    image: "{{ actuator_controller_docker_image }}"
+    state: started
+    ports:
+    - "{{ actuator_controller_port }}:{{ actuator_controller_port }}"
+    command: "bundle exec puma -p {{ actuator_controller_port }} -C config/puma.rb -e production"
+    env:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      MONGO_USER: "{{ mongo_user }}"
+      MONGO_PASSWORD: "{{ mongo_password }}"
+      MONGO_HOST: "{{ mongo }}"
+      MONGO_PORT: "{{ mongo_port }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: "{{ rabbitmq }}"
+      REGISTER_METHOD: "target"
+      KONG_URI: "{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ actuator_controller_port }}"
