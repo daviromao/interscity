@@ -3,7 +3,9 @@
 This repository contains the Ansible scripts to deploy InterSCity on IME's cloud
 infrastructure - Revoada.
 
-## Setup:
+# Setup:
+
+## Your machine
 
 * Install Python 2.7
   * Most Linux distributions have python installed natively. To test, 
@@ -24,3 +26,11 @@ communicate via **ssh** :
   * Enable your user to run commands as sudo without request password
   * Add you ssh public key to your user in remote hosts. [Here's an
   example](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
+
+# Running
+
+* Enter in [ansible](ansible) directory
+* Run:
+```sh
+ansible-playbook site.yml
+```
