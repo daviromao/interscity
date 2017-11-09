@@ -14,7 +14,7 @@
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
       CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
-      COLLECTOR_HOST: "{{ kong }}:{{ kong_port }}/collector"
+      DATACOLLECTOR_HOST: "{{ kong }}:{{ kong_port }}/collector"
       REGISTER_METHOD: "target"
       KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "{{ self_ip }}:{{ resource_discoverer_port }}"

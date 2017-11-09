@@ -32,3 +32,17 @@
       KONG_PG_HOST: kong-database
       KONG_PG_USER: "{{ postgres_user }}"
   register: kong_container
+
+- name: Remove kong upstreams
+  uri:
+    url: "http://localhost:8001/upstreams/{{ item.name }}"
+    method: DELETE
+    status_code: 204
+  with_items:
+    - { name: 'collector.v1.service' }
+    - { name: 'adaptor.v1.service' }
+    - { name: 'discovery.v1.service' }
+    - { name: 'actuator.v1.service' }
+    - { name: 'catalog.v1.service' }
+  ignore_errors: yes
+

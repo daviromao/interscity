@@ -1,6 +1,7 @@
 ---
 - name: Setup kong
-  hosts: kong
+  hosts:
+    - gateway-machine
   user: root
   become: yes
   roles:

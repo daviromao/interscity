@@ -7,7 +7,7 @@
     state: started
     ports:
     - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
-    command: /bin/sh -c "rm tmp/pids/server.pid && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
+    command: /bin/sh -c "bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
     env:
       RAILS_ENV: "{{ rails_env }}"
       RAILS_MAX_THREADS: 200

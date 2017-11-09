@@ -18,5 +18,5 @@
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
       REGISTER_METHOD: "target"
-      KONG_URI: "{{ kong }}:{{ kong_admin_port }}"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "{{ self_ip }}:{{ actuator_controller_port }}"
