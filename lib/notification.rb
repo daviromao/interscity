@@ -18,7 +18,7 @@ module SmartCities
     end
 
     def notify_command_request(command = self)
-      setup_connection
+      setup_connection if @@conn.closed?
       key = command.uuid
       key = key + '.' + command.capability
       topic = @@channel.topic('resource.actuate.create')
