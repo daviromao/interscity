@@ -5,6 +5,7 @@
     name: resource-cataloguer
     image: "{{ resource_cataloguer_docker_image }}"
     state: started
+    restart: yes
     ports:
     - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
     command: /bin/sh -c "bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"

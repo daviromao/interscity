@@ -1,27 +1,8 @@
 ---
-- name: install basic setup
-  hosts: resource-adaptor
-  user: root
-  become: yes
-  roles:
-    - common
-
-- name: install docker
-  hosts: resource-adaptor
-  user: root
-  become: yes
-  roles:
-    - docker
-
-- name: install postgres
-  hosts: resource-adaptor
-  user: root
-  become: yes
-  roles:
-    - postgres
-
 - name: setup resource-adaptor
-  hosts: resource-adaptor
+  hosts:
+    - big-machine-1
+    - small-machine-2
   user: root
   become: yes
   roles:

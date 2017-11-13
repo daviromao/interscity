@@ -5,6 +5,7 @@
     name: data-collector
     image: "{{ data_collector_docker_image }}"
     state: started
+    restart: yes
     ports:
     - "{{ data_collector_port }}:{{ data_collector_port }}"
     command: "bundle exec puma -p {{ data_collector_port }} -C config/puma.rb -e production"

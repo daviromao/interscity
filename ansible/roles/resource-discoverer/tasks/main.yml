@@ -5,6 +5,7 @@
     name: resource-discoverer
     image: "{{ resource_discoverer_docker_image }}"
     state: started
+    restart: yes
     ports:
     - "{{ resource_discoverer_port }}:{{ resource_discoverer_port }}"
     command: "bundle exec puma -p {{ resource_discoverer_port }} -C config/puma.rb -e production"

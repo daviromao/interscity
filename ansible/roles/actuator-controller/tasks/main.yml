@@ -5,6 +5,7 @@
     name: actuator-controller
     image: "{{ actuator_controller_docker_image }}"
     state: started
+    restart: yes
     ports:
     - "{{ actuator_controller_port }}:{{ actuator_controller_port }}"
     command: "bundle exec puma -p {{ actuator_controller_port }} -C config/puma.rb -e production"

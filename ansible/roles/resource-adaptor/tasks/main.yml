@@ -11,6 +11,7 @@
     name: resource-adaptor-sidekiq
     image: "{{ resource_adaptor_docker_image }}"
     state: started
+    restart: yes
     command: bundle exec sidekiq -C config/sidekiq.yml
     links:
     - 'redis'
