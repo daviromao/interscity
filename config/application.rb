@@ -33,6 +33,7 @@ module ResourcesCatalog
         resource '*', :headers => :any, :methods => [:get, :post, :options]
       end
     end
+    config.enable_dependency_loading = true
     config.middleware.use CatchJsonParseErrors
     config.autoload_paths << Rails.root.join('lib')
   end
