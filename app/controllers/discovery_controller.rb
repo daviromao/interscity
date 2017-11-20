@@ -146,7 +146,7 @@ class DiscoveryController < ApplicationController
 
   # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def call_to_data_collector(uuids)
-    filters = {matchers: {}}
+    filters = {matchers: {}, uuids: uuids}
     @informed_matchers_params.each do |matcher|
       filters[:matchers][matcher] = params[matcher]
     end
