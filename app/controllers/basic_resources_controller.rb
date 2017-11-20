@@ -5,30 +5,26 @@ class BasicResourcesController < ApplicationController
   include SmartCities::Notification
   include SmartCities::ResourceFilter
 
-  before_action :set_page_params, only: [:index, :index_sensors, :index_actuators]
+  before_action :set_page_params, only: [:index, :index_sensors, :index_actuators, :search]
 
   # GET /resources/search
   # Errors
   # => 422 unprocessable entity
   def search
     response = []
-    begin
-      @resources = BasicResource.all
-      @resources = filter_capabilities @resources, search_params
-      @resources = filter_position @resources, search_params
-      @resources = filter_distance @resources, search_params
-      simple_params.each do |k,v|
-        @resources = filter_resources @resources, k, v
-      end
-      @resources.each do |resource|
-        response << {uuid: resource.uuid, lat: resource.lat, lon: resource.lon, collect_interval: resource.collect_interval}
-      end
-      render json: {resources: response}, status: 200
-    rescue
-      render json: {
-        error: "Error while searching resource"
-      }, status: 422
+    @resources = BasicResource.all
+    @resources = filter_capabilities @resources, search_params
+    @resources = filter_position @resources, search_params
+    @resources = filter_distance @resources, search_params
+    simple_params.each do |k,v|
+      @resources = filter_resources @resources, k, v
     end
+    @resources = @resources.paginate(page: @page, per_page: @per_page)
+    render json: {resources: @resources}, status: 200
+  rescue StandardError => e
+    render json: {
+      error: "Error while searching resource: #{e.message}"
+    }, status: 422
   end
 
   # POST /resources
@@ -130,6 +126,6 @@ class BasicResourcesController < ApplicationController
       else
         @page = 1
       end
-      @per_page = 40
+      @per_page = params[:per_page].nil? ? 40 : params[:per_page]
     end
 end

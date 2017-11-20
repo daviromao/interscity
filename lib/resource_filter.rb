@@ -10,7 +10,7 @@ module SmartCities
       if params[:capability].present?
         capability = Capability.find_by_name(params[:capability])
         id = capability.blank? ? -1 : capability.id
-        resources = resources.includes(:capabilities).where(capabilities: {id: id})
+        resources = resources.joins(:capabilities).where(capabilities: {id: id}).preload(:capabilities)
       end
       resources
     end
@@ -24,7 +24,7 @@ module SmartCities
 
     def filter_distance resources, params
       if params[:lat].present? and params[:lon].present? and params[:radius].present?
-        resources = resources.near([params[:lat],params[:lon]], params[:radius].to_f/1000.0, unit: :km)
+        resources = resources.near([params[:lat], params[:lon]], params[:radius].to_f/1000.0, units: :km)
       end
       resources
     end
