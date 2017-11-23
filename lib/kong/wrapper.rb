@@ -54,6 +54,7 @@ module Kong
         uris: uris,
         strip_uri: true
       })
+      api.save
 
       Rails.logger.info "API was succesfully registered to Kong"
     rescue StandardError => e
