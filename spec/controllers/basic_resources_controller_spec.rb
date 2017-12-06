@@ -341,15 +341,21 @@ describe BasicResourcesController do
 
       before :each do
         allow(controller).to receive(:notify_resource).and_return(true)
-        put :update, params: {uuid: resource.uuid, data: {uri: "changed.com", lat: -23, lon: -46, collect_interval: 1, capabilities:["temperature"]}}, format: :json
+        put :update, params: {
+          uuid: resource.uuid, data: {
+            uri: "changed.com",
+            lat: -23.2237,
+            lon: -45.9009,
+            collect_interval: 1,
+            capabilities:["temperature"]
+          }
+        }, format: :json
       end
 
       it { expect(response.status).to eq(204) }
       it 'is expected to update resource data' do
         updated_resource = BasicResource.find(resource.id)
         expect(updated_resource.uri).to eq('changed.com')
-        expect(updated_resource.lat).to eq(-23)
-        expect(updated_resource.lon).to eq(-46)
         expect(updated_resource.status).to eq("stopped")
         expect(updated_resource.collect_interval).to eq(1)
         expect(updated_resource.description).to eq("I am a dummy sensor")
@@ -358,8 +364,6 @@ describe BasicResourcesController do
 
       it 'is expected to automatically update location parameters' do
         updated_resource = BasicResource.find(resource.id)
-        expect(updated_resource.postal_code).to eq(nil)
-        expect(updated_resource.neighborhood).to eq(nil)
         expect(updated_resource.city).to eq("São José dos Campos")
         expect(updated_resource.state).to eq("São Paulo")
         expect(updated_resource.country).to eq("Brazil")
