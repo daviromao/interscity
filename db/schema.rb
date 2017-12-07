@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170427185247) do
+ActiveRecord::Schema.define(version: 20171207193134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(version: 20170427185247) do
     t.string   "state"
     t.string   "postal_code"
     t.string   "country"
+    t.index ["lat", "lon"], name: "index_basic_resources_on_lat_and_lon", using: :btree
+    t.index ["uuid"], name: "index_basic_resources_on_uuid", unique: true, using: :btree
   end
 
   create_table "basic_resources_capabilities", id: false, force: :cascade do |t|
@@ -43,6 +45,7 @@ ActiveRecord::Schema.define(version: 20170427185247) do
     t.string  "name"
     t.integer "function"
     t.text    "description"
+    t.index ["name"], name: "index_capabilities_on_name", unique: true, using: :btree
   end
 
 end
