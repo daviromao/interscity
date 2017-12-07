@@ -1,26 +1,41 @@
+defaults: &defaults
+  persist_in_safe_mode: true
+  hosts:
+    - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+  options:
+    max_pool_size: 25
+    wait_queue_timeout: 10
+
+caches: &caches
+  hosts:
+    - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+  options:
+    max_pool_size: 25
+    wait_queue_timeout: 10
+
 development:
   # Configure available database clients. (required)
   clients:
     # Defines the default client. (required)
     default:
+      <<: *defaults
       database: data_collector_development
-      hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
-      options:
-        max_pool_size: 25
-        wait_queue_timeout: 10
+    # Defines the cache database client. (required)
+    cache:
+      <<: *caches
+      database: data_collector_cache_development
 
 production:
   # Configure available database clients. (required)
   clients:
     # Defines the default client. (required)
     default:
-      database: data_collector_development
-      hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
-      options:
-        max_pool_size: 25
-        wait_queue_timeout: 10
+      <<: *defaults
+      database: data_collector_production
+    # Defines the cache database client. (required)
+    cache:
+      <<: *caches
+      database: data_collector_cache_production
 
 
   # Configure Mongoid specific options. (optional)
@@ -67,3 +82,6 @@ test:
         read:
           mode: :primary
         max_pool_size: 1
+    cache:
+      <<: *caches
+      database: data_collector_cache_test
