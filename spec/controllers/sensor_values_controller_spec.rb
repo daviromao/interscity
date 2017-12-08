@@ -21,14 +21,18 @@ RSpec.describe SensorValuesController, type: :controller do
 
   context 'request resources/data' do
     context 'with paginated connection' do
-      before do
-        FactoryGirl.create_list(:default_sensor_value, 1025)
+      before(:all) do
+        use_array_as_mongo_collection
+        @sensor = FactoryGirl.create(:default_sensor_value)
       end
 
       context 'with unset limit param' do
         subject { post :resources_data }
 
         it 'correctly limit the results to the default value' do
+          svs = Array.new(1025, @sensor)
+          expect(SensorValue).to receive(:where).twice.and_return(svs)
+
           subject
           resources = JSON.parse(response.body)["resources"]
           first_resource = resources[0]
@@ -41,6 +45,9 @@ RSpec.describe SensorValuesController, type: :controller do
         subject { post :resources_data, params: { limit: 100 } }
 
         it 'correctly limit the results to the param sended' do
+          svs = Array.new(1025, @sensor)
+          expect(SensorValue).to receive(:where).twice.and_return(svs)
+
           subject
           resources = JSON.parse(response.body)["resources"]
           first_resource = resources[0]
@@ -490,6 +497,21 @@ RSpec.describe SensorValuesController, type: :controller do
       end
     end
   end
+
+  def use_array_as_mongo_collection
+    Array.class_eval do
+      def limit l
+        entry = FactoryGirl.create(:default_sensor_value)
+        l = l.to_i
+        Array.new(l, entry)
+      end
+
+      def offset l
+        self
+      end
+    end
+  end
+
 
   def generate_data(total)
     status_opt = %w(on off unknown wtf)
