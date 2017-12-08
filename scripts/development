@@ -78,7 +78,7 @@ if [ "$1" = "test" ]; then
   printf "${NC}"
 
   shift
-  command="sudo docker-compose exec $PROJECT_NAME rspec"
+  command="sudo docker-compose exec $PROJECT_NAME rspec --profile"
 
   $command
 fi
