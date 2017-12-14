@@ -32,6 +32,8 @@ services:
       KONG_URI: 'http://kong:8001'
       SELF_HOST: 'resource-cataloguer:3000'
       REGISTER_METHOD: 'target'
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
 
 networks:
   default:

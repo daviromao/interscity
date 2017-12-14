@@ -54,7 +54,7 @@ class BasicResource < ApplicationRecord
 
   def as_json(options = { })
     hash = super(options)
-    capabilities_list = self.capabilities.pluck(:name)
+    capabilities_list = self.capability_names
     hash[:capabilities] = capabilities_list
     hash
   end
