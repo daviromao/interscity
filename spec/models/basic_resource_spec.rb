@@ -47,7 +47,6 @@ RSpec.describe BasicResource, :type => :model do
   end
 
   describe '.all_sensors' do
-
     context 'there are no sensors' do
       subject { described_class.all_sensors }
       it { is_expected.to be_empty }
@@ -66,11 +65,9 @@ RSpec.describe BasicResource, :type => :model do
       subject { described_class.all_sensors }
       it { is_expected.to include(hybrid) }
     end
-
   end
 
   describe '.all_actuators' do
-
     context 'there are no actuators' do
       subject { described_class.all_actuators }
       it { is_expected.to be_empty }
@@ -131,6 +128,87 @@ RSpec.describe BasicResource, :type => :model do
       subject { resource.to_json('informations')[:capabilities] }
       it { is_expected.not_to include(semaphore_actuator.name) }
       it { is_expected.not_to include(temperature_sensor.name) }
+    end
+  end
+
+  describe 'cache-related methods' do
+    context 'resource with capabilities' do
+      let!(:resource) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator, temperature_sensor], uri: "example2.com")) }
+
+      it "returns the name of all capabilities" do
+        expect(resource.capability_names).to include(semaphore_actuator.name)
+        expect(resource.capability_names).to include(temperature_sensor.name)
+      end
+
+      it "does not cache capability names before first call" do
+        expect(resource.get_cached_capabilities).to be_blank
+        expect(resource.get_cached_capabilities("sensors")).to be_blank
+        expect(resource.get_cached_capabilities("actuators")).to be_blank
+      end
+
+      it "caches capability names after first call" do
+        resource.capability_names
+        expect(resource.get_cached_capabilities).to include(temperature_sensor.name)
+        expect(resource.get_cached_capabilities).to  include(semaphore_actuator.name)
+
+        resource.capability_names("sensors")
+        expect(resource.get_cached_capabilities("sensors")).to include(temperature_sensor.name)
+        resource.capability_names("actuators")
+        expect(resource.get_cached_capabilities("actuators")).to include(semaphore_actuator.name)
+      end
+    end
+
+    context 'resource without capabilities' do
+      let!(:resource) { described_class.create(resource_params) }
+
+      it "returns an empty array when call capability_names" do
+        expect(resource.capability_names).to be_blank
+      end
+
+      it "does not cache anything before call capability_names" do
+        expect(resource.get_cached_capabilities).to be_blank
+        expect(resource.get_cached_capabilities("sensors")).to be_blank
+        expect(resource.get_cached_capabilities("actuators")).to be_blank
+      end
+
+      it "does not cache anything after call capability_names" do
+        resource.capability_names
+        expect(resource.get_cached_capabilities).to be_blank
+
+        resource.capability_names("sensors")
+        expect(resource.get_cached_capabilities("sensors")).to be_blank
+
+        resource.capability_names("actuators")
+        expect(resource.get_cached_capabilities("actuators")).to be_blank
+      end
+
+      context "change resources' capabilities" do
+        it "updates cache when adding a new sensor capability" do
+          resource.capabilities << temperature_sensor
+          expect(resource.get_cached_capabilities).to include(temperature_sensor.name)
+          expect(resource.get_cached_capabilities("sensors")).to include(temperature_sensor.name)
+        end
+
+        it "updates cache when adding a new actuator capability" do
+          resource.capabilities << semaphore_actuator
+          expect(resource.get_cached_capabilities).to  include(semaphore_actuator.name)
+          expect(resource.get_cached_capabilities("actuators")).to include(semaphore_actuator.name)
+        end
+
+        it "updates cache when removing a new sensor capability" do
+          resource.capabilities << temperature_sensor
+          resource.capabilities.delete(temperature_sensor)
+          expect(resource.get_cached_capabilities).to_not include(temperature_sensor.name)
+          expect(resource.get_cached_capabilities("sensors")).to_not include(temperature_sensor.name)
+        end
+
+        it "updates cache when removing a new actuator capability" do
+          resource.capabilities << semaphore_actuator
+          resource.capabilities.delete(semaphore_actuator)
+          expect(resource.get_cached_capabilities).to_not  include(semaphore_actuator.name)
+          expect(resource.get_cached_capabilities("actuators")).to_not include(semaphore_actuator.name)
+        end
+      end
     end
   end
 end
