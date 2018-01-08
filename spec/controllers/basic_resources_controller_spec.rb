@@ -352,7 +352,7 @@ describe BasicResourcesController do
         }, format: :json
       end
 
-      it { expect(response.status).to eq(204) }
+      it { expect(response.status).to eq(200) }
       it 'is expected to update resource data' do
         updated_resource = BasicResource.find(resource.id)
         expect(updated_resource.uri).to eq('changed.com')

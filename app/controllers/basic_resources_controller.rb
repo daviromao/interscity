@@ -94,7 +94,7 @@ class BasicResourcesController < ApplicationController
         end
       end
       notify_resource(resource, component_params.to_h, true)
-      render json: { data: resource.to_json }, status: 204
+      render json: { data: resource.to_json }, status: 200
     rescue
       render json: {
         error: "Error while updating basic resource"
