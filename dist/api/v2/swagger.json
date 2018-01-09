@@ -185,7 +185,7 @@
           }
         },
         "responses": {
-          "204": {
+          "200": {
             "description": "The updated resource",
             "content": {
               "application/json": {
@@ -1207,7 +1207,7 @@
           }
         },
         "responses": {
-          "204": {
+          "200": {
             "description": "The updated resource",
             "content": {
               "application/json": {
@@ -1323,24 +1323,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "resources": {
-                      "type": "array",
-                      "items": {
-                        "example": [
-                          {
-                            "id": 1,
-                            "name": "semaphore",
-                            "function": 1,
-                            "description": "Manipulate the semaphore status"
-                          },
-                          {
-                            "id": 2,
-                            "name": "temperature",
-                            "function": 0,
-                            "description": "Measure the temperature of the environment"
-                          }
-                        ]
-                      }
+                    "capabilities": {
+                      "example": [
+                        {
+                          "id": 1,
+                          "name": "semaphore",
+                          "function": 1,
+                          "description": "Manipulate the semaphore status"
+                        },
+                        {
+                          "id": 2,
+                          "name": "temperature",
+                          "function": 0,
+                          "description": "Measure the temperature of the environment"
+                        }
+                      ]
                     }
                   }
                 }
@@ -1362,30 +1359,25 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "name",
+                  "capability_type"
+                ],
                 "properties": {
-                  "data": {
-                    "type": "object",
-                    "required": [
-                      "name",
-                      "capability_type"
-                    ],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "capability's name",
-                        "example": "temperature"
-                      },
-                      "description": {
-                        "type": "string",
-                        "description": "resource's description",
-                        "example": "Measure the temperature of the environment"
-                      },
-                      "capability_type": {
-                        "type": "string",
-                        "description": "the capability's type in [sensor, actuator]",
-                        "example": "sensor"
-                      }
-                    }
+                  "name": {
+                    "type": "string",
+                    "description": "capability's name",
+                    "example": "temperature"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "resource's description",
+                    "example": "Measure the temperature of the environment"
+                  },
+                  "capability_type": {
+                    "type": "string",
+                    "description": "the capability's type in [sensor, actuator]",
+                    "example": "sensor"
                   }
                 }
               }
@@ -2265,7 +2257,88 @@
                     "resources": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Resource"
+                        "type": "object",
+                        "properties": {
+                          "uuid": {
+                            "type": "string",
+                            "description": "resource's uuid",
+                            "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "resource's description",
+                            "example": "A public bus"
+                          },
+                          "capabilities": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "a list with all the resource's capabilities.",
+                            "example": [
+                              "temperature",
+                              "humidity",
+                              "illuminate"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "the current status of the resource. Currently, we only support the 'active' status",
+                            "example": "active"
+                          },
+                          "lat": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "resource's latitude",
+                            "example": -23.559616
+                          },
+                          "lon": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "resource's longitude",
+                            "example": -46.731386
+                          },
+                          "country": {
+                            "type": "string",
+                            "description": "country name discovered automatically from the resource's position",
+                            "example": "Brazil"
+                          },
+                          "state": {
+                            "type": "string",
+                            "description": "state name discovered automatically from the resource's position",
+                            "example": "São Paulo"
+                          },
+                          "city": {
+                            "type": "string",
+                            "description": "state name discovered automatically from the resource's position",
+                            "example": "São Paulo"
+                          },
+                          "neighborhood": {
+                            "type": "string",
+                            "description": "neighborhood name discovered automatically from the resource's position",
+                            "example": "Butantã"
+                          },
+                          "postal_code": {
+                            "type": "string",
+                            "description": "postal code discovered automatically from the resource's position",
+                            "example": null
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "timestamp of resource creation"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "timestamp of the last resource update"
+                          },
+                          "id": {
+                            "type": "integer",
+                            "description": "internal id (not used by clients)",
+                            "example": 10
+                          }
+                        }
                       }
                     }
                   }
@@ -2371,31 +2444,26 @@
       "Capability": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "number",
-                "format": "integer",
-                "description": "internal id",
-                "example": 34
-              },
-              "name": {
-                "type": "string",
-                "description": "capability's name",
-                "example": "temperature"
-              },
-              "description": {
-                "type": "string",
-                "description": "capability's description",
-                "example": "Measure the temperature of the environment"
-              },
-              "function": {
-                "type": "string",
-                "description": "capability's functions (sensor or actuator)",
-                "example": "sensor"
-              }
-            }
+          "id": {
+            "type": "number",
+            "format": "integer",
+            "description": "internal id",
+            "example": 34
+          },
+          "name": {
+            "type": "string",
+            "description": "capability's name",
+            "example": "temperature"
+          },
+          "description": {
+            "type": "string",
+            "description": "capability's description",
+            "example": "Measure the temperature of the environment"
+          },
+          "function": {
+            "type": "string",
+            "description": "capability's functions (sensor or actuator)",
+            "example": "sensor"
           }
         }
       },
