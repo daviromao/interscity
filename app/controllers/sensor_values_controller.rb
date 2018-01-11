@@ -4,20 +4,20 @@ class SensorValuesController < ApplicationController
   before_action :set_sensor_values,
                 only: [:resources_data, :resource_data]
   before_action :set_sensor_values_last,
-                only: [:resources_data_last, :resource_data_last]
+                only: [:resources_data_last, :resource_data_last, :resources_search]
   before_action :set_specific_resource,
                 only: [:resource_data, :resource_data_last]
-  before_action :filter_by_uuids, only: [:resources_data, :resources_data_last]
+  before_action :filter_by_uuids, only: [:resources_data, :resources_data_last, :resources_search]
   before_action :filter_by_date, :filter_by_capabilities, :filter_by_value
 
   def set_sensor_values
-    @sensor_values = SensorValue.where(:capability.nin => ['', nil])
+    @sensor_values = SensorValue.all
 
     paginate
   end
 
   def set_sensor_values_last
-    @sensor_values = LastSensorValue.where(:capability.nin => ['', nil])
+    @sensor_values = LastSensorValue.all
 
     paginate
   end
@@ -108,6 +108,10 @@ class SensorValuesController < ApplicationController
 
   def resource_data_last
     resources_data_last
+  end
+
+  def resources_search
+    render json: { resources: @sensor_values.pluck(:uuid) }
   end
 
   private

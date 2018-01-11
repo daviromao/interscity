@@ -33,8 +33,8 @@ class SensorValue
 
   def save_last_value
     sensor_last = LastSensorValue.find_or_create_by(
-      capability: self.capability,
       uuid: self.uuid,
+      capability: self.capability,
     )
     new_attributes = self.dynamic_attributes
     new_attributes.each {|attribute, value| sensor_last.process_attribute(attribute, value)}

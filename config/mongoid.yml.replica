@@ -2,7 +2,7 @@ defaults: &defaults
   hosts: <%= "[#{ENV['MONGO_ADDRESSES'].split(',').map {|addr| "\"#{addr}:27017\""}.join(',')}]" %>
   options:
     max_pool_size: <%= ENV['MONGO_POOL_SIZE'] %>
-    wait_queue_timeout: 60
+    wait_queue_timeout: <%= ENV['MONGO_WAIT_QUEUE_TIMEOUT'] %>
     read:
       mode: :secondary_preferred
     connect: :replica_set
@@ -12,7 +12,7 @@ caches: &caches
   hosts: <%= "[#{ENV['MONGO_CACHE_ADDRESSES'].split(',').map {|addr| "\"#{addr}:27017\""}.join(',')}]" %>
   options:
     max_pool_size: <%= ENV['MONGO_POOL_SIZE'] %>
-    wait_queue_timeout: 60
+    wait_queue_timeout: <%= ENV['MONGO_WAIT_QUEUE_TIMEOUT'] %>
     read:
       mode: :secondary_preferred
     connect: :replica_set

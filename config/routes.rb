@@ -11,5 +11,7 @@ Rails.application.routes.draw do
                        to: 'sensor_values#resources_data_last'
     match ':uuid/data/last', as: 'resource_data_last',
                              to: 'sensor_values#resource_data_last'
+    match 'search', as: 'resources_search',
+                    to: 'sensor_values#resources_search'
   end
 end
