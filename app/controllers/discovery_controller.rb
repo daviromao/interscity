@@ -12,7 +12,7 @@ class DiscoveryController < ApplicationController
 
   def initialize
     @catalog_url = SERVICES_CONFIG['services']['catalog'] + '/resources/search?'
-    @collector_url = SERVICES_CONFIG['services']['collector'] + '/resources/data/last'
+    @collector_url = SERVICES_CONFIG['services']['collector'] + '/resources/search'
   end
 
   def resources
@@ -41,9 +41,7 @@ class DiscoveryController < ApplicationController
 
   def data_from_collector(uuids)
     collector_response = call_to_data_collector(uuids)
-    collector_response['resources'].map do |resource|
-      resource['uuid']
-    end
+    collector_response['resources']
   rescue
     render error_payload('The data collector service is unavailable', 503)
     return nil
