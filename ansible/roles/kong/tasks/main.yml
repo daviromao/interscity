@@ -46,3 +46,26 @@
     - { name: 'catalog.v1.service' }
   ignore_errors: yes
 
+- name: Get docs
+  git:
+    repo: 'https://gitlab.com/smart-city-software-platform/kong-api-gateway.git'
+    dest: /opt/kong-api-gateway
+
+- name: Create swagger docs
+  docker_container:
+    name: swagger-docs
+    image: nginx
+    state: started
+    published_ports:
+      - 8888:80
+    volumes:
+      - '/opt/kong-api-gateway/dist:/usr/share/nginx/html:ro'
+  register: swagger_nginx_container
+
+- name: Add swagger docs to Kong
+  uri:
+    url: "http://localhost:8001/apis/"
+    method: PUT
+    body: "name=swagger-docs&uris=/&upstream_url=http://{{ self_ip }}:8888&strip_uri=true"
+    status_code: 200, 201
+  ignore_errors: yes
