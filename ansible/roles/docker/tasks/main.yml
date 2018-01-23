@@ -7,6 +7,11 @@
     repo: 'deb https://apt.dockerproject.org/repo debian-jessie main'
     state: present
 
+- name: Add json config file for network ip definition
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
 - name: install docker-engine
   apt:
     name: docker-engine
