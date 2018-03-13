@@ -2,7 +2,7 @@
 #              Docker Compose file that starts Kong              #
 ##################################################################
 
-version: '3'
+version: '2'
 
 services:
   kong-database:
@@ -16,7 +16,7 @@ services:
     volumes:
       - "db-data-kong-postgres:/var/lib/postgresql/data"
   kong:
-    image: kong:latest
+    image: kong:0.11.2
     container_name: kong
     environment:
       - KONG_DATABASE=postgres
@@ -31,6 +31,8 @@ services:
       - "8001:8001"
       - "7946:7946"
       - "7946:7946/udp"
+    depends_on:
+      - kong-database
     links:
       - kong-database
 
