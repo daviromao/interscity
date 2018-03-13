@@ -28,10 +28,10 @@ if [ "$1" = "start" ]; then
   cp $BASE_DIR/config/database.yml.docker $BASE_DIR/config/database.yml
 
   # this should verify weather the database exists
-  sudo docker-compose exec $PROJECT_NAME rake db:create
+  sudo docker-compose exec $PROJECT_NAME bundle exec rake db:create
   verify "Cannot create database."
 
-  sudo docker-compose exec $PROJECT_NAME rake db:migrate
+  sudo docker-compose exec $PROJECT_NAME bundle exec rake db:migrate
   verify "Cannot migrate database."
 
   printf "${CYAN}"
