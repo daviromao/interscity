@@ -21,4 +21,4 @@ before_script:
 
 rspec:
   script:
-    - bundle exec rspec
+    - bundle exec rspec --profile

@@ -27,7 +27,7 @@ services:
       - 4000:3000
     volumes:
       - '.:/data-collector'
-    command: bash -c "bundle install && rake db:mongoid:remove_indexes db:mongoid:create_indexes && bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: bash -c "bundle install && bundle exec rake db:mongoid:remove_indexes db:mongoid:create_indexes && bundle exec rails s -p 3000 -b 0.0.0.0"
     environment:
       MONGO_USER: 'admin'
       MONGO_PASSWORD: 'admin'
