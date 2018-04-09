@@ -31,7 +31,7 @@ RSpec.describe SensorValuesController, type: :controller do
 
         it 'correctly limit the results to the default value' do
           svs = Array.new(1025, @sensor)
-          expect(SensorValue).to receive(:where).twice.and_return(svs)
+          expect(SensorValue).to receive(:all).and_return(svs)
 
           subject
           resources = JSON.parse(response.body)["resources"]
@@ -46,7 +46,7 @@ RSpec.describe SensorValuesController, type: :controller do
 
         it 'correctly limit the results to the param sended' do
           svs = Array.new(1025, @sensor)
-          expect(SensorValue).to receive(:where).twice.and_return(svs)
+          expect(SensorValue).to receive(:all).and_return(svs)
 
           subject
           resources = JSON.parse(response.body)["resources"]
