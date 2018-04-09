@@ -108,9 +108,7 @@ describe DiscoveryController, type: 'controller' do
     context 'when inform a capability and matchers' do
       it 'properly returns all resources found by both catalog and collector' do
         catalog_response = {'resources' => [{'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
-        collector_response = {'resources' =>
-                                  [{'uuid' => '7', 'capabilities' =>
-                                      {'environment_monitoring' => [{'temperature' => '28.31', 'date' => '2016-06-21T23:27:35.000Z'}]}}]}
+        collector_response = {'resources' => ['7']}
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
@@ -130,10 +128,7 @@ describe DiscoveryController, type: 'controller' do
                                 [{'uuid' => '4', 'lat' => '40', 'lon' => '40'},
                                  {'uuid' => '5', 'lat' => '40', 'lon' => '40'},
                                  {'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
-        collector_response = {'resources' =>
-                                  [{'uuid' => '7',
-                                    'capabilities' => {'environment_monitoring' => [{'temperature' => '28.31',
-                                                                   'date' => '2016-06-21T23:27:35.000Z'}]}}]}
+        collector_response = {'resources' => ['7']}
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
@@ -150,9 +145,7 @@ describe DiscoveryController, type: 'controller' do
 
       it 'properly discovery resources even when the capability name is missing' do
         catalog_response = {'resources' => [{'uuid' => '7', 'lat' => '40', 'lon' => '40'}]}
-        collector_response = {'resources' =>
-                                  [{'uuid' => '7', 'capabilities' =>
-                                      {'environment_monitoring' => [{'temperature' => '28.31', 'date' => '2016-06-21T23:27:35.000Z'}]}}]}
+        collector_response = {'resources' => ['7']}
 
         allow(@controller).to receive(:call_to_resource_catalog).and_return(catalog_response)
         allow(@controller).to receive(:call_to_data_collector).and_return(collector_response)
