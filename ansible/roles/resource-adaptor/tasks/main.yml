@@ -52,11 +52,13 @@
       ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
       KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "{{ self_ip }}:{{ resource_adaptor_port }}"
+      REDIS_HOST: "{{ self_ip }}"
+      REDIS_PORT: 6379
 
 - name: create database
-  command: docker exec resource-adaptor rake db:create
+  command: docker exec resource-adaptor bundle exec rake db:create
   ignore_errors: yes
 
 - name: migrate database
-  command: docker exec resource-adaptor rake db:migrate
+  command: docker exec resource-adaptor bundle exec rake db:migrate
   ignore_errors: yes

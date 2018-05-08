@@ -1,4 +1,9 @@
 ---
+- name: Upgrade all packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+
 - name: add debian backport repository
   apt_repository:
     repo: 'deb http://http.debian.net/debian jessie-backports main'

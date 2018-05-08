@@ -44,6 +44,11 @@
     - { name: 'discovery.v1.service' }
     - { name: 'actuator.v1.service' }
     - { name: 'catalog.v1.service' }
+    - { name: 'swagger-docs' }
+    - { name: 'actuator' }
+    - { name: 'collector' }
+    - { name: 'catalog' }
+    - { name: 'discovery' }
   ignore_errors: yes
 
 - name: Get docs

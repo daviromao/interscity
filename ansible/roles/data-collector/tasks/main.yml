@@ -16,8 +16,14 @@
       MONGO_PASSWORD: "{{ mongo_password }}"
       MONGO_HOST: "{{ mongo }}"
       MONGO_PORT: "{{ mongo_port }}"
+      MONGO_CACHE_HOST: "{{ mongo }}"
+      MONGO_CACHE_PORT: "{{ mongo_port }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: "{{ rabbitmq }}"
       REGISTER_METHOD: "target"
       KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "{{ self_ip }}:{{ data_collector_port }}"
+
+- name: create indexes
+  command: docker exec data-collector bundle exec rake db:mongoid:remove_indexes db:mongoid:create_indexes
+  ignore_errors: yes

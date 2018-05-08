@@ -1,22 +1,61 @@
 ---
-- name: add docker gpg key
-  apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
+- name: Remove "docker" package
+  apt: name=docker state=absent
+
+- name: Remove "docker-engine" package
+  apt: name=docker-engine state=absent
+
+- name: Remove "docker.io" package
+  apt: name=docker.io state=absent
+
+- name: install apt-transport-https
+  apt:
+    name: apt-transport-https
+    update_cache: yes
+    state: present
+
+- name: install ca-certificates
+  apt:
+    name: ca-certificates
+    update_cache: yes
+    state: present
+
+- name: install curl
+  apt:
+    name: curl
+    update_cache: yes
+    state: present
+
+- name: install gnupg2
+  apt:
+    name: gnupg2
+    update_cache: yes
+    state: present
+
+- name: install software-properties-common
+  apt:
+    name: software-properties-common
+    update_cache: yes
+    state: present
+
+- name: add Docker's official GPG key
+  command: bash -c "curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -"
 
 - name: add docker repository
   apt_repository:
-    repo: 'deb https://apt.dockerproject.org/repo debian-jessie main'
+    repo: 'deb https://download.docker.com/linux/debian jessie stable'
+    state: present
+
+- name: install docker-cd
+  apt:
+    name: docker-ce
+    update_cache: yes
     state: present
 
 - name: Add json config file for network ip definition
   copy:
     src: daemon.json
     dest: /etc/docker/daemon.json
-
-- name: install docker-engine
-  apt:
-    name: docker-engine
-    update_cache: yes
-    state: present
 
 - name: start docker daemon
   service:
