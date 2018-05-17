@@ -109,7 +109,7 @@ class BasicResourcesController < ApplicationController
     end
 
     def simple_params
-      params.permit(:status, :city, :neighborhood, :postal_code)
+      params.permit(:status, :city, :neighborhood, :postal_code, :description, :uuid)
     end
 
     def component_params
