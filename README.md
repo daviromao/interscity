@@ -1,8 +1,8 @@
-![Build Status](https://gitlab.com/smart-city-software-platform/resource-adaptor/badges/master/build.svg)
+![Build Status](https://gitlab.com/interscity/interscity-platform/resource-adaptor/badges/master/build.svg)
 
 # README
 
-The detailed documentation can be found in [the Wiki of this repository](https://gitlab.com/smart-city-software-platform/resource-adaptor/wikis/home).
+The detailed documentation can be found in [the Wiki of this repository](https://gitlab.com/interscity/interscity-platform/resource-adaptor/wikis/home).
 
 ## Environment Setup
 
