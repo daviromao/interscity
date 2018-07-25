@@ -1,6 +1,6 @@
 # Data Collector - InterSCity
 
-![Build Status](https://gitlab.com/smart-city-software-platform/data-collector/badges/master/build.svg)
+![Build Status](https://gitlab.com/interscity/interscity-platform/data-collector/badges/master/build.svg)
 [![Mezuro](https://img.shields.io/badge/mezuro-green-green.svg)](http://mezuro.org/en/repositories/73)
 [![Mezuro](https://img.shields.io/badge/freenode-%40data__collector-blue.svg)]()
 
