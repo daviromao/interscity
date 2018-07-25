@@ -1,4 +1,4 @@
-![Build Status](https://gitlab.com/smart-city-software-platform/actuator-controller/badges/master/build.svg)
+![Build Status](https://gitlab.com/interscity/interscity-platform/actuator-controller/badges/master/build.svg)
 
 Actuator-Controller API
 =====================
@@ -195,5 +195,5 @@ Useful links
 ============
 
 * [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes) @ STOA
-* [Group Repository](https://gitlab.com/groups/smart-city-software-platform)
+* [Group Repository](https://gitlab.com/interscity/interscity-platform)
 * [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
