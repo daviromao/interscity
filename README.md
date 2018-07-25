@@ -1,4 +1,4 @@
-![Build Status](https://gitlab.com/smart-city-software-platform/resource-discoverer/badges/master/build.svg)
+![Build Status](https://gitlab.com/interscity/interscity-platform/resource-discoverer/badges/master/build.svg)
 ---
 
 ## Docker Setup
@@ -79,6 +79,6 @@ Useful links
 
 >* [Project description](https://social.stoa.usp.br/poo2016/projeto/projeto-plataforma-cidades-inteligentes) @ STOA
 >* [Discovery Services description](https://social.stoa.usp.br/poo2016/projeto/grupo-5-middleware-cidade-inteligente) @ STOA
->* [Group Repository](https://gitlab.com/groups/smart-city-software-platform)
+>* [Group Repository](https://gitlab.com/interscity/interscity-platform)
 >* [Discovery Service Sequence UML Diagram](doc/SequenceDiagram_v1.png)
 >* [email list](https://groups.google.com/forum/#!forum/pci-lideres-equipe-de-organizacao-poo-ime-2016)
