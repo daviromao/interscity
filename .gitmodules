@@ -1,21 +1,21 @@
 [submodule "data-collector"]
 	path = data-collector
-	url = https://gitlab.com/smart-city-software-platform/data-collector.git
+	url = https://gitlab.com/interscity/interscity-platform/data-collector.git
 [submodule "resource-cataloguer"]
 	path = resource-cataloguer
-	url = https://gitlab.com/smart-city-software-platform/resource-cataloguer.git
+	url = https://gitlab.com/interscity/interscity-platform/resource-cataloguer.git
 [submodule "resource-adaptor"]
 	path = resource-adaptor
-	url = https://gitlab.com/smart-city-software-platform/resource-adaptor.git
+	url = https://gitlab.com/interscity/interscity-platform/resource-adaptor.git
 [submodule "external-resources"]
 	path = external-resources
-	url = https://gitlab.com/smart-city-software-platform/external-resources.git
+	url = https://gitlab.com/interscity/interscity-platform/external-resources.git
 [submodule "resource-discoverer"]
 	path = resource-discoverer
-	url = https://gitlab.com/smart-city-software-platform/resource-discoverer.git
+	url = https://gitlab.com/interscity/interscity-platform/resource-discoverer.git
 [submodule "actuator-controller"]
 	path = actuator-controller
-	url = https://gitlab.com/smart-city-software-platform/actuator-controller.git
+	url = https://gitlab.com/interscity/interscity-platform/actuator-controller.git
 [submodule "kong-api-gateway"]
 	path = kong-api-gateway
-	url = https://gitlab.com/smart-city-software-platform/kong-api-gateway.git
+	url = https://gitlab.com/interscity/interscity-platform/kong-api-gateway.git
