@@ -46,7 +46,7 @@ describe BasicResourcesController do
         expect(resource.country).to eq("Brazil")
         expect(resource.state).to eq("São Paulo")
         expect(resource.neighborhood).to eq("Butantã")
-        expect(resource.postal_code).to eq("05508-090")
+        expect(resource.postal_code).to match(/\d+-\d+/)
       end
 
       it 'is expected to create a resource' do
