@@ -65,7 +65,7 @@ describe SmartCities::ResourceFilter do
       it { is_expected.to include(resource3) }
     end
     context "search by postal code" do
-      subject { filter.filter_resources resources, :postal_code, "05508-090" }
+      subject { filter.filter_resources resources, :postal_code, resource1.postal_code }
       it { is_expected.to include(resource1) }
       it { is_expected.not_to include(resource2) }
       it { is_expected.not_to include(resource3) }
