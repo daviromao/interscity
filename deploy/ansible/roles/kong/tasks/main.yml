@@ -1,0 +1,76 @@
+---
+# Reference: https://github.com/clickfreak/kong-ansible-docker/blob/master/site.yml
+
+- name: Start Postgresql container
+  docker_container:
+    name: kong-database
+    image: postgres:9.5
+    state: started
+    volumes:
+      - /pgdata:/var/lib/postgresql/kong_database
+    env:
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_DB: kong
+  register: postgres_container
+
+- name: Start kong container
+  docker_container:
+    name: kong
+    image: "kong:0.11.0"
+    state: started
+    links:
+      - kong-database:kong-database
+    published_ports:
+      - 8000:8000
+      - 8001:8001
+    command: bash -c "kong migrations up && kong start"
+    env:
+      KONG_PG_PASSWORD: "{{ postgres_password }}"
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: kong
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: "{{ postgres_user }}"
+  register: kong_container
+
+- name: Remove kong upstreams
+  uri:
+    url: "http://localhost:8001/upstreams/{{ item.name }}"
+    method: DELETE
+    status_code: 204
+  with_items:
+    - { name: 'collector.v1.service' }
+    - { name: 'adaptor.v1.service' }
+    - { name: 'discovery.v1.service' }
+    - { name: 'actuator.v1.service' }
+    - { name: 'catalog.v1.service' }
+    - { name: 'swagger-docs' }
+    - { name: 'actuator' }
+    - { name: 'collector' }
+    - { name: 'catalog' }
+    - { name: 'discovery' }
+  ignore_errors: yes
+
+- name: Get docs
+  git:
+    repo: 'https://gitlab.com/smart-city-software-platform/kong-api-gateway.git'
+    dest: /opt/kong-api-gateway
+
+- name: Create swagger docs
+  docker_container:
+    name: swagger-docs
+    image: nginx
+    state: started
+    published_ports:
+      - 8888:80
+    volumes:
+      - '/opt/kong-api-gateway/dist:/usr/share/nginx/html:ro'
+  register: swagger_nginx_container
+
+- name: Add swagger docs to Kong
+  uri:
+    url: "http://localhost:8001/apis/"
+    method: PUT
+    body: "name=swagger-docs&uris=/&upstream_url=http://{{ self_ip }}:8888&strip_uri=true"
+    status_code: 200, 201
+  ignore_errors: yes

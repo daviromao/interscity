@@ -1,0 +1,48 @@
+---
+
+- name: create redis
+  docker_container:
+    name: redis
+    ports:
+    - "6379:6379"
+    image: redis
+    state: started
+    restart: yes
+
+- name: Create resource-cataloguer service
+  docker_container:
+    name: resource-cataloguer
+    image: "{{ resource_cataloguer_docker_image }}"
+    state: started
+    restart: yes
+    ports:
+    - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
+    command: /bin/sh -c "bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
+    links:
+    - 'redis'
+    env:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      POSTGRES_HOST: "{{ postgres_host }}"
+      POSTGRES_PORT: "{{postgres_port}}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: "{{ rabbitmq }}"
+      REGISTER_METHOD: "target"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ resource_cataloguer_port }}"
+      REDIS_HOST: "{{ self_ip }}"
+      REDIS_PORT: 6379
+
+- name: create database
+  command: docker exec resource-cataloguer bundle exec rake db:create
+  ignore_errors: yes
+
+- name: migrate database
+  command: docker exec resource-cataloguer bundle exec rake db:migrate
+  ignore_errors: yes
+
+  #- name: seed database
+  #  command: docker exec resource-cataloguer rake db:seed
+  #  ignore_errors: yes
