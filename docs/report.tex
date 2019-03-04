@@ -57,7 +57,17 @@
 
 \maketitle
 
-\section{Heading on level 1 (section)}
-  Sample
+\section{Current and former developers views on the project}
+  Our first step was to reach out developers who have worked or still work with the platform. In this task, we contacted successfully the following ones: Arthur Del Esposte, who was the main developer of the platform; Dylan Guedes, currently rewriting one of the platform's services; and Higor Amario de Souza, currently responsible for the project. All of them have provided valuable feedback on the platform which are listed below:
+
+  \begin{itemize}
+    \item infrastructure stability is a consensus as the main problem with the platform currently;
+    \item going further on stability, logs are difficult to find and are spread among services and servers making hard to find the source of problems;
+    \item another part of the platform hard to understand is the RabbitMQ messaging because all services can read and write to it and there is no documentation on how each one performs this message exchange;
+    \item there is a correct order to bring up the services which, when not followed, may lead to race conditions;
+    \item the platform lacks basic security features such as authentication, authorization and permissions management;
+    \item the API does not follow a standard, such as JSON API (\url{https://jsonapi.org/}), and the current one lacks a documentation;
+    \item it is missing a acceptance test that assures all the platform components are working and the available hardware is enough to run the platform.
+  \end{itemize}
 
 \end{document}
