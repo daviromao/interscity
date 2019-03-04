@@ -1,0 +1,29 @@
+---
+
+- name: Create data-collector service
+  docker_container:
+    name: data-collector
+    image: "{{ data_collector_docker_image }}"
+    state: started
+    restart: yes
+    ports:
+    - "{{ data_collector_port }}:{{ data_collector_port }}"
+    command: "bundle exec puma -p {{ data_collector_port }} -C config/puma.rb -e production"
+    env:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      MONGO_USER: "{{ mongo_user }}"
+      MONGO_PASSWORD: "{{ mongo_password }}"
+      MONGO_HOST: "{{ mongo }}"
+      MONGO_PORT: "{{ mongo_port }}"
+      MONGO_CACHE_HOST: "{{ mongo }}"
+      MONGO_CACHE_PORT: "{{ mongo_port }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: "{{ rabbitmq }}"
+      REGISTER_METHOD: "target"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "{{ self_ip }}:{{ data_collector_port }}"
+
+- name: create indexes
+  command: docker exec data-collector bundle exec rake db:mongoid:remove_indexes db:mongoid:create_indexes
+  ignore_errors: yes
