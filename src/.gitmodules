@@ -7,6 +7,3 @@
 [submodule "resource-discoverer"]
 	path = resource-discoverer
 	url = https://gitlab.com/interscity/interscity-platform/resource-discoverer.git
-[submodule "kong-api-gateway"]
-	path = kong-api-gateway
-	url = https://gitlab.com/interscity/interscity-platform/kong-api-gateway.git

@@ -1,0 +1,103 @@
+#!/bin/bash
+
+FILE_DIR=`perl -e 'use Cwd "abs_path";print abs_path(shift)' $0`
+BASE_DIR=`dirname $FILE_DIR`/..
+
+PROJECT_NAME="kong-api-gateway"
+EXPOSED_PORT=8000
+
+CYAN='\033[0;36m'
+NC='\033[0m'
+RED='\033[0;31m'
+
+verify () {
+  if [ $? != 0 ]; then
+    printf "${RED}$1${NC}"
+    exit 2
+  fi
+}
+
+if [ "$1" = "start" ]; then
+  printf "${CYAN}"
+  echo "Starting service $PROJECT_NAME"
+  printf "${NC}"
+
+  sudo docker-compose up -d 
+  verify "Cannot run the container. For more information take a look in docker's log"
+
+  # this always update a database.yml 
+  # cp $BASE_DIR/config/database.yml.docker $BASE_DIR/config/database.yml
+
+  printf "${CYAN}"
+  echo "############################################################"
+  echo "     Exposed port is: $EXPOSED_PORT"
+  echo "############################################################"
+  echo "     To execute commands in container you must run"
+  echo "     $ scripts/development exec <service> <command>"
+  echo "############################################################"
+  printf "${NC}"
+fi
+
+if [ "$1" = "stop" ]; then
+  printf "${CYAN}"
+  echo "Stopping service $PROJECT_NAME"
+  printf "${NC}"
+
+  sudo docker-compose stop
+  verify "You have some issue when we try to stop the container. Verify it manually"
+
+  printf "${CYAN}"
+  echo "####################################"
+  echo "     The container is stopped."
+  echo "####################################"
+  printf "${NC}"
+  echo
+fi
+
+if [ "$1" = "exec" ]; then
+  printf "${CYAN}"
+  echo "Executing command into the container's work directory"
+  printf "${NC}"
+
+  shift
+  command="sudo docker-compose exec"
+ 
+  for word in $@; do
+     command="$command $word"
+  done
+
+  $command
+  verify "Cannot execute command into the container. Please verify logs"
+fi
+
+if [ "$1" = "register" ]; then
+  printf "${CYAN}"
+  echo "Registering microservices upstreams"
+  printf "${NC}"
+
+  services=( "adaptor" "catalog" "collector" "discovery" "actuator" )
+
+  if [[ -z "${KONG_ADMIN_HOST}" ]]; then
+    KONG_ADMIN_HOST="http://localhost:8001"
+  else
+    KONG_ADMIN_HOST="${KONG_ADMIN_HOST}"
+  fi
+
+  for d in "${services[@]}"; do
+    if [ "$d" != 'zPOO/' ]; then
+      echo "####################################"
+      echo "Registering $d upstream service:"
+      curl -X POST $KONG_ADMIN_HOST/upstreams --data "name=$d.v1.service"
+      verify "Could not register service: $d"
+
+      echo "Registering $d API:"
+      curl -X POST $KONG_ADMIN_HOST/apis --data "name=$d" \
+        --data "upstream_url=http://$d.v1.service" \
+        --data "uris=/$d" \
+        --data "strip_uri=true"
+
+      verify "Could not register API for $d service"
+      echo "####################################"
+    fi
+  done
+fi
