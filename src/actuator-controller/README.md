@@ -3,11 +3,16 @@
 Actuator-Controller API
 =====================
 
+Requirements
+------------
+
+* MongoDB
+  - export the environment variables `MONGO_HOST` and `MONGO_PORT`
+* RabbitMQ
+
 Environment Setup
 -----------------
 
-* Install RVM
-* Run on terminal: ```$ rvm install 2.3.1```
 * In the project directory, run:
   * ```$ gem install bundle```
   * ```$ bundle install```
