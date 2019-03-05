@@ -1,0 +1,87 @@
+defaults: &defaults
+  persist_in_safe_mode: true
+  hosts:
+    - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+  options:
+    max_pool_size: 25
+    wait_queue_timeout: 10
+
+caches: &caches
+  hosts:
+    - <%= ENV['MONGO_CACHE_HOST'] %>:<%= ENV['MONGO_CACHE_PORT'] %>
+  options:
+    max_pool_size: 25
+    wait_queue_timeout: 10
+
+development:
+  # Configure available database clients. (required)
+  clients:
+    # Defines the default client. (required)
+    default:
+      <<: *defaults
+      database: data_collector_development
+    # Defines the cache database client. (required)
+    cache:
+      <<: *caches
+      database: data_collector_cache_development
+
+production:
+  # Configure available database clients. (required)
+  clients:
+    # Defines the default client. (required)
+    default:
+      <<: *defaults
+      database: data_collector_production
+    # Defines the cache database client. (required)
+    cache:
+      <<: *caches
+      database: data_collector_cache_production
+
+
+  # Configure Mongoid specific options. (optional)
+  options:
+    # Includes the root model name in json serialization. (default: false)
+    # include_root_in_json: false
+
+    # Include the _type field in serialization. (default: false)
+    # include_type_for_serialization: false
+
+    # Preload all models in development, needed when models use
+    # inheritance. (default: false)
+    # preload_models: false
+
+    # Raise an error when performing a #find and the document is not found.
+    # (default: true)
+    # raise_not_found_error: true
+
+    # Raise an error when defining a scope with the same name as an
+    # existing method. (default: false)
+    # scope_overwrite_exception: false
+
+    # Use Active Support's time zone in conversions. (default: true)
+    # use_activesupport_time_zone: true
+
+    # Ensure all times are UTC in the app side. (default: false)
+    # use_utc: false
+
+    # Set the Mongoid and Ruby driver log levels when not in a Rails
+    # environment. The Mongoid logger will be set to the Rails logger
+    # otherwise.(default: :info)
+    # log_level: :info
+
+    # Application name that is printed to the mongodb logs upon establishing a
+    # connection in server versions >= 3.4. Note that the name cannot exceed 128 bytes.
+    # app_name: MyApplicationName
+test:
+  clients:
+    default:
+      database: data_collector_test
+      hosts:
+        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+      options:
+        read:
+          mode: :primary
+        max_pool_size: 1
+    cache:
+      <<: *caches
+      database: data_collector_cache_test

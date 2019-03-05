@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker exec -it data-collector-mongo-cache bash -c 'mongoexport --host data-collector-mongo --db data_collector_development --collection last_sensor_values --out /tmp/last_sensor_values.json;mongoimport --db data_collector_cache_development --file /tmp/last_sensor_values.json'
+
+

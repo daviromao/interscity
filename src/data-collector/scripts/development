@@ -1,0 +1,84 @@
+#!/bin/bash
+
+FILE_DIR=`perl -e 'use Cwd "abs_path";print abs_path(shift)' $0`
+BASE_DIR=`dirname $FILE_DIR`/..
+
+PROJECT_NAME="data-collector"
+EXPOSED_PORT=4000
+
+CYAN='\033[0;36m'
+NC='\033[0m'
+RED='\033[0;31m'
+
+verify () {
+  if [ $? != 0 ]; then
+    printf "${RED}$1${NC}"
+    exit 2
+  fi
+}
+
+if [ "$1" = "start" ]; then
+  printf "${CYAN}"
+  echo "Starting service $PROJECT_NAME"
+  printf "${NC}"
+
+  sudo docker-compose up -d
+  verify "Cannot run the container. For more information take a look in docker's log"
+
+  # this always update a database.yml
+  # cp $BASE_DIR/config/database.yml.docker $BASE_DIR/config/database.yml
+
+  printf "${CYAN}"
+  echo "############################################################"
+  echo "     Exposed port is: $EXPOSED_PORT"
+  echo "############################################################"
+  echo "     To execute commands in container you must run"
+  echo "     $ scripts/development exec <service> <command>"
+  echo "############################################################"
+  printf "${NC}"
+fi
+
+if [ "$1" = "stop" ]; then
+  printf "${CYAN}"
+  echo "Stopping service $PROJECT_NAME"
+  printf "${NC}"
+
+  sudo rm -rf tmp/pids/*
+  verify "You have some issue when we try to delete tmp/pids/*. Verify it manually"
+
+  sudo docker-compose stop
+  verify "You have some issue when we try to stop the container. Verify it manually"
+
+  printf "${CYAN}"
+  echo "####################################"
+  echo "     The container is stopped."
+  echo "####################################"
+  printf "${NC}"
+fi
+
+if [ "$1" = "exec" ]; then
+  printf "${CYAN}"
+  echo "Executing command into the container's work directory"
+  printf "${NC}"
+
+  shift
+  command="sudo docker-compose exec"
+
+  for word in $@; do
+     command="$command $word"
+  done
+
+  $command
+  verify "Cannot execute command into the container. Please verify logs"
+fi
+
+if [ "$1" = "test" ]; then
+  printf "${CYAN}"
+  echo "Executing tests into the container's work directory"
+  printf "${NC}"
+
+  shift
+  command="sudo docker-compose exec $PROJECT_NAME rspec --profile"
+
+  $command
+fi
