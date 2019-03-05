@@ -1,6 +1,3 @@
-[submodule "resource-cataloguer"]
-	path = resource-cataloguer
-	url = https://gitlab.com/interscity/interscity-platform/resource-cataloguer.git
 [submodule "resource-discoverer"]
 	path = resource-discoverer
 	url = https://gitlab.com/interscity/interscity-platform/resource-discoverer.git
