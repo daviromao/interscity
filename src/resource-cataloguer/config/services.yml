@@ -1,0 +1,8 @@
+# Be sure to restart your server when you modify this file
+
+# do not include a final slash after the URL
+services:
+  self: <%= ENV['SELF_HOST'] %>
+  collector: <%= ENV['DATACOLLECTOR_HOST'] %>
+  actuator: <%= ENV['ACTUATORCONTROLLER_HOST'] %>
+  rabbitmq: <%= ENV['RABBITMQ_HOST'] %>
