@@ -3,6 +3,13 @@
 Actuator-Controller API
 =====================
 
+Requirements
+------------
+
+* MongoDB
+  - export the environment variables `MONGO_HOST` and `MONGO_PORT`
+* RabbitMQ
+
 Environment Setup
 -----------------
 
