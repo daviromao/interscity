@@ -8,6 +8,7 @@
 \usepackage[pdftex]{graphicx}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
+\usepackage{tabu}
 
 % Configure referencing styles
 \hypersetup{
@@ -96,7 +97,15 @@
 
   Another important remark, which we will get back to at the Discussion (\ref{sec:discussion}), is the amount of services that the platform brings up. It employs a micro-service architecture with the following components: actuator-controller; data-collector; resource-adaptor; resource-cataloguer; resource-discoverer. And these have requirements of their own: Kong; MongoDB; RabbitMQ; Redis; PostgreSQL.
 
-  \section{Discussion}
-  \label{sec:discussion}
+\section{Tests}
+  Unit tests summary:
+
+  \begin{tabu} to \textwidth {  X[c] | X[c] | X[c] | X[c]  }
+    \textbf{Service} & \textbf{Mocks} & \textbf{LOC} & \textbf{Tested LOC} \\ \hline \hline
+    actuator-controller & No & 455 & 423 \\
+  \end{tabu}
+
+\section{Discussion}
+\label{sec:discussion}
 
 \end{document}
