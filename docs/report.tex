@@ -6,8 +6,17 @@
 \usepackage[protrusion=true,expansion=true]{microtype}
 \usepackage{amsmath,amsfonts,amsthm} % Math packages
 \usepackage[pdftex]{graphicx}
-\usepackage{url}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
 
+% Configure referencing styles
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,
+  urlcolor=blue
+}
+\urlstyle{same}
 
 %%% Custom sectioning
 \usepackage{sectsty}
@@ -69,5 +78,25 @@
     \item the API does not follow a standard, such as JSON API (\url{https://jsonapi.org/}), and the current one lacks a documentation;
     \item it is missing a acceptance test that assures all the platform components are working and the available hardware is enough to run the platform.
   \end{itemize}
+
+\section{Platform installation}
+  The first step on the installation process is finding the instructions. One may think that they are at \url{https://gitlab.com/interscity/interscity-platform/deploy}, but the most up to date ones were found at \url{https://github.com/LSS-USP/interscity-deploy-revoada} and only because Arthur has pointed us to them. These are the scripts that install the only known instance of the platform running currently at \url{http://playground.interscity.org/}.
+
+  After getting the correct scripts, we have found no major issues bringing up a local installation\footnote{\label{installation-mr}\url{https://gitlab.com/pragmacode/interscity-platform/merge_requests/4}}. Below are listed minor issues that we have found:
+
+  \begin{enumerate}
+    \item the hosts must run Debian Jessie but this requirement was not listed;
+    \item the scripts expect the program \textit{easy\_install} to be available at hosts and this is also not documented;
+    \item if you wish to use the same scripts to perform a deployment on different hosts than Revoada's ones, there are no instructions on which settings must be changed;
+    \item we found deprecation warnings\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/8}} raised by Ansible which can cause these scripts to fail on version 2.8 of Ansible;
+    \item there are errors during the installation that can safely be ignored\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/7}}, but they are not documented and can lead users to think the installation did not succeed instead of looking for problems on their infrastructure.
+  \end{enumerate}
+
+  Items 1, 2 and 3 have already been addressed\textsuperscript{\ref{installation-mr}}.
+
+  Another important remark, which we will get back to at the Discussion (\ref{sec:discussion}), is the amount of services that the platform brings up. It employs a micro-service architecture with the following components: actuator-controller; data-collector; resource-adaptor; resource-cataloguer; resource-discoverer. And these have requirements of their own: Kong; MongoDB; RabbitMQ; Redis; PostgreSQL.
+
+  \section{Discussion}
+  \label{sec:discussion}
 
 \end{document}
