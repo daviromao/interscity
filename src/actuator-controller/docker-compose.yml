@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  mongo:
+    container_name: actuator-controller-mongo
+    image: 'mongo:3.4'
+    environment:
+      AUTH: 'no'
+
+  actuator-controller:
+    container_name: actuator-controller 
+    depends_on:
+      - 'mongo'
+    build: .
+    ports:
+      - 5000:3000
+    volumes:
+      - '.:/actuator-controller'
+    command: bash -c "bundle install && bundle exec rails s -p 3000 -b 0.0.0.0"
+    environment:
+      MONGO_USER: 'admin'
+      MONGO_PASSWORD: 'admin'
+      MONGO_HOST: 'actuator-controller-mongo'
+      MONGO_PORT: 27017
+      RABBITMQ_HOST: 'rabbitmq'
+      KONG_URI: 'http://kong:8001'
+      SELF_HOST: 'actuator-controller:3000'
+      REGISTER_METHOD: 'target'
+
+networks:
+  default:
+    external:
+      name: platform 
