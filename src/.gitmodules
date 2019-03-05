@@ -10,9 +10,6 @@
 [submodule "resource-discoverer"]
 	path = resource-discoverer
 	url = https://gitlab.com/interscity/interscity-platform/resource-discoverer.git
-[submodule "actuator-controller"]
-	path = actuator-controller
-	url = https://gitlab.com/interscity/interscity-platform/actuator-controller.git
 [submodule "kong-api-gateway"]
 	path = kong-api-gateway
 	url = https://gitlab.com/interscity/interscity-platform/kong-api-gateway.git
