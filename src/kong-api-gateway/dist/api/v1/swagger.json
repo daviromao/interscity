@@ -1,0 +1,2621 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "InterSCity Platform API",
+    "description": "An open-source microservices-based platform to enable the development of smart city applications",
+    "version": "1.0.0",
+    "contact": {
+      "name": "InterSCity Consortium",
+      "url": "http://interscity.org/",
+      "email": "interscity@ime.usp.br"
+    },
+    "license": {
+      "name": "MPL 2.0",
+      "url": "https://www.mozilla.org/en-US/MPL/2.0/"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/v1",
+      "description": "Localhost server"
+    },
+    {
+      "url": "http://platform.interscity.org/v1",
+      "description": "Oficial server"
+    }
+  ],
+  "paths": {
+    "/adaptor/resources": {
+      "post": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Register new resources",
+        "description": "Register a new city resource. This action will return a new UUID\nto the registered resource, which must be used in future requests\n",
+        "requestBody": {
+          "description": "The city resource to create.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "lat",
+                      "lon",
+                      "status"
+                    ],
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "resource's description",
+                        "example": "A public bus"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "a list with all the resource's capabilities.",
+                        "example": [
+                          "temperature",
+                          "humidity",
+                          "illuminate"
+                        ]
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "the current status of the resource. Currently, we only support the 'active' status",
+                        "example": "active"
+                      },
+                      "lat": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "resource's latitude",
+                        "example": -23.559616
+                      },
+                      "lon": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "resource's longitude",
+                        "example": -46.731386
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Status can't be blank"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adaptor/resources/{uuid}": {
+      "put": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Update an existing resource",
+        "description": "Update an existing city resource. This action will return the updated resource\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's uuid"
+          }
+        ],
+        "requestBody": {
+          "description": "The city resource data to update.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "resource's description",
+                    "example": "A public bus"
+                  },
+                  "capabilities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "a list with all the resource's capabilities.",
+                    "example": [
+                      "temperature",
+                      "humidity",
+                      "illuminate"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "the current status of the resource. Currently, we only support the 'active' status",
+                    "example": "active"
+                  },
+                  "lat": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "resource's latitude",
+                    "example": -23.559616
+                  },
+                  "lon": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "resource's longitude",
+                    "example": -46.731386
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The updated resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Status can't be blank"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adaptor/resources/{uuid}/data": {
+      "post": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Post several context data",
+        "description": "Post a set of data collected by city resources. Resources may\ncollect observations about the city environment through sensor\ndevices, which provide its sensor capabilities, such as\ntemperature, humidity, to cite a few. It is possible to post\nseveral observed data by time. Thus, the body must specify the\ncorrespondent capability for each observation.\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's uuid"
+          }
+        ],
+        "requestBody": {
+          "description": "Post several data collected by sensors of a city resource.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "temperature": {
+                        "type": "array",
+                        "description": "The list of observed data for a given resource capability",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "example": 10,
+                              "description": "the observed value can be of any type"
+                            },
+                            "timestamp": {
+                              "type": "string",
+                              "description": "the timestamp of the observation",
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        "example": [
+                          {
+                            "value": 10,
+                            "timestamp": "2017-06-14T17:52:25.428Z"
+                          },
+                          {
+                            "value": 20,
+                            "timestamp": "2017-06-14T17:57:25.428Z"
+                          }
+                        ]
+                      },
+                      "position": {
+                        "type": "array",
+                        "description": "The list of observed data for a given resource capability",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "lat": {
+                                  "type": "number",
+                                  "format": "double",
+                                  "example": -10.00032
+                                },
+                                "lon": {
+                                  "type": "number",
+                                  "format": "double",
+                                  "example": -23.200223
+                                }
+                              },
+                              "description": "the observed value can be of any type"
+                            },
+                            "timestamp": {
+                              "type": "string",
+                              "description": "the timestamp of the observation",
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        "example": [
+                          {
+                            "value": {
+                              "lat": -10.00032,
+                              "lon": -23.200223
+                            },
+                            "timestamp": "2017-06-14T17:52:25.428Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/adaptor/resources/{uuid}/data/{capability}": {
+      "post": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Post context data for a single capability",
+        "description": "Rost a data collected by city resources from a specific sensor\ndevice (for a single capability).\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's uuid"
+          },
+          {
+            "in": "path",
+            "name": "capability",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's capability"
+          }
+        ],
+        "requestBody": {
+          "description": "Post data collected for a single capability of a city resource.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "example": 10,
+                          "description": "the observed value can be of any type"
+                        },
+                        "timestamp": {
+                          "type": "string",
+                          "description": "the timestamp of the observation",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "value": 10,
+                        "timestamp": "2017-06-14T17:52:25.428Z"
+                      },
+                      {
+                        "value": 20,
+                        "timestamp": "2017-06-14T17:57:25.428Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/adaptor/subscriptions": {
+      "post": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Subscribe to receive actuation commands",
+        "description": "When you register a resource with actuator capabilities, such as\n**illuminate** or **semaphore**, you must subscribe to the platform\nto receive notifications whenever an application send a new command\nfor this resource. We will notify you through a Webhook \narchitecture. To do so, you must provide an HTTP server to receive\na POST command with the notification.\n",
+        "requestBody": {
+          "description": "The subscription datails to create.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subscription": {
+                    "type": "object",
+                    "required": [
+                      "uuid",
+                      "url",
+                      "capabilities"
+                    ],
+                    "properties": {
+                      "uuid": {
+                        "type": "string",
+                        "description": "resource's uuid",
+                        "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "a list with the resource's actuator capabilities that you want to receive notifications about.",
+                        "example": [
+                          "semaphore",
+                          "illuminate"
+                        ]
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+                        "example": "http://myendpoint.com"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": [
+                        "Url can't be blank",
+                        "Capabilities can't be blank"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource Cataloguer service is unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Get all subscriptions",
+        "description": "This endpoint can be used to get data of all subscriptions.\nFurthermore, one may filter results for a specific uuid\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parameter to filter subscriptions by resource's uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "subscriptions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Subscription"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Subscription not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adaptor/subscriptions/{id}": {
+      "put": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Update a specific subscription",
+        "description": "This endpoint can be used to update an existing subscription.\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Subscription's id"
+          }
+        ],
+        "requestBody": {
+          "description": "The subscription datails to update.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subscription": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string",
+                        "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+                        "example": "http://newendpoint.com"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Subscription not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": [
+                        "Url can't be blank",
+                        "Capabilities can't be blank"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource Cataloguer service is unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Resource Adaptor"
+        ],
+        "summary": "Get data about a specific subscription",
+        "description": "This endpoint can be used to get data of an existing subscription.\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Subscription's id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Subscription not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/resources": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get all resources registered on the platform",
+        "description": "This endpoint can be used to get static data of all registered\nresources. The result is paginated through the parameter\n'page' and each page has 40 resources\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Parameter to paginate the resources list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Register new resources",
+        "description": "Register a new city resource. This action will return a new UUID\nto the registered resource, which must be used in future requests\n",
+        "requestBody": {
+          "description": "The city resource to create.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "lat",
+                      "lon",
+                      "status"
+                    ],
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "resource's description",
+                        "example": "A public bus"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "a list with all the resource's capabilities.",
+                        "example": [
+                          "temperature",
+                          "humidity",
+                          "illuminate"
+                        ]
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "the current status of the resource. Currently, we only support the 'active' status",
+                        "example": "active"
+                      },
+                      "lat": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "resource's latitude",
+                        "example": -23.559616
+                      },
+                      "lon": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "resource's longitude",
+                        "example": -46.731386
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Status can't be blank"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/resources/sensors": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get all resources registered on the platform with sensor capabilities",
+        "description": "This endpoint can be used to get static data of all registered\nresources with sensor capabilities. The result is paginated\nthrough the parameter 'page' and each page has 40 resources\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Parameter to paginate the resources list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources with sensor capabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/resources/actuators": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get all resources registered on the platform with actuator capabilities",
+        "description": "This endpoint can be used to get static data of all registered\nresources with actuator capabilities. The result is paginated\nthrough the parameter 'page' and each page has 40 resources\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Parameter to paginate the resources list"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources with actuator capabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "example": {
+                          "capabilities": [
+                            "semaphore"
+                          ],
+                          "uuid": "45b7d363-86fd-4f81-8681-663140b318d4",
+                          "description": "A traffic semaphore",
+                          "status": "active",
+                          "lat": -23.559616,
+                          "lon": -46.731386,
+                          "country": "Brazil",
+                          "state": "São Paulo",
+                          "city": "São Paulo",
+                          "neighborhood": "Butantã",
+                          "postal_code": null,
+                          "created_at": "2017-08-08T17:44:26.728Z",
+                          "updated_at": "2017-08-08T17:44:26.728Z",
+                          "id": 11
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/resources/search": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Search for registered resources using different filters",
+        "description": "This endpoint can be used to search for registered resources based on some specific query parameters. One must provide both *lat* and *lon* in order to perform location-based search. In addition, you may also provide the *radius* parameter to enable the platform to search for resources near to the specified point.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "capability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter resources with the specified capability"
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "a location's latitude"
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "a location's longitude"
+          },
+          {
+            "in": "query",
+            "name": "radius",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "search for resources near to the point defined by *lat* and *lon* parameters considering the *radius* distance in meters from the point"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on resource's uuid"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on the resource's description"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based the current status of the resource"
+          },
+          {
+            "in": "query",
+            "name": "country",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on country name"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on state name"
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on city name"
+          },
+          {
+            "in": "query",
+            "name": "neighborhood",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on neighborhood name"
+          },
+          {
+            "in": "query",
+            "name": "postal_code",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter based on postal_code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources the match the search filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "example": [
+                          {
+                            "capabilities": [
+                              "semaphore"
+                            ],
+                            "uuid": "f43d42ab-58ea-4eff-9c24-2e3c52103f00",
+                            "description": "A traffic semaphore",
+                            "status": "active",
+                            "lat": -23.559616,
+                            "lon": -46.731386,
+                            "country": "Brazil",
+                            "state": "São Paulo",
+                            "city": "São Paulo",
+                            "neighborhood": "Butantã",
+                            "postal_code": null,
+                            "created_at": "2017-08-08T17:44:26.728Z",
+                            "updated_at": "2017-08-08T17:44:26.728Z",
+                            "id": 11
+                          },
+                          {
+                            "capabilities": [
+                              "temperature",
+                              "humidity"
+                            ],
+                            "uuid": "45b7d363-86fd-4f81-8681-663140b318d4",
+                            "description": "A traffic semaphore",
+                            "status": "active",
+                            "lat": -23.559616,
+                            "lon": -46.731386,
+                            "country": "Brazil",
+                            "state": "São Paulo",
+                            "city": "São Paulo",
+                            "neighborhood": "Butantã",
+                            "postal_code": null,
+                            "created_at": "2017-08-08T17:44:26.728Z",
+                            "updated_at": "2017-08-08T17:44:26.728Z",
+                            "id": 8
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/resources/{uuid}": {
+      "put": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Update an existing resource",
+        "description": "Update an existing city resource. This action will return the updated resource\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's uuid"
+          }
+        ],
+        "requestBody": {
+          "description": "The city resource data to update.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "resource's description",
+                    "example": "A public bus"
+                  },
+                  "capabilities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "a list with all the resource's capabilities.",
+                    "example": [
+                      "temperature",
+                      "humidity",
+                      "illuminate"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "the current status of the resource. Currently, we only support the 'active' status",
+                    "example": "active"
+                  },
+                  "lat": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "resource's latitude",
+                    "example": -23.559616
+                  },
+                  "lon": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "resource's longitude",
+                    "example": -46.731386
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The updated resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Status can't be blank"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get data about a specific resource",
+        "description": "This endpoint can be used to get the static data of an existing resource\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Resource's uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/capabilities": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get all capabilities",
+        "description": "This endpoint can be used to get the list of existing capabilities\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "capability_type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "filter by capability's types in [sensor, actuator]"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of capabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "example": [
+                          {
+                            "id": 1,
+                            "name": "semaphore",
+                            "function": 1,
+                            "description": "Manipulate the semaphore status"
+                          },
+                          {
+                            "id": 2,
+                            "name": "temperature",
+                            "function": 0,
+                            "description": "Measure the temperature of the environment"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Create a new capability",
+        "description": "Create a new capability\n",
+        "requestBody": {
+          "description": "The capability to create.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "capability_type"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "capability's name",
+                        "example": "temperature"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "resource's description",
+                        "example": "Measure the temperature of the environment"
+                      },
+                      "capability_type": {
+                        "type": "string",
+                        "description": "the capability's type in [sensor, actuator]",
+                        "example": "sensor"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created capability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capability"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Bad capability_type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/capabilities/{name}": {
+      "get": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Get data about a specific capability",
+        "description": "This endpoint can be used to get details about an existing capability\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Capability's name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested capability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Capability not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Capability not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Update an existing capability",
+        "description": "Update an existing capability\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Capability's name"
+          }
+        ],
+        "requestBody": {
+          "description": "The capability data to update.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "capability's name",
+                    "example": "temperature"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "capability's description",
+                    "example": "Measure the temperature of the environment"
+                  },
+                  "function": {
+                    "type": "string",
+                    "description": "capability's functions (sensor or actuator)",
+                    "example": "sensor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The updated capability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Resource not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation failed: Bad capability_type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Resource Catalog"
+        ],
+        "summary": "Delete a specific capability",
+        "description": "This endpoint can be used to delete an existing capability. As a consequence, both new and updated resources will not be able to provide this capability on the platform\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Capability's name"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The capability was destroyed"
+          },
+          "404": {
+            "description": "Capability not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Capability not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actuator/commands": {
+      "get": {
+        "tags": [
+          "Actuator Controller"
+        ],
+        "summary": "Get all actuator commands requested to the platform by client applications",
+        "description": "This endpoint can be used to get the list of actuation commands requested by client applications for resources with actuation capabilities. It is also possible to filter the results by status, uuid of the target resource, and the actuation capability. Actuation commands may have one of the following status:\n* pending - the command was received by the platform, but not by the resource yet\n* failed - the command could not be sended to the target resource\n* processed - the command was processed by the target resource\n* rejected - the command was rejected by the target resource, probrably because it does not konw how to process the input\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Parameter to paginate the resources list. By default it returns the 1st page."
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer",
+              "default": 40
+            },
+            "description": "Parameter to paginate the resources list. The default value is 40."
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by status. This value should be in ['pending', 'failed', 'processed', 'rejected']"
+          },
+          {
+            "in": "query",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by target's uuid"
+          },
+          {
+            "in": "query",
+            "name": "capability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by capability's name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of actuation commands",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "commands": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Command"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Actuator Controller"
+        ],
+        "summary": "Send commands to city resources",
+        "description": "One may use this endpoint to send commands to underlying city resources. This API allows you to send multiple commands at once rather than perform several requests to change multiple resources. Whenever a command is requested by a client application, it's status is pending. As a result, the response of this endpoint is divided in success commands (which passed in all validations) and failed commands (with validation or input issues).\n\nActuation commands may have one of the following status:\n* pending - the command was received by the platform, but not by the resource yet\n* failed - the command could not be sended to the target resource\n* processed - the command was processed by the target resource\n* rejected - the command was rejected by the target resource, probrably because it does not konw how to process the input\n",
+        "requestBody": {
+          "description": "The set of commands for city resources.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "uuid": {
+                          "type": "string",
+                          "description": "resource's uuid",
+                          "example": "b0ae6f76-521d-4199-9595-f52c99361052"
+                        },
+                        "capabilities": {
+                          "type": "object",
+                          "description": "a hash with the capabilities and their values",
+                          "example": {
+                            "semaphore": "green",
+                            "illuminate": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of successful and failed commands",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Command"
+                      }
+                    },
+                    "failure": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "error": "Invalid command [\"Value can't be blank\"]",
+                          "value": null,
+                          "capability": "illuminate",
+                          "uuid": "b0ae6f76-521d-4199-9595-f52c99361052",
+                          "code": 400
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Parameter data is missing"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector/resources/data": {
+      "post": {
+        "tags": [
+          "Data Collector"
+        ],
+        "summary": "Get historical data of sensor capabilities of all city resources",
+        "description": "This endpoint can be used to get the data history collected from resources with sensor capabilities. One may use the following parameters to filter the result of the data.\n\n* **uuids** - a list of resource identifiers that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"uuids\":[\"5ad20589-a3db-4521-b1bc-a21dde00a25c\",\"b5d170b5-aaf3-42bc-9e47-58e3fe2a4846\"]}}' http://localhost:3000/resources/data/last\n```\n\n\n* **capabilities** - the set of capabilities that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"capabilities\":\"tofu\"}}' http://platform.interscity.org/collector/resources/data\n```\n\n\n* **date range** - date interval based on in ISO-8601 format that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\"}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\",\"end_range\":\"2016-06-25T16:21:29\"}' http://localhost:3000/resources/data\n```\n\n\n* **value range** - maximum, minimum or exact values considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"min\":\"13.498\",\"max\":\"18.091\"}}}}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"equal\":\"13.498\"}}}}' http://localhost:3000/resources/data\n```\n",
+        "requestBody": {
+          "description": "Filter parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sensor_value": {
+                    "type": "object",
+                    "properties": {
+                      "uuids": {
+                        "type": "array",
+                        "example": [
+                          "5ad20589-a3db-4521-b1bc-a21dde00a25c",
+                          "b5d170b5-aaf3-42bc-9e47-58e3fe2a4846"
+                        ]
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "example": [
+                          "temperature",
+                          "humidity"
+                        ]
+                      },
+                      "range": {
+                        "type": "object",
+                        "properties": {
+                          "temperature": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": "object",
+                                "example": 13.498
+                              },
+                              "max": {
+                                "type": "object",
+                                "example": 18.091
+                              }
+                            }
+                          },
+                          "humidity": {
+                            "type": "object",
+                            "properties": {
+                              "equal": {
+                                "type": "object",
+                                "example": 20.02
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "start_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T12:21:29"
+                  },
+                  "end_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T16:21:29"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of sensor values by resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "uuid": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              },
+                              {
+                                "value": 28.237,
+                                "date": "2016-06-20T06:37:52.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              },
+                              {
+                                "value": 28.237,
+                                "date": "2016-06-20T06:37:52.000Z"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "uuid": "56tcf598-3tg1-77d9-034t-w5ajis5u44c7",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 25.5,
+                                "date": "2016-07-21T23:27:35.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 18,
+                                "date": "2016-07-21T23:27:35.000Z"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector/resources/{uuid}/data": {
+      "post": {
+        "tags": [
+          "Data Collector"
+        ],
+        "summary": "Get historical data of sensor capabilities of a specific city resource",
+        "description": "This endpoint can be used to get the data history collected from a specific resource with sensor capabilities, identified by its **uuid**. One may use the following parameters to filter the result of the data.\n\n* **capabilities** - the set of capabilities that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"capabilities\":\"tofu\"}}' http://platform.interscity.org/collector/resources/data\n```\n\n\n* **date range** - date interval based on in ISO-8601 format that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\"}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\",\"end_range\":\"2016-06-25T16:21:29\"}' http://localhost:3000/resources/data\n```\n\n\n* **value range** - maximum, minimum or exact values considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"min\":\"13.498\",\"max\":\"18.091\"}}}}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"equal\":\"13.498\"}}}}' http://localhost:3000/resources/data\n```\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "example": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+            "description": "Resource's uuid"
+          }
+        ],
+        "requestBody": {
+          "description": "Filter parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sensor_value": {
+                    "type": "object",
+                    "properties": {
+                      "capabilities": {
+                        "type": "array",
+                        "example": [
+                          "temperature",
+                          "humidity"
+                        ]
+                      },
+                      "range": {
+                        "type": "object",
+                        "properties": {
+                          "temperature": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": "object",
+                                "example": 13.498
+                              },
+                              "max": {
+                                "type": "object",
+                                "example": 18.091
+                              }
+                            }
+                          },
+                          "humidity": {
+                            "type": "object",
+                            "properties": {
+                              "equal": {
+                                "type": "object",
+                                "example": 20.02
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "start_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T12:21:29"
+                  },
+                  "end_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T16:21:29"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of sensor values by resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "uuid": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              },
+                              {
+                                "value": 28.237,
+                                "date": "2016-06-20T06:37:52.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              },
+                              {
+                                "value": 28.237,
+                                "date": "2016-06-20T06:37:52.000Z"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector/resources/data/last": {
+      "post": {
+        "tags": [
+          "Data Collector"
+        ],
+        "summary": "Get the most recent data of sensor capabilities from all city resources",
+        "description": "This endpoint can be used to get the most recent data collected from resources with sensor capabilities. As a consequence, a response will contain at most one value for each of the included capabilities for a given resource. One may use the following parameters to filter the result of the data.\n\n* **uuids** - a list of resource identifiers that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"uuids\":[\"5ad20589-a3db-4521-b1bc-a21dde00a25c\",\"b5d170b5-aaf3-42bc-9e47-58e3fe2a4846\"]}}' http://localhost:3000/resources/data/last\n```\n\n\n* **capabilities** - the set of capabilities that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"capabilities\":\"tofu\"}}' http://platform.interscity.org/collector/resources/data\n```\n\n\n* **date range** - date interval based on in ISO-8601 format that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\"}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\",\"end_range\":\"2016-06-25T16:21:29\"}' http://localhost:3000/resources/data\n```\n\n\n* **value range** - maximum, minimum or exact values considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"min\":\"13.498\",\"max\":\"18.091\"}}}}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"equal\":\"13.498\"}}}}' http://localhost:3000/resources/data\n```\n",
+        "requestBody": {
+          "description": "Filter parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sensor_value": {
+                    "type": "object",
+                    "properties": {
+                      "uuids": {
+                        "type": "array",
+                        "example": [
+                          "5ad20589-a3db-4521-b1bc-a21dde00a25c",
+                          "b5d170b5-aaf3-42bc-9e47-58e3fe2a4846"
+                        ]
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "example": [
+                          "temperature",
+                          "humidity"
+                        ]
+                      },
+                      "range": {
+                        "type": "object",
+                        "properties": {
+                          "temperature": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": "object",
+                                "example": 13.498
+                              },
+                              "max": {
+                                "type": "object",
+                                "example": 18.091
+                              }
+                            }
+                          },
+                          "humidity": {
+                            "type": "object",
+                            "properties": {
+                              "equal": {
+                                "type": "object",
+                                "example": 20.02
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "start_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T12:21:29"
+                  },
+                  "end_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T16:21:29"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of sensor values by resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "uuid": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "uuid": "56tcf598-3tg1-77d9-034t-w5ajis5u44c7",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 25.5,
+                                "date": "2016-07-21T23:27:35.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 18,
+                                "date": "2016-07-21T23:27:35.000Z"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collector/resources/{uuid}/data/last": {
+      "post": {
+        "tags": [
+          "Data Collector"
+        ],
+        "summary": "Get the most recent data of sensor capabilities from a specific city resource",
+        "description": "This endpoint can be used to get the most recent data collected from a specific resource with sensor capabilities, identified by its **uuid**. One may use the following parameters to filter the result of the data.\n\n* **capabilities** - the set of capabilities that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\":{\"capabilities\":\"tofu\"}}' http://platform.interscity.org/collector/resources/data\n```\n\n\n* **date range** - date interval based on in ISO-8601 format that must be considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\"}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"start_range\":\"2016-06-25T12:21:29\",\"end_range\":\"2016-06-25T16:21:29\"}' http://localhost:3000/resources/data\n```\n\n\n* **value range** - maximum, minimum or exact values considered to obtain the data. You may use *curl* to test it:\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"min\":\"13.498\",\"max\":\"18.091\"}}}}' http://localhost:3000/resources/data\n```\n```\n$ curl -H \"Content-Type: application/json\" -X POST -d '{\"sensor_value\": {\"range\":{\"chillwave\":{\"equal\":\"13.498\"}}}}' http://localhost:3000/resources/data\n```\n",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "example": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+            "description": "Resource's uuid"
+          }
+        ],
+        "requestBody": {
+          "description": "Filter parameters",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sensor_value": {
+                    "type": "object",
+                    "properties": {
+                      "capabilities": {
+                        "type": "array",
+                        "example": [
+                          "temperature",
+                          "humidity"
+                        ]
+                      },
+                      "range": {
+                        "type": "object",
+                        "properties": {
+                          "temperature": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": "object",
+                                "example": 13.498
+                              },
+                              "max": {
+                                "type": "object",
+                                "example": 18.091
+                              }
+                            }
+                          },
+                          "humidity": {
+                            "type": "object",
+                            "properties": {
+                              "equal": {
+                                "type": "object",
+                                "example": 20.02
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "start_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T12:21:29"
+                  },
+                  "end_range": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2016-06-25T16:21:29"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of sensor values by resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "example": [
+                        {
+                          "uuid": "ae9cf502-5ed2-47d4-914c-c1caec1c41c4",
+                          "capabilities": {
+                            "temperature": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              }
+                            ],
+                            "humidity": [
+                              {
+                                "value": 38.313,
+                                "date": "2016-06-21T23:27:35.000Z"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discovery/resources": {
+      "get": {
+        "tags": [
+          "Resource Discovery"
+        ],
+        "summary": "Context-aware search endpoint to discovery city resources",
+        "description": "This endpoint can be used to search for city resources based context data. One may combine static and dynamic filters to discovery existing resources.\nOne may use the following context-based filters for resource discovery:\n\n* **capability** - If this parameter is used alone, the system will filter the results by resources with the given capability. However, you may also combine it with the following parameters:\n  * **min_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at least the value informed. It should **not** be used with the parameter **cap_value**.\n  * **max_cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is at most the value informed. It should **not** be used with the parameter **cap_value**.\n  * **cap_value** - You must combine this parameter with the **capability** parameter. By doing so, the system will filter the results by resources whose the most recent value for the given capability is exactly the value informed. It should **not** be used either with the parameter **max_cap_value** or **min_cap_value**.\n\n* **location** - To discovery resources based on location data, you must always provide both **lat** and **lon** parameters. With these two parameters, the system will discovery resources which are located exactly at the point informed. However, you may also combine them with the following parameter:\n  * **radius**: Tell the system to include resources near to the location formed by **lat** and **lon** considering the radius (in meters) informed.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "capability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by resources with a given capability",
+            "example": "temperature"
+          },
+          {
+            "in": "query",
+            "name": "min_cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at least the informed *min_cap_value*",
+            "example": 20
+          },
+          {
+            "in": "query",
+            "name": "max_cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is at most the informed *max_cap_value*",
+            "example": 24
+          },
+          {
+            "in": "query",
+            "name": "cap_value",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources that has the capability informed in the **capability** parameter and that the most recent value for that capability is exactly the informed *cap_value*",
+            "example": 23.5
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose location has the latitude informed",
+            "example": -23.558253
+          },
+          {
+            "in": "query",
+            "name": "lon",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose location has the longitude informed",
+            "example": -46.730903
+          },
+          {
+            "in": "query",
+            "name": "radius",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "Filter by resources whose near to the location formed by *lat* and *lon* considering the informed radius(in meters)",
+            "example": 100
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "description": "resource's uuid",
+                "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+              },
+              "description": {
+                "type": "string",
+                "description": "resource's description",
+                "example": "A public bus"
+              },
+              "capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "a list with all the resource's capabilities.",
+                "example": [
+                  "temperature",
+                  "humidity",
+                  "illuminate"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "description": "the current status of the resource. Currently, we only support the 'active' status",
+                "example": "active"
+              },
+              "lat": {
+                "type": "number",
+                "format": "double",
+                "description": "resource's latitude",
+                "example": -23.559616
+              },
+              "lon": {
+                "type": "number",
+                "format": "double",
+                "description": "resource's longitude",
+                "example": -46.731386
+              },
+              "country": {
+                "type": "string",
+                "description": "country name discovered automatically from the resource's position",
+                "example": "Brazil"
+              },
+              "state": {
+                "type": "string",
+                "description": "state name discovered automatically from the resource's position",
+                "example": "São Paulo"
+              },
+              "city": {
+                "type": "string",
+                "description": "state name discovered automatically from the resource's position",
+                "example": "São Paulo"
+              },
+              "neighborhood": {
+                "type": "string",
+                "description": "neighborhood name discovered automatically from the resource's position",
+                "example": "Butantã"
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "postal code discovered automatically from the resource's position",
+                "example": null
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of resource creation"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of the last resource update"
+              },
+              "id": {
+                "type": "integer",
+                "description": "internal id (not used by clients)",
+                "example": 10
+              }
+            }
+          }
+        }
+      },
+      "Capability": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "format": "integer",
+                "description": "internal id",
+                "example": 34
+              },
+              "name": {
+                "type": "string",
+                "description": "capability's name",
+                "example": "temperature"
+              },
+              "description": {
+                "type": "string",
+                "description": "capability's description",
+                "example": "Measure the temperature of the environment"
+              },
+              "function": {
+                "type": "string",
+                "description": "capability's functions (sensor or actuator)",
+                "example": "sensor"
+              }
+            }
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "subscription": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "subscription id. This must be used in future requests",
+                "example": 23
+              },
+              "active": {
+                "type": "boolean",
+                "description": "subscription status. Non active endpoints will not longer receive notifications",
+                "example": true
+              },
+              "uuid": {
+                "type": "string",
+                "description": "resource's uuid related to the subscription",
+                "example": "45b7d363-86fd-4f81-8681-663140b318d4"
+              },
+              "capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "a list with the resource's actuator capabilities that you want to receive notifications about.",
+                "example": [
+                  "semaphore",
+                  "illuminate"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "description": "the callback url that we must send the notification when receiving commands related to this subscription.",
+                "example": "http://myendpoint.com"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of subscription creation"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of the last subscription update"
+              }
+            }
+          }
+        }
+      },
+      "Command": {
+        "type": "object",
+        "properties": {
+          "subscription": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "object",
+                "properties": {
+                  "$oid": {
+                    "type": "string",
+                    "description": "internal id",
+                    "example": "598a183c913ccd0001a8cb65"
+                  }
+                }
+              },
+              "capability": {
+                "type": "string",
+                "description": "capability's name",
+                "example": "illuminate"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of subscription creation"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "timestamp of the last subscription update"
+              },
+              "platform_resource_id": {
+                "type": "object",
+                "properties": {
+                  "$oid": {
+                    "type": "string",
+                    "description": "platform resource's internal id",
+                    "example": "598a17e4913ccd0001a8cb5f"
+                  }
+                }
+              },
+              "uuid": {
+                "type": "string",
+                "description": "target resource's uuid",
+                "example": "b0ae6f76-521d-4199-9595-f52c99361052"
+              },
+              "value": {
+                "type": "object",
+                "description": "the input value/command to be used by the resource to perform the actuation command",
+                "example": "low"
+              },
+              "status": {
+                "type": "string",
+                "description": "the current status of the command",
+                "example": "pending"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
