@@ -15,6 +15,12 @@ different sensors scattered throughout the city. For example, with this
 service one could obtain data of all temperature sensors on a city,
 either historical or the most recent data.
 
+# Development requirements
+
+* MongoDB
+  - export the environment variables: `MONGO_HOST`; `MONGO_PORT`; `MONGO_CACHE_HOST`; and `MONGO_CACHE_PORT`
+* RabbitMQ
+
 # How to use
 
 You must see:
