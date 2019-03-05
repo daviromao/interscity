@@ -7,8 +7,11 @@ The detailed documentation can be found in [the Wiki of this repository](https:/
 ## Environment Setup
 
 * Install [PostgreSQL](https://www.postgresql.org/download/)
-* Run on terminal: ```$ sudo -u postgres psql```
-* Run on postgresql command line: ```$ create role resource_adaptor with createdb login password 'resource_adaptor';```
+  * Run on terminal: ```$ sudo -u postgres psql```
+  * Run on postgresql command line: ```$ create role resource_adaptor with createdb login password 'resource_adaptor';```
+  * `export POSTGRESQL_USER=resource_adaptor`
+  * `export POSTGRESQL_PASSWORD=resource_adaptor`
+* RabbitMQ
 * In the project directory, run:
   * ```$ gem install rails-api```
   * ```$ gem install bundle```
