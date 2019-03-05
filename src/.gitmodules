@@ -7,9 +7,6 @@
 [submodule "resource-adaptor"]
 	path = resource-adaptor
 	url = https://gitlab.com/interscity/interscity-platform/resource-adaptor.git
-[submodule "external-resources"]
-	path = external-resources
-	url = https://gitlab.com/interscity/interscity-platform/external-resources.git
 [submodule "resource-discoverer"]
 	path = resource-discoverer
 	url = https://gitlab.com/interscity/interscity-platform/resource-discoverer.git
