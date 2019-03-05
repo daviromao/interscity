@@ -1,0 +1,5 @@
+deploy/ansible/*.retry
+
+*.log
+
+deploy/.vagrant/
