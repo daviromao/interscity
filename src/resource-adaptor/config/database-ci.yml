@@ -1,0 +1,10 @@
+# This is the database.yml file used by GitLab CI.
+
+test:
+  adapter: postgresql
+  host: postgres
+  database: resource_adaptor_test
+  username: resource_adaptor
+  password: resource_adaptor
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  encoding: unicode
