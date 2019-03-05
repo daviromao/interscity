@@ -1,0 +1,97 @@
+#!/bin/bash
+localPATH=`pwd`
+sep="---------------------------"
+msg=""
+
+CYAN='\033[0;36m'
+NC='\033[0m'
+RED='\033[0;31m'
+projects=( "kong-api-gateway" "resource-adaptor" "resource-cataloguer" "data-collector" "resource-discoverer" "actuator-controller" )
+
+verify () {
+  if [ $? != 0 ]; then
+    printf "${RED}$1${NC}"
+    exit 2
+  fi
+}
+
+if [ "$1" = "pull" ]; then
+  echo $sep
+  for d in "${projects[@]}"; do
+    if [ "$d" != 'zPOO/' ]; then
+      if [ -n "$(git -C $localPATH/$d status --porcelain)" ]; then
+        msg="You have uncomitted changes on $d"
+        printf "${RED}"
+        echo $msg
+        printf "${NC}"
+        echo
+      fi
+    fi
+  done
+
+  if [ -n "$msg" ]; then
+    echo $sep
+    echo "Aborting..."
+    echo
+    exit 1
+  else
+    echo "All repositories are clean"
+    echo "$sep"
+    for d in "${projects[@]}"; do
+      if [ "$d" != 'zPOO/' ]; then
+        echo "Processing $d :"
+        git -C $localPATH/$d checkout master
+        printf "${CYAN}"
+        echo $(git -C $localPATH/$d pull origin master)
+        printf "${NC}"
+      fi
+    done
+  fi
+fi
+
+if [ "$1" = "setup" ]; then
+  for d in "${projects[@]}"; do
+    if [ "$d" != 'zPOO/' ]; then
+      echo "$sep"
+      printf "Starting $d :"
+      cd $localPATH/$d
+      printf "${CYAN}"
+      ./scripts/setup
+      printf "${NC}"
+    fi
+  done
+fi
+
+if [ "$1" = "start" ]; then
+  for d in "${projects[@]}"; do
+    if [ "$d" != 'zPOO/' ]; then
+      echo "$sep"
+      echo "Starting $d :"
+      cd $localPATH/$d
+      ./scripts/development stop > /dev/null
+      printf "${CYAN}"
+      echo $(./scripts/development start)
+      printf "${NC}"
+    fi
+  done
+fi
+
+if [ "$1" = "stop" ]; then
+  for d in "${projects[@]}"; do
+    if [ "$d" != 'zPOO/' ]; then
+      echo "$sep"
+      echo "Stopping $d :"
+      cd $localPATH/$d
+      printf "${CYAN}"
+      echo $(./scripts/development stop)
+      printf "${NC}"
+    fi
+  done
+fi
+
+if [ "$1" = "test" ]; then
+  echo "Running all tests"
+  printf "${CYAN}"
+  ./tests/run_all
+  printf "${NC}"
+fi

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+SERVICE=$1
+
+cd $(cd $(dirname $SERVICE) && pwd -P)/$(basename $SERVICE)
+./scripts/development exec $SERVICE bundle exec rspec
+cd -
