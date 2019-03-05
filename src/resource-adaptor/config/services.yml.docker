@@ -1,0 +1,8 @@
+# Be sure to restart your server when you modify this file
+
+services:
+  catalog: "resource-cataloguer:3000"
+  colector: "data-collector:3000"
+  resource: "resource-adaptor:3000"
+  rabbitmq: "rabbitmq"
+  kong: "kong:8001"

@@ -1,0 +1,7 @@
+# Be sure to restart your server when you modify this file
+
+services:
+  catalog: "localhost:3001"
+  colector: "localhost:3002"
+  resource: "localhost:3000"
+
