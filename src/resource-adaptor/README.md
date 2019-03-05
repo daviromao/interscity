@@ -9,8 +9,6 @@ The detailed documentation can be found in [the Wiki of this repository](https:/
 * Install [PostgreSQL](https://www.postgresql.org/download/)
 * Run on terminal: ```$ sudo -u postgres psql```
 * Run on postgresql command line: ```$ create role resource_adaptor with createdb login password 'resource_adaptor';```
-* Install RVM
-* Run on terminal: ```$ rvm install 2.2.0```
 * In the project directory, run:
   * ```$ gem install rails-api```
   * ```$ gem install bundle```
