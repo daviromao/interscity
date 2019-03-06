@@ -33,6 +33,9 @@ the
 * In the project directory, run:
   * ```$ gem install bundle```
   * ```$ bundle install```
+* RabbitMQ
+* PostgreSQL
+  * Install and start it
   * ```$ bundle exec rake db:create```
   * ```$ bundle exec rake db:migrate```
 * Run the tests:
