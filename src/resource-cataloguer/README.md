@@ -30,11 +30,12 @@ and the required data structures.
 By using this option, you will have additional overhead to properly configure
 the
 
-* Install RVM
-* Run on terminal: ```$ rvm install 2.3.1```
 * In the project directory, run:
   * ```$ gem install bundle```
   * ```$ bundle install```
+* RabbitMQ
+* PostgreSQL
+  * Install and start it
   * ```$ bundle exec rake db:create```
   * ```$ bundle exec rake db:migrate```
 * Run the tests:
