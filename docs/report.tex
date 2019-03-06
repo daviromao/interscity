@@ -97,17 +97,42 @@
 
   Another important remark, which we will get back to at the Discussion (\ref{sec:discussion}), is the amount of services that the platform brings up. It employs a micro-service architecture with the following components: actuator-controller; data-collector; resource-adaptor; resource-cataloguer; resource-discoverer. And these have requirements of their own: Kong; MongoDB; RabbitMQ; Redis; PostgreSQL.
 
-\section{Tests}
-  Unit tests summary:
+\section{Setup development environment}
+  While working with the installation of a production environment, we have noticed a high fragmentation of code between many repositories and this perception was exacerbated when we started to setup a development environment using the code found at \url{https://gitlab.com/interscity/interscity-platform/dev-env}. As a means of making our job of evaluating the project easier and also already taking the opportunity to propose an option for this problem, we have set a single repository with each of the platform's repositories present as subtrees instead of submodules\footnote{\url{https://www.atlassian.com/blog/git/alternatives-to-git-submodule-git-subtree}}.
 
-  \begin{tabu} to \textwidth {  X[c] | X[c] | X[c] | X[c]  }
-    \textbf{Service} & \textbf{Mocks} & \textbf{LOC} & \textbf{Tested LOC} \\ \hline \hline
-    actuator-controller & No & 455 & 423 \\
-    data-collector & No & 1007 & 977 \\
-    resource-adaptor & No & 563 & 506 \\
-    resource-cataloguer & No & 1105 & 1040 \\
-    resource-discoverer & Yes & 190 & 177 \\
-  \end{tabu}
+  In this task of bringing up a full development environment we came across the following:
+
+  \begin{itemize}
+    \item the Ruby version being used, 2.3, will soon EOL\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/9}};
+    \item the recommended way to setup the development environment is using Docker, but it is highly prone to network issues and depends on shell scripts accounting for 10\% of the project's code\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/12}};
+    \item when setting the environment from sources we found errors related to missing dependencies and environment variables which we have already documented to each project's README.
+  \end{itemize}
+
+\section{Tests}
+  In our local development environment we have run the tests for each of the platform's services and summarized in the table below:
+
+  \vspace{1em}
+
+  \begin{center}
+    \begin{tabu} to \textwidth {  c | c | c | c  }
+      \textbf{Service} & \textbf{Mocks} & \textbf{LOC} & \textbf{Tested LOC} \\ \hline \hline
+      actuator-controller & No & 455 & 423 \\
+      data-collector & No & 1007 & 977 \\
+      resource-adaptor & No & 563 & 506 \\
+      resource-cataloguer\footnote{We have found 6 failing tests probably related to a invalid Google Geocoding API key.} & No & 1105 & 1040 \\
+      resource-discoverer & Yes & 190 & 177 \\
+    \end{tabu}
+  \end{center}
+
+  \vspace{1em}
+
+  Important remarks on these tests are:
+
+  \begin{itemize}
+    \item coverage above 94\% of the code;
+    \item almost none of the tests uses mocks and thus we classify them as integration tests\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/11}};
+    \item these tests are restricted to their own services and thus there is no guarantee that a change in one won't break others\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/10}}.
+  \end{itemize}
 
 \section{Discussion}
 \label{sec:discussion}
