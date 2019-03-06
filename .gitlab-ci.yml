@@ -1,0 +1,10 @@
+image: ruby:2.3
+
+before_script:
+  - gem install bundler --no-ri --no-rdoc
+
+resource-discoverer:
+  script:
+    - pushd src/resource-dicoverer
+    - bundle check || bundle install
+    - bundle exec rspec
