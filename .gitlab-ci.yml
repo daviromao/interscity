@@ -20,6 +20,13 @@ actuator-controller:
     - bundle check || bundle install
     - bundle exec rspec
 
+data-collector:
+  script:
+    - pushd src/data-collector
+    - cp config/mongoid-ci.yml config/mongoid.yml
+    - bundle check || bundle install
+    - bundle exec rspec
+
 resource-discoverer:
   script:
     - pushd src/resource-dicoverer
