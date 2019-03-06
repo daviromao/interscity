@@ -49,6 +49,7 @@ resource-cataloguer:
     - bundle exec rake db:create
     - bundle exec rake db:migrate
     - bundle exec rspec
+  allow_failure: true
 
 resource-discoverer:
   script:
