@@ -1,0 +1,58 @@
+image: ruby:2.3
+
+services:
+  - mongo:latest
+  - redis:latest
+  - postgres:latest
+
+variables:
+  MONGO_USER: admin
+  MONGO_PASSWORD: admin
+  MONGO_HOST: mongo
+  MONGO_PORT: "27017"
+  POSTGRES_DB: resource_test
+  POSTGRES_USER: resource_test
+  POSTGRES_PASSWORD: resource_test
+  RAILS_ENV: test
+
+before_script:
+  - gem install bundler --no-document
+
+actuator-controller:
+  script:
+    - pushd src/actuator-controller
+    - cp config/mongoid-ci.yml config/mongoid.yml
+    - bundle check || bundle install
+    - bundle exec rspec
+
+data-collector:
+  script:
+    - pushd src/data-collector
+    - cp config/mongoid-ci.yml config/mongoid.yml
+    - bundle check || bundle install
+    - bundle exec rspec
+
+resource-adaptor:
+  script:
+    - pushd src/resource-adaptor
+    - cp config/database-ci.yml config/database.yml
+    - bundle check || bundle install
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate
+    - bundle exec rspec
+
+resource-cataloguer:
+  script:
+    - pushd src/resource-cataloguer
+    - cp config/database-ci.yml config/database.yml
+    - bundle check || bundle install
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate
+    - bundle exec rspec
+  allow_failure: true
+
+resource-discoverer:
+  script:
+    - pushd src/resource-dicoverer
+    - bundle check || bundle install
+    - bundle exec rspec
