@@ -41,6 +41,15 @@ resource-adaptor:
     - bundle check || bundle install
     - bundle exec rspec
 
+resource-cataloguer:
+  script:
+    - pushd src/resource-cataloguer
+    - cp config/database-ci.yml config/database.yml
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate
+    - bundle check || bundle install
+    - bundle exec rspec
+
 resource-discoverer:
   script:
     - pushd src/resource-dicoverer
