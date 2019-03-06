@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  redis:
+    image: 'redis'
+    container_name: resource-discoverer-redis
+  resource-discoverer:
+    container_name: resource-discoverer
+    depends_on:
+      - 'redis'
+    build: .
+    ports:
+      - 3004:3000
+    volumes:
+      - '.:/resource-discoverer'
+    command: bash -c "bundle install && bundle exec rails s -p 3000 -b 0.0.0.0"
+    environment:
+      REDIS_HOST: 'resource-discoverer-redis:6379'
+      DATACOLLECTOR_HOST: 'data-collector:3000'
+      CATALOGUER_HOST: 'resource-cataloguer:3000'
+      RABBITMQ_HOST: 'rabbitmq'
+      KONG_URI: 'http://kong:8001'
+      SELF_HOST: 'resource-discoverer:3000'
+      REGISTER_METHOD: 'target'
+
+networks:
+  default:
+    external:
+      name: platform 

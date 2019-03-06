@@ -1,0 +1,7 @@
+---
+
+services:
+  catalog: <%= ENV['CATALOGUER_HOST'] %>
+  collector: <%= ENV['DATACOLLECTOR_HOST'] %>
+  rabbitmq: <%= ENV['RABBITMQ_HOST'] %>
+  self: <%= ENV['SELF_HOST'] %>
