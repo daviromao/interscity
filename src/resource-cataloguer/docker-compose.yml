@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+  redis:
+    image: 'redis'
+    container_name: resource-cataloguer-redis
+  postgres:
+    container_name: resource-cataloguer-pg
+    image: 'postgres:9.5'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'admin'
+  resource-cataloguer:
+    container_name: resource-cataloguer
+    depends_on:
+      - 'postgres'
+      - 'redis'
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - '.:/resource-cataloguer'
+    command: bash -c "bundle install && bundle exec rails s -p 3000 -b 0.0.0.0"
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'admin'
+      POSTGRES_HOST: 'resource-cataloguer-pg'
+      POSTGRES_PORT: 5432
+      DATACOLLECTOR_HOST: 'data-collector:3000'
+      ACTUATORCONTROLLER_HOST: 'actuator-controller:3000'
+      RABBITMQ_HOST: 'rabbitmq'
+      KONG_URI: 'http://kong:8001'
+      SELF_HOST: 'resource-cataloguer:3000'
+      REGISTER_METHOD: 'target'
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+
+networks:
+  default:
+    external:
+      name: platform 
