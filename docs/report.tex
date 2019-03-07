@@ -165,6 +165,18 @@
 
   Among those, one that presents the higher risks is \textit{rest-client}, which has been abandoned by the community back in 2017\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/14}}. And beyond Ruby dependencies, the platform's API Gateway Kong is running its version 0.11.2 while the current release is 1.0.3\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/13}}.
 
+\section{Pipeline}
+  Each service triggers a CI pipeline on Gitlab running their respective tests. After the CI, it is up to the system maintainer to manually:
+
+  \begin{enumerate}
+    \item generate new container images for each service;
+    \item push them to a registry;
+    \item updating the deployment script variables to meet the new version;
+    \item invoke the deployment script.
+  \end{enumerate}
+
+  We believe the project can benefit from first establishing a release routine\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/16}} and then automating the tasks enumerated above just for new releases\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/17}}.
+
 \section{Discussion}
 \label{sec:discussion}
 
