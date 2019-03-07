@@ -93,6 +93,7 @@
   \end{itemize}
 
 \section{Platform installation}
+\label{sec:platinst}
   The first step on the installation process is finding the instructions. One may think that they are at \url{https://gitlab.com/interscity/interscity-platform/deploy}, but the most up to date ones were found at \url{https://github.com/LSS-USP/interscity-deploy-revoada} and only because Arthur has pointed us to them. These are the scripts that install the only known instance of the platform running currently at \url{http://playground.interscity.org/}.
 
   After getting the correct scripts, we have found no major issues bringing up a local installation\footnote{\label{installation-mr}\url{https://gitlab.com/pragmacode/interscity-platform/merge_requests/4}}. Below are listed minor issues that we have found:
@@ -147,6 +148,7 @@
   \end{itemize}
 
 \section{Dependencies}
+\label{sec:dependencies}
   Summary of outdated packages\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/15}} count\footnote{This is the result of running \textit{bundle outdated | wc -l}}:
 
   \begin{itemize}
@@ -190,7 +192,7 @@
   We believe the project can benefit from first establishing a release routine\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/16}} and then automating the tasks enumerated above just for new releases\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/17}}.
 
 \section{Additional insights}
-
+\label{sec:addtinsights}
   Besides the already mentioned improvement proposals, we would like address other concerns raised by current and former developers (\ref{sec:developers}).
 
   We wish to add on the matter of infrastructure stability:
@@ -207,5 +209,12 @@
 
 \section{Discussion}
 \label{sec:discussion}
+  This technical advice goes through key parts of the InterSCity Platform and proposes improvements when we saw they were fit. A summary of all those can be found at \url{https://gitlab.com/pragmacode/interscity-platform/issues?label_name\%5B\%5D=technical+advice}.
+
+  Most of them suppose the maintenance of current system architecture, but here we seek to discuss if a micro-services architecture the best fit for the maintenance effort the project currently has available and expect to have in the future. First of all we must say that it is the best technical fit for such distributed systems as is the InterSCity Platform but it also has a price of additional development and maintenance efforts which we highlighted some of them though this technical advice: complex deployment (\ref{sec:platinst}); harder to keep updated (instead of a single service with 80 outdated dependencies, we have five each with 80 outdated dependencies \ref{sec:dependencies}).
+
+  Another motivation to question if a micro-services is the best for the current reality of the project are the tasks of authentication, permission management and API standardization (\ref{sec:addtinsights}). All of them are easier to develop if there is a single service.
+
+  On the other hand, a monolith has its own downsides: we are probably going to end up with a 3000 lines code base; scalability becomes a bigger concern; if tests are not properly written, the expected maintainability improvement is null.
 
 \end{document}
