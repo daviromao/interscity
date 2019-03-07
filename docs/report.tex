@@ -67,21 +67,34 @@
 
 \maketitle
 
+\section{Objectives}
+  This technical advice report is guided by three priorities that were brought to us by the InterSCity Platform responsibles. They are:
+
+  \begin{itemize}
+    \item reliability;
+    \item easy of install;
+    \item easy of maintain.
+  \end{itemize}
+
+  Having this in mind, in the following sections we go through each of the software's main components to achieve such priorities.
+
 \section{Current and former developers views on the project}
+\label{sec:developers}
   Our first step was to reach out developers who have worked or still work with the platform. In this task, we contacted successfully the following ones: Arthur Del Esposte, who was the main developer of the platform; Dylan Guedes, currently rewriting one of the platform's services; and Higor Amario de Souza, currently responsible for the project. All of them have provided valuable feedback on the platform which are listed below:
 
   \begin{itemize}
     \item infrastructure stability is a consensus as the main problem with the platform currently;
-    \item going further on stability, logs are difficult to find and are spread among services and servers making hard to find the source of problems;
+    \item going further on stability, logs are difficult to find and are spread among services and servers making it hard to find the source of problems;
     \item another part of the platform hard to understand is the RabbitMQ messaging because all services can read and write to it and there is no documentation on how each one performs this message exchange;
     \item there is a correct order to bring up the services which, when not followed, may lead to race conditions;
     \item the platform lacks basic security features such as authentication, authorization and permissions management;
     \item the API does not follow a standard, such as JSON API (\url{https://jsonapi.org/}), and the current one lacks a documentation;
-    \item it is missing a acceptance test that assures all the platform components are working and the available hardware is enough to run the platform.
+    \item it is missing an acceptance test that assures all the platform components are working and the available hardware is enough to run the platform.
   \end{itemize}
 
 \section{Platform installation}
-  The first step on the installation process is finding the instructions. One may think that they are at \url{https://gitlab.com/interscity/interscity-platform/deploy}, but the most up to date ones were found at \url{https://github.com/LSS-USP/interscity-deploy-revoada} and only because Arthur has pointed us to them. These are the scripts that install the only known instance of the platform running currently at \url{http://playground.interscity.org/}.
+\label{sec:platinst}
+  The first step on the installation process is finding the instructions. One may think that they are at \url{https://gitlab.com/interscity/interscity-platform/deploy}, but the most up to date ones were found at \url{https://github.com/LSS-USP/interscity-deploy-revoada} and we found them only because Arthur has pointed us to them. These are the scripts that install the only known instance of the platform running currently at \url{http://playground.interscity.org/}.
 
   After getting the correct scripts, we have found no major issues bringing up a local installation\footnote{\label{installation-mr}\url{https://gitlab.com/pragmacode/interscity-platform/merge_requests/4}}. Below are listed minor issues that we have found:
 
@@ -95,7 +108,7 @@
 
   Items 1, 2 and 3 have already been addressed\textsuperscript{\ref{installation-mr}}.
 
-  Another important remark, which we will get back to at the Discussion (\ref{sec:discussion}), is the amount of services that the platform brings up. It employs a micro-service architecture with the following components: actuator-controller; data-collector; resource-adaptor; resource-cataloguer; resource-discoverer. And these have requirements of their own: Kong; MongoDB; RabbitMQ; Redis; PostgreSQL.
+  Another important remark, which we will get back to at the Discussion (\ref{sec:discussion}), is the amount of services that the platform brings up. It employs a microservice architecture with the following components: actuator-controller; data-collector; resource-adaptor; resource-cataloguer; resource-discoverer. And these have requirements of their own: Kong; MongoDB; RabbitMQ; Redis; PostgreSQL.
 
 \section{Setup development environment}
   While working with the installation of a production environment, we have noticed a high fragmentation of code between many repositories and this perception was exacerbated when we started to setup a development environment using the code found at \url{https://gitlab.com/interscity/interscity-platform/dev-env}. As a means of making our job of evaluating the project easier and also already taking the opportunity to propose an option for this problem, we have set a single repository with each of the platform's repositories present as subtrees instead of submodules\footnote{\url{https://www.atlassian.com/blog/git/alternatives-to-git-submodule-git-subtree}}.
@@ -135,6 +148,7 @@
   \end{itemize}
 
 \section{Dependencies}
+\label{sec:dependencies}
   Summary of outdated packages\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/15}} count\footnote{This is the result of running \textit{bundle outdated | wc -l}}:
 
   \begin{itemize}
@@ -177,7 +191,30 @@
 
   We believe the project can benefit from first establishing a release routine\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/16}} and then automating the tasks enumerated above just for new releases\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/17}}.
 
+\section{Additional insights}
+\label{sec:addtinsights}
+  Besides the already mentioned improvement proposals, we would like to address other concerns raised by current and former developers (\ref{sec:developers}).
+
+  We wish to add on the matter of infrastructure stability:
+
+  \begin{itemize}
+    \item automatic startup of the platform services after the system has booted\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/18}};
+    \item independent up time monitoring with alerts if the system is down\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/19}};
+    \item warn users that Revoada is not supposed to be a production installation and thus the service can be disrupted and data can be lost\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/20}}.
+  \end{itemize}
+
+  About logs and error visibility there are open source tools available that make possible the aggregation of all services' logs\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/21}} and warning when unexpected exceptions get raised\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/22}}.
+
+  Regarding system authentication, permission management\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/23}} and API standards\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/24}}, we recognize them as necessary for the system to reach a production state.
+
 \section{Discussion}
 \label{sec:discussion}
+  This technical advice goes through key parts of the InterSCity Platform and proposes improvements when we saw they were fit. A summary of all those can be found at \url{https://gitlab.com/pragmacode/interscity-platform/issues?label_name\%5B\%5D=technical+advice}.
+
+  Most of them suppose the maintenance of the current system architecture. However, here we seek to discuss if a microservices architecture is the best fit for the maintenance effort the project currently has and is expected to have in the future. First of all, we must say that it is the best technical fit for such a distributed system as the InterSCity Platform. Nevertheless, it is also costly to evolve and to maintain such architecture because of: complex deployment (\ref{sec:platinst}); update difficulties (instead of a single service with 80 outdated dependencies, we have five each with 80 outdated dependencies \ref{sec:dependencies}).
+
+  Another motivation to question if microservices is the best for the current reality of the project are the tasks of authentication, permission management and API standardization (\ref{sec:addtinsights}). All of them are easier to develop if there is a single service.
+
+  On the other hand, a monolith has its own downsides: we are probably going to end up with a 3000 lines code base; scalability becomes a bigger concern; if tests are not properly written, the expected maintainability improvement is null.
 
 \end{document}
