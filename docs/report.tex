@@ -79,6 +79,7 @@
   Having this in mind in the following sections we go through each of the software's main components to achieve such priorities.
 
 \section{Current and former developers views on the project}
+\label{sec:developers}
   Our first step was to reach out developers who have worked or still work with the platform. In this task, we contacted successfully the following ones: Arthur Del Esposte, who was the main developer of the platform; Dylan Guedes, currently rewriting one of the platform's services; and Higor Amario de Souza, currently responsible for the project. All of them have provided valuable feedback on the platform which are listed below:
 
   \begin{itemize}
@@ -187,6 +188,22 @@
   \end{enumerate}
 
   We believe the project can benefit from first establishing a release routine\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/16}} and then automating the tasks enumerated above just for new releases\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/17}}.
+
+\section{Additional insights}
+
+  Besides the already mentioned improvement proposals, we would like address other concerns raised by current and former developers (\ref{sec:developers}).
+
+  We wish to add on the matter of infrastructure stability:
+
+  \begin{itemize}
+    \item automatic startup of the platform services after the system has booted\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/18}};
+    \item independent up time monitoring with alerts if the system is down\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/19}};
+    \item warn users that Revoada is not supposed to be a production installation and thus the service can be disrupted and data can be lost\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/20}}.
+  \end{itemize}
+
+  About logs and error visibility there are open source tools available that make possible the aggregation of all services' logs\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/21}} and warning when unexpected exceptions get raised\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/22}}.
+
+  Regarding system authentication, permission management\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/23}} and API standards\footnote{\url{https://gitlab.com/pragmacode/interscity-platform/issues/24}}, we recognize them as necessary for the system to reach a production state.
 
 \section{Discussion}
 \label{sec:discussion}
