@@ -1,0 +1,9 @@
+# Revision history for InterSCity Platform
+
+A microservice-based, open-source smart city platform that aims at supporting collaborative, novel smart city research, development, and deployment initiatives.
+
+The version numbers below try to follow the conventions at http://semver.org/.
+
+## Unreleased
+
+* There is a lot of work done before 13/05/2019 that is not documented here
