@@ -53,6 +53,6 @@ resource-cataloguer:
 
 resource-discoverer:
   script:
-    - pushd src/resource-dicoverer
+    - pushd src/resource-discoverer
     - bundle check || bundle install
     - bundle exec rspec
