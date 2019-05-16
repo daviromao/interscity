@@ -79,31 +79,31 @@ build_and_push_docker:
   script:
     # actuator-controller
     - cd src/actuator-controller
-    - docker build -t $CI_REGISTRY/actuator-controller .
-    - docker push $CI_REGISTRY/actuator-controller
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller
     - cd ..
     # data-collector
     - cd src/data-collector
-    - docker build -t $CI_REGISTRY/data-collector .
-    - docker push $CI_REGISTRY/data-collector
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector
     - cd ..
     # resource-adaptor
     - cd src/resource-adaptor
-    - docker build -t $CI_REGISTRY/resource-adaptor .
-    - docker push $CI_REGISTRY/resource-adaptor
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
     - cd ..
     # resource-adaptor
     - cd src/resource-adaptor
-    - docker build -t $CI_REGISTRY/resource-adaptor .
-    - docker push $CI_REGISTRY/resource-adaptor
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
     - cd ..
     # resource-cataloguer
     - cd src/resource-cataloguer
-    - docker build -t $CI_REGISTRY/resource-cataloguer .
-    - docker push $CI_REGISTRY/resource-cataloguer
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer
     - cd ..
     # resource-
     - cd src/resource-
-    - docker build -t $CI_REGISTRY/resource-discoverer .
-    - docker push $CI_REGISTRY/resource-discoverer
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer
     - cd ..
