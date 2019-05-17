@@ -15,10 +15,15 @@ variables:
   POSTGRES_PASSWORD: resource_test
   RAILS_ENV: test
 
+stages:
+  - test
+  - build
+
 before_script:
   - gem install bundler --no-document
 
 actuator-controller:
+  stage: test
   script:
     - pushd src/actuator-controller
     - cp config/mongoid-ci.yml config/mongoid.yml
@@ -26,6 +31,7 @@ actuator-controller:
     - bundle exec rspec
 
 data-collector:
+  stage: test
   script:
     - pushd src/data-collector
     - cp config/mongoid-ci.yml config/mongoid.yml
@@ -33,6 +39,7 @@ data-collector:
     - bundle exec rspec
 
 resource-adaptor:
+  stage: test
   script:
     - pushd src/resource-adaptor
     - cp config/database-ci.yml config/database.yml
@@ -42,6 +49,7 @@ resource-adaptor:
     - bundle exec rspec
 
 resource-cataloguer:
+  stage: test
   script:
     - pushd src/resource-cataloguer
     - cp config/database-ci.yml config/database.yml
@@ -52,7 +60,48 @@ resource-cataloguer:
   allow_failure: true
 
 resource-discoverer:
+  stage: test
   script:
     - pushd src/resource-discoverer
     - bundle check || bundle install
     - bundle exec rspec
+
+build_and_push_docker:
+  stage: build
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+  image: docker:stable
+  only:
+    - master
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd src
+    # actuator-controller
+    - cd actuator-controller
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller
+    - cd ..
+    # data-collector
+    - cd data-collector
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector
+    - cd ..
+    # resource-adaptor
+    - cd resource-adaptor
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
+    - cd ..
+    # resource-cataloguer
+    - cd resource-cataloguer
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer
+    - cd ..
+    # resource-discoverer
+    - cd resource-discoverer
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer
+    - cd ..
