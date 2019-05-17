@@ -95,11 +95,6 @@ build_and_push_docker:
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
     - cd ..
-    # resource-adaptor
-    - cd resource-adaptor
-    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
-    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
-    - cd ..
     # resource-cataloguer
     - cd resource-cataloguer
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer .
