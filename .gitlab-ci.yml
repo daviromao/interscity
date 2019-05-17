@@ -77,33 +77,34 @@ build_and_push_docker:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
+    - cd src
     # actuator-controller
-    - cd src/actuator-controller
+    - cd actuator-controller
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller
     - cd ..
     # data-collector
-    - cd src/data-collector
+    - cd data-collector
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/data-collector
     - cd ..
     # resource-adaptor
-    - cd src/resource-adaptor
+    - cd resource-adaptor
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
     - cd ..
     # resource-adaptor
-    - cd src/resource-adaptor
+    - cd resource-adaptor
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-adaptor
     - cd ..
     # resource-cataloguer
-    - cd src/resource-cataloguer
+    - cd resource-cataloguer
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-cataloguer
     - cd ..
-    # resource-
-    - cd src/resource-
+    # resource-discoverer
+    - cd resource-discoverer
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer
     - cd ..
