@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'bunny'
 require 'json'
@@ -7,8 +7,8 @@ class DataManager
   include Singleton
 
   def initialize
-    self.setup
-    ObjectSpace.define_finalizer( self, self.class.finalize() )
+    setup
+    ObjectSpace.define_finalizer(self, self.class.finalize)
   end
 
   def self.finalize
@@ -19,19 +19,17 @@ class DataManager
   end
 
   def publish_resource_data(uuid, capability, value)
-    self.setup if @conn.closed?
+    setup if @conn.closed?
     message = JSON(value)
     key = uuid + '.' + capability
-    if value.has_key?("location")
-      key = key + '.location'
-    end
+    key += '.location' if value.key?('location')
     topic = @channel.topic('data_stream')
     topic.publish(message, routing_key: key)
   end
 
   def publish_actuation_command_status(uuid, capability, command_id, status)
-    self.setup if @conn.closed?
-    message = JSON({command_id: command_id, status: status})
+    setup if @conn.closed?
+    message = JSON(command_id: command_id, status: status)
     key = uuid + '.' + capability
     topic = @channel.topic('resource.actuate.status')
     topic.publish(message, routing_key: key)

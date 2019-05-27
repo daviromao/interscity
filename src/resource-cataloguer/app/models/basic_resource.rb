@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'geocoder'
 require 'location'
 require 'uuid'
@@ -5,7 +7,7 @@ require 'uuid'
 class BasicResource < ApplicationRecord
   before_validation :create_uuid
   has_and_belongs_to_many :capabilities,
-    after_add: :add_cache, after_remove: :remove_cache
+                          after_add: :add_cache, after_remove: :remove_cache
   validates :lat, presence: true, numericality: true
   validates :lon, presence: true, numericality: true
   validates :status, presence: true
@@ -13,36 +15,36 @@ class BasicResource < ApplicationRecord
   validate :uuid_format
 
   def self.all_sensors
-    joins(:capabilities).where("capabilities.function" => Capability.sensor_index)
+    joins(:capabilities).where('capabilities.function' => Capability.sensor_index)
   end
 
   def self.all_actuators
-    joins(:capabilities).where("capabilities.function" => Capability.actuator_index)
+    joins(:capabilities).where('capabilities.function' => Capability.actuator_index)
   end
 
   def self.all_informations
-    joins(:capabilities).where("capabilities.function" => Capability.information_index)
+    joins(:capabilities).where('capabilities.function' => Capability.information_index)
   end
 
   def sensor?
-    self.capabilities.where(function: Capability.sensor_index).count > 0
+    capabilities.where(function: Capability.sensor_index).count > 0
   end
 
   def actuator?
-    self.capabilities.where(function: Capability.actuator_index).count > 0
+    capabilities.where(function: Capability.actuator_index).count > 0
   end
 
   def capability_names(function = nil)
-    names = self.get_cached_capabilities(function)
-    return names if !names.blank? || self.capabilities.count == 0
+    names = get_cached_capabilities(function)
+    return names if names.present? || capabilities.count == 0
 
-    selected_capabilities = self.capabilities
-    selected_capabilities = self.capabilities.send('all_' + function.to_s) unless function.blank?
+    selected_capabilities = capabilities
+    selected_capabilities = capabilities.send('all_' + function.to_s) if function.present?
     names = []
     selected_capabilities.each do |cap|
       names << cap.name
     end
-    self.set_cached_capabilities(names, function)
+    set_cached_capabilities(names, function)
     names
   end
 
@@ -52,9 +54,9 @@ class BasicResource < ApplicationRecord
     hash
   end
 
-  def as_json(options = { })
+  def as_json(options = {})
     hash = super(options)
-    capabilities_list = self.capability_names
+    capabilities_list = capability_names
     hash[:capabilities] = capabilities_list
     hash
   end
@@ -73,48 +75,47 @@ class BasicResource < ApplicationRecord
   after_validation :reverse_geocode
 
   def get_cached_capabilities(function = nil)
-    function = "all" if function.nil?
-    $redis.smembers("#{self.uuid}:#{function.to_s}")
+    function = 'all' if function.nil?
+    $redis.smembers("#{uuid}:#{function}")
   end
 
   def set_cached_capabilities(names, function = nil)
     return nil if names.blank?
-    function = "all" if function.nil?
-    $redis.sadd("#{self.uuid}:#{function.to_s}", names)
+
+    function = 'all' if function.nil?
+    $redis.sadd("#{uuid}:#{function}", names)
   end
 
   def remove_cached_capabilities(names, function = nil)
-    function = "all" if function.nil?
-    $redis.srem("#{self.uuid}:#{function.to_s}", names)
+    function = 'all' if function.nil?
+    $redis.srem("#{uuid}:#{function}", names)
   end
 
   private
 
-    def create_uuid
-      self.uuid = SecureRandom.uuid if self.uuid.blank?
-    end
+  def create_uuid
+    self.uuid = SecureRandom.uuid if uuid.blank?
+  end
 
-    def uuid_format
-      unless UUID.validate(self.uuid)
-        errors.add(:uuid, "is not compatible with RFC 4122")
-      end
-    end
+  def uuid_format
+    errors.add(:uuid, 'is not compatible with RFC 4122') unless UUID.validate(uuid)
+  end
 
-    def add_cache(capability)
-      self.set_cached_capabilities(capability.name)
-      if capability.sensor?
-        self.set_cached_capabilities(capability.name, "sensors")
-      elsif capability.actuator?
-        self.set_cached_capabilities(capability.name, "actuators")
-      end
+  def add_cache(capability)
+    set_cached_capabilities(capability.name)
+    if capability.sensor?
+      set_cached_capabilities(capability.name, 'sensors')
+    elsif capability.actuator?
+      set_cached_capabilities(capability.name, 'actuators')
     end
+  end
 
-    def remove_cache(capability)
-      self.remove_cached_capabilities(capability.name)
-      if capability.sensor?
-        self.remove_cached_capabilities(capability.name, "sensors")
-      elsif capability.actuator?
-        self.remove_cached_capabilities(capability.name, "actuators")
-      end
+  def remove_cache(capability)
+    remove_cached_capabilities(capability.name)
+    if capability.sensor?
+      remove_cached_capabilities(capability.name, 'sensors')
+    elsif capability.actuator?
+      remove_cached_capabilities(capability.name, 'actuators')
     end
+  end
 end

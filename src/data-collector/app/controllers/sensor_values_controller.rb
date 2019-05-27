@@ -1,13 +1,14 @@
 # frozen_string_literal: true
+
 class SensorValuesController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :set_sensor_values,
-                only: [:resources_data, :resource_data]
+                only: %i[resources_data resource_data]
   before_action :set_sensor_values_last,
-                only: [:resources_data_last, :resource_data_last, :resources_search]
+                only: %i[resources_data_last resource_data_last resources_search]
   before_action :set_specific_resource,
-                only: [:resource_data, :resource_data_last]
-  before_action :filter_by_uuids, only: [:resources_data, :resources_data_last, :resources_search]
+                only: %i[resource_data resource_data_last]
+  before_action :filter_by_uuids, only: %i[resources_data resources_data_last resources_search]
   before_action :filter_by_date, :filter_by_capabilities, :filter_by_value
 
   def set_sensor_values
@@ -31,9 +32,11 @@ class SensorValuesController < ApplicationController
 
     [limit, start].each do |arg|
       next if arg.nil? || arg.is_positive_int?
-      render :json => {
-        error: 'Bad Request: pagination args not valid' },
-        status: 400
+
+      render json: {
+        error: 'Bad Request: pagination args not valid'
+      },
+             status: :bad_request
       break # Prevents DoubleRenderError
     end
 
@@ -54,14 +57,14 @@ class SensorValuesController < ApplicationController
 
     unless @start_date.nil?
       @sensor_values = @sensor_values
-                       .where(:date.gte => DateTime.parse(@start_date))
+                       .where(:date.gte => DateTime.zone.parse(@start_date))
     end
     unless @end_date.nil?
       @sensor_values = @sensor_values
-                       .where(:date.lte => DateTime.parse(@end_date))
+                       .where(:date.lte => DateTime.zone.parse(@end_date))
     end
-  rescue
-    render json: { error: 'Bad Request: resource not found' }, status: 400
+  rescue StandardError
+    render json: { error: 'Bad Request: resource not found' }, status: :bad_request
   end
 
   def filter_by_capabilities
@@ -73,6 +76,7 @@ class SensorValuesController < ApplicationController
 
   def filter_by_value
     return unless params[:matchers]
+
     dynamic_values = params[:matchers].to_unsafe_h
     filters = create_filters(dynamic_values)
     @sensor_values = @sensor_values.where(filters)
@@ -93,13 +97,13 @@ class SensorValuesController < ApplicationController
   def resources_data
     generate_response
   rescue StandardError => e
-    render json: { error: 'Internal server error: ' + e.message }, status: 500
+    render json: { error: 'Internal server error: ' + e.message }, status: :internal_server_error
   end
 
   def resource_data
     generate_response
   rescue StandardError => e
-    render json: { error: 'Internal server error: ' + e.message }, status: 500
+    render json: { error: 'Internal server error: ' + e.message }, status: :internal_server_error
   end
 
   def resources_data_last
@@ -120,9 +124,9 @@ class SensorValuesController < ApplicationController
     # params[:uuid] gets from the uri, while sensor_value_params gets
     # it from the json sent
     @sensor_values = @sensor_values.where(uuid: params[:uuid])
-    raise Mongoid::Errors::DocumentNotFound.new(LastSensorValue, uuid: params["uuid"]) if @sensor_values.blank?
+    raise Mongoid::Errors::DocumentNotFound.new(LastSensorValue, uuid: params['uuid']) if @sensor_values.blank?
   rescue Mongoid::Errors::DocumentNotFound
-    render json: { error: 'Resource not found' }, status: 404
+    render json: { error: 'Resource not found' }, status: :not_found
   end
 
   def generate_response
@@ -152,29 +156,31 @@ class SensorValuesController < ApplicationController
     dynamic_values.each do |key, value|
       filters = extract_filter(filters, key, value)
       if filters.nil?
-        render json: { error: "Bad Request: impossible to apply matchers filters: #{dynamic_values}" }, status: 400
+        render json: { error: "Bad Request: impossible to apply matchers filters: #{dynamic_values}" }, status: :bad_request
       end
     end
     filters
   end
 
   def extract_filter(filters, key, value)
-    acceptable_filters = ['gt', 'gte', 'lt', 'lte', 'eq', 'in', 'ne', 'nin']
+    acceptable_filters = %w[gt gte lt lte eq in ne nin]
     index = key.to_s.rindex('.')
     return nil if index.nil?
-    name = key.to_s[0..index-1]
-    operator = key.to_s[index+1..-1]
+
+    name = key.to_s[0..index - 1]
+    operator = key.to_s[index + 1..-1]
     return nil unless acceptable_filters.include? operator
+
     if value.is_a?(Array)
-      value.map!{ |x| x.try(:is_float?) ? x.to_f : x }
+      value.map! { |x| x.try(:is_float?) ? x.to_f : x }
     elsif value.try(:is_float?)
       value = value.to_f
     end
-    if filters[name]
-      filters[name] = filters[name].merge({'$'+operator => value})
-    else
-      filters[name] = {'$'+operator => value}
-    end
+    filters[name] = if filters[name]
+                      filters[name].merge('$' + operator => value)
+                    else
+                      { '$' + operator => value }
+                    end
     filters
   end
 end

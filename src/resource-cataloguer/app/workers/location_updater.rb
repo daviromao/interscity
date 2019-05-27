@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
 require "#{File.dirname(__FILE__)}/../models/basic_resource"
-
 
 class LocationUpdater
   TOPIC = 'data_stream'
@@ -19,29 +20,26 @@ class LocationUpdater
   end
 
   def perform
-    @queue.bind(@topic, routing_key: "#." + @location_attr + ".#")
+    @queue.bind(@topic, routing_key: '#.' + @location_attr + '.#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
         begin
           routing_keys = delivery_info.routing_key.split('.')
 
           uuid = routing_keys[0]
           capability = routing_keys[1]
           value = JSON.parse(body)
-          lat = value["location"]["lat"]
-          lon = value["location"]["lon"]
+          lat = value['location']['lat']
+          lon = value['location']['lon']
 
-          if lat.blank? || lon.blank?
-            raise "Could not read latitude or longitude data"
-          end
+          raise 'Could not read latitude or longitude data' if lat.blank? || lon.blank?
 
           resource_attributes = {
             lat: lat,
             lon: lon
           }
           update_location(resource_attributes, uuid)
-
         rescue StandardError => e
           WORKERS_LOGGER.error("LocationUpdate::ResourceNotUpdated - #{e.message}")
         end

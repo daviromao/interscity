@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SensorValue, type: :model do
@@ -66,7 +67,7 @@ RSpec.describe SensorValue, type: :model do
   end
 
   it 'creates a new last sensor value' do
-    expect{sensor_value_default}.to change{LastSensorValue.count}.by(1)
+    expect { sensor_value_default }.to change { LastSensorValue.count }.by(1)
   end
 
   it 'updates an existing last sensor temperature' do
@@ -78,7 +79,7 @@ RSpec.describe SensorValue, type: :model do
     )
 
     expect(last_value_before.temperature).to eq(10)
-    expect{FactoryGirl.create(:default_sensor_value, temperature: '15')}.not_to change{LastSensorValue.count}
+    expect { FactoryGirl.create(:default_sensor_value, temperature: '15') }.not_to change { LastSensorValue.count }
 
     last_value_after = LastSensorValue.find_by(
       capability: sensor_value.capability,
@@ -97,7 +98,7 @@ RSpec.describe SensorValue, type: :model do
     )
 
     expect(last_value_before.pressure).to eq(3)
-    expect{FactoryGirl.create(:default_sensor_value, pressure: '5.2')}.not_to change{LastSensorValue.count}
+    expect { FactoryGirl.create(:default_sensor_value, pressure: '5.2') }.not_to change { LastSensorValue.count }
 
     last_value_after = LastSensorValue.find_by(
       capability: sensor_value.capability,
@@ -106,5 +107,4 @@ RSpec.describe SensorValue, type: :model do
 
     expect(last_value_after.pressure).to eq(5.2)
   end
-
 end

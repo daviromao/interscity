@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
@@ -23,14 +25,12 @@ class DataReceiver
     @queue.bind(@topic, routing_key: '#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
         begin
           routing_keys = delivery_info.routing_key.split('.')
           uuid = routing_keys.first
           resource = PlatformResource.find_by(uuid: uuid)
-          if resource.nil?
-            WORKERS_LOGGER.error("DataReceiver::ResourceNotFound = Could not find resource #{uuid}")
-          end
+          WORKERS_LOGGER.error("DataReceiver::ResourceNotFound = Could not find resource #{uuid}") if resource.nil?
 
           capability = routing_keys[1]
           unless resource.capabilities.include? capability
@@ -52,16 +52,14 @@ class DataReceiver
   def create_sensor_value(resource, capability, body)
     if resource && capability
       json = JSON.parse(body)
-      attributes = {uuid: resource.uuid,
-                    capability: capability,
-                    platform_resource_id: resource.id}
+      attributes = { uuid: resource.uuid,
+                     capability: capability,
+                     platform_resource_id: resource.id }
       attributes.merge! json
-      attributes["date"] = attributes["timestamp"] unless attributes["date"]
-      attributes.delete("timestamp")
+      attributes['date'] = attributes['timestamp'] unless attributes['date']
+      attributes.delete('timestamp')
       value = SensorValue.new(attributes)
-      if !value.save
-        raise "Cannot save: #{value.inspect} with body #{body} and the errors: #{value.errors.messages}"
-      end
+      raise "Cannot save: #{value.inspect} with body #{body} and the errors: #{value.errors.messages}" unless value.save
     end
   end
 end

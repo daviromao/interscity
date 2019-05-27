@@ -1,15 +1,19 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.4'
 
-gem 'spring', :group => :development
+gem 'spring', group: :development
 gem 'httparty'
+gem 'kong'
+gem 'sqlite3'
 
 # Sidekiq and redis
-gem 'sidekiq'
 gem 'redis', '~> 4.0'
 gem 'redis-namespace'
+gem 'sidekiq'
 
 gem 'colorize'
 
@@ -19,7 +23,7 @@ group :development, :test do
   gem 'rspec-rails'
 end
 
-gem 'simplecov', :require => false, :group => :test
+gem 'simplecov', require: false, group: :test
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

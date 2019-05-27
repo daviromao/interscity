@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe LastSensorValue, type: :model do
-
   let(:sensor_value_default) { create(:default_last_value) }
 
   it 'has a valid factory' do
@@ -20,9 +21,9 @@ RSpec.describe LastSensorValue, type: :model do
     expect(sensor_value_default.uuid).to_not be_nil
 
     expect(FactoryGirl.build(:last_sensor_value, uuid: ''))
-                              .not_to be_valid
+      .not_to be_valid
     expect(FactoryGirl.build(:last_sensor_value, uuid: nil))
-                              .not_to be_valid
+      .not_to be_valid
   end
 
   it 'has a capability type' do
@@ -30,7 +31,7 @@ RSpec.describe LastSensorValue, type: :model do
 
     expect(FactoryGirl.build(:last_sensor_value, capability: '')).not_to be_valid
     expect(FactoryGirl.build(:last_sensor_value, capability: nil))
-                              .not_to be_valid
+      .not_to be_valid
     expect(FactoryGirl.build(:last_sensor_value, capability: nil)).not_to be_valid
   end
 

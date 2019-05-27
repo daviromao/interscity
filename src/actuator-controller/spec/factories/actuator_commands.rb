@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Defines factories for creating PlatformResource objects
 FactoryGirl.define do
   # Abstract factory for PlatformResource
@@ -11,15 +12,15 @@ FactoryGirl.define do
       value 10
 
       factory :processed_actuator_command do
-        status "processed"
+        status 'processed'
       end
 
       factory :failed_actuator_command do
-        status "failed"
+        status 'failed'
       end
 
       factory :rejected_actuator_command do
-        status "rejected"
+        status 'rejected'
       end
     end
 

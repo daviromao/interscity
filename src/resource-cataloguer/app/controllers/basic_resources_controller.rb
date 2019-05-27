@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'notification'
 require 'resource_filter'
 
@@ -5,7 +7,7 @@ class BasicResourcesController < ApplicationController
   include SmartCities::Notification
   include SmartCities::ResourceFilter
 
-  before_action :set_page_params, only: [:index, :index_sensors, :index_actuators, :search]
+  before_action :set_page_params, only: %i[index index_sensors index_actuators search]
 
   # GET /resources/search
   # Errors
@@ -16,15 +18,15 @@ class BasicResourcesController < ApplicationController
     @resources = filter_capabilities @resources, search_params
     @resources = filter_position @resources, search_params
     @resources = filter_distance @resources, search_params
-    simple_params.each do |k,v|
+    simple_params.each do |k, v|
       @resources = filter_resources @resources, k, v
     end
     @resources = @resources.paginate(page: @page, per_page: @per_page)
-    render json: {resources: @resources}, status: 200
+    render json: { resources: @resources }, status: :ok
   rescue StandardError => e
     render json: {
       error: "Error while searching resource: #{e.message}"
-    }, status: 422
+    }, status: :unprocessable_entity
   end
 
   # POST /resources
@@ -38,13 +40,14 @@ class BasicResourcesController < ApplicationController
         capability_params[:capabilities].each do |cap|
           query = Capability.where(name: cap)
           raise CapabilityNotFound if query.empty?
+
           resource.capabilities << query.take
         end
       end
       notify_resource(resource)
-      render json: {data: resource.to_json}, status: 201, location: basic_resource_url(resource)
+      render json: { data: resource.to_json }, status: :created, location: basic_resource_url(resource)
     rescue StandardError => e
-      render json: { error: e }, status: 422
+      render json: { error: e }, status: :unprocessable_entity
     end
   end
 
@@ -71,18 +74,16 @@ class BasicResourcesController < ApplicationController
 
   # GET /resources/:uuid
   def show
-    begin
-      render json: { data: BasicResource.find_by_uuid!(params[:uuid]).to_json }
-    rescue
-      render json: {
-        error: "Resource not found"
-      }, status: 404
-    end
+    render json: { data: BasicResource.find_by!(uuid: params[:uuid]).to_json }
+  rescue StandardError
+    render json: {
+      error: 'Resource not found'
+    }, status: :not_found
   end
 
   # PUT /resources/:uuid
   def update
-    resource = BasicResource.find_by_uuid(params[:uuid])
+    resource = BasicResource.find_by(uuid: params[:uuid])
     begin
       resource.update!(component_params)
       if capability_params[:capabilities].present?
@@ -90,42 +91,39 @@ class BasicResourcesController < ApplicationController
         capability_params[:capabilities].each do |cap|
           query = Capability.where(name: cap)
           raise if query.empty?
+
           resource.capabilities << query.take
         end
       end
       notify_resource(resource, component_params.to_h, true)
-      render json: { data: resource.to_json }, status: 200
-    rescue
+      render json: { data: resource.to_json }, status: :ok
+    rescue StandardError
       render json: {
-        error: "Error while updating basic resource"
-      }, status: 422
+        error: 'Error while updating basic resource'
+      }, status: :unprocessable_entity
     end
   end
 
   private
 
-    def search_params
-      params.permit(:capability, :lat, :lon, :radius)
-    end
+  def search_params
+    params.permit(:capability, :lat, :lon, :radius)
+  end
 
-    def simple_params
-      params.permit(:status, :city, :neighborhood, :postal_code, :description, :uuid)
-    end
+  def simple_params
+    params.permit(:status, :city, :neighborhood, :postal_code, :description, :uuid)
+  end
 
-    def component_params
-      params.require(:data).permit(:description, :lat, :lon, :status, :collect_interval, :uri, :uuid)
-    end
+  def component_params
+    params.require(:data).permit(:description, :lat, :lon, :status, :collect_interval, :uri, :uuid)
+  end
 
-    def capability_params
-      params.require(:data).permit(capabilities: [])
-    end
+  def capability_params
+    params.require(:data).permit(capabilities: [])
+  end
 
-    def set_page_params
-      if params[:page]
-        @page = params[:page]
-      else
-        @page = 1
-      end
-      @per_page = params[:per_page].nil? ? 40 : params[:per_page]
-    end
+  def set_page_params
+    @page = params[:page] || 1
+    @per_page = params[:per_page].nil? ? 40 : params[:per_page]
+  end
 end

@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe Capability, :type => :model do
-
-  let!(:temperature_sensor) { Capability.create_sensor(name: "collect_temperature") }
-  let!(:semaphore_actuator) { Capability.create_actuator(name: "manipulate_semaphore") }
-  let!(:parking_information) { Capability.create_information(name: "parking_information") }
+RSpec.describe Capability, type: :model do
+  let!(:temperature_sensor) { Capability.create_sensor(name: 'collect_temperature') }
+  let!(:semaphore_actuator) { Capability.create_actuator(name: 'manipulate_semaphore') }
+  let!(:parking_information) { Capability.create_information(name: 'parking_information') }
 
   describe '#function_symbol' do
     it 'returns the correct function symbol' do
@@ -14,7 +15,7 @@ RSpec.describe Capability, :type => :model do
 
   context 'sensor capability only' do
     describe '#create' do
-      it "automatically define sensor flag based on name" do
+      it 'automatically define sensor flag based on name' do
         expect(temperature_sensor).to be_sensor
         expect(temperature_sensor).to_not be_actuator
         expect(temperature_sensor).to_not be_information
@@ -30,7 +31,7 @@ RSpec.describe Capability, :type => :model do
     end
 
     describe '#create' do
-      it "automatically define actuator flag based on name" do
+      it 'automatically define actuator flag based on name' do
         expect(semaphore_actuator).to_not be_sensor
         expect(semaphore_actuator).to be_actuator
         expect(semaphore_actuator).to_not be_information
@@ -46,7 +47,7 @@ RSpec.describe Capability, :type => :model do
     end
 
     describe '#create' do
-      it "automatically define actuator flag based on name" do
+      it 'automatically define actuator flag based on name' do
         expect(parking_information).to_not be_sensor
         expect(parking_information).to_not be_actuator
         expect(parking_information).to be_information
@@ -55,27 +56,27 @@ RSpec.describe Capability, :type => :model do
   end
 
   context 'all kinds of capabilities' do
-    let(:resource1) {
+    let(:resource1) do
       BasicResource.create(
-        description: "just a resource",
+        description: 'just a resource',
         lat: 10,
         lon: 10,
-        status: "stopped",
+        status: 'stopped',
         collect_interval: 5,
-        uri: "example.com"
+        uri: 'example.com'
       )
-    }
+    end
 
-    let(:resource2) {
+    let(:resource2) do
       BasicResource.create(
-        description: "just another resource",
+        description: 'just another resource',
         lat: -10,
         lon: 10,
-        status: "stopped",
+        status: 'stopped',
         collect_interval: 10,
-        uri: "another_example.com"
+        uri: 'another_example.com'
       )
-    }
+    end
 
     before do
       resource1.capabilities << semaphore_actuator
@@ -94,7 +95,6 @@ RSpec.describe Capability, :type => :model do
         expect(temperature_sensor.basic_resources).to_not include(resource2)
       end
     end
-
   end
 
   describe '.all_sensors' do

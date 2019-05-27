@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 # Global constants for error messages
 module ErrorMessage
-  ERROR_CODE = {}
+  ERROR_CODE = {}.freeze
 
   ERROR_CODE[200] = 'OK'
 

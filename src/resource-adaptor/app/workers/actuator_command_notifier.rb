@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
@@ -19,7 +21,7 @@ class ActuatorCommandNotifier
     @queue.bind(@topic, routing_key: '#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |_delivery_info, _properties, body|
         begin
           json = JSON.parse(body)
           uuid = json['uuid']
@@ -33,7 +35,7 @@ class ActuatorCommandNotifier
               end
             end
           else
-            raise "UUID and Capability not provided"
+            raise 'UUID and Capability not provided'
           end
         rescue StandardError => e
           WORKERS_LOGGER.error("AcutatorCommandNotifier::CommandNotProcessed - #{e.message}")
@@ -43,7 +45,7 @@ class ActuatorCommandNotifier
   end
 
   def cancel
-    @consumers.each do |consumer|
+    @consumers.each do |_consumer|
       @consumer.cancel
     end
     @channel.close
