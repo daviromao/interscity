@@ -1,0 +1,32 @@
+---
+- name: Basic setup
+  hosts:
+    - swarm-manager
+    - swarm-workers
+  roles:
+    - common
+    - docker
+  user: root
+  become: yes
+- name: Initialize Docker Swarm Manager
+  hosts: swarm-manager
+  tasks:
+    - docker_swarm:
+        state: present
+        advertise_addr: "{{ swarm_manager_ip }}"
+    - docker_swarm_info:
+      register: swarm_info
+  user: root
+  become: yes
+- name: Join workers to te swarm
+  hosts: swarm-workers
+  tasks:
+    - set_fact:
+        swarm_facts: "{{ hostvars['swarm-manager-machine']['swarm_info'].swarm_facts }}"
+    - docker_swarm:
+        state: join
+        remote_addrs: [ "{{ swarm_manager_ip }}" ]
+        advertise_addr: "{{ swarm_manager_ip }}"
+        join_token: "{{ swarm_facts.JoinTokens.Worker }}"
+  user: root
+  become: yes

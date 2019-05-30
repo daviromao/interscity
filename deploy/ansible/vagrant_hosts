@@ -7,8 +7,18 @@ small-machine-2 ansible_host=10.10.10.103 ansible_user=vagrant ansible_ssh_priva
 [gateway]
 gateway-machine ansible_host=10.10.10.104 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
 
+[swarm-manager]
+swarm-manager-machine ansible_host=10.10.10.104 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+[swarm-workers]
+big-machine-1
+big-machine-2
+small-machine-1
+small-machine-2
+
 [all:vars]
 kong=10.10.10.104
 rabbitmq=10.10.10.100
 mongo=10.10.10.101
 postgres_host=10.10.10.100
+swarm_manager_ip=10.10.10.104

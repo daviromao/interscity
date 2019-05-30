@@ -17,7 +17,7 @@ Ansible scripts to deploy InterSCity.
 
 ## Remote hosts - Managed nodes:
 
-* Debian Jessie
+* Debian Stretch
 * Each host should be able to access the other through the network
 * In each managed node, pointed by [hosts](ansible/hosts), you need to
 communicate via **ssh** :
