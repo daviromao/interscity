@@ -6,5 +6,6 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Target Ansible scripts to Debian Stretch
 * Make docker image generation part of the CI
 * There is a lot of work done before 13/05/2019 that is not documented here
