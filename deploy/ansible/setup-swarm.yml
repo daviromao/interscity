@@ -6,6 +6,11 @@
   roles:
     - common
     - docker
+  tasks:
+    - name: Create swarm deployment data directory
+      file:
+        state: directory
+        path: "{{ swarm_deployments_path }}"
   user: root
   become: yes
 - name: Initialize Docker Swarm Manager
