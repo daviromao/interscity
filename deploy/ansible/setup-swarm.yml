@@ -6,3 +6,16 @@
     - docker
   user: root
   become: yes
+- name: Initialize Docker Swarm Manager
+  hosts: swarm-manager
+  tasks:
+    - docker_swarm:
+        state: present
+        advertise_addr: "{{ swarm_manager_ip }}"
+    - docker_swarm:
+        state: inspect
+      register: swarm_info
+    - debug:
+        var: swarm_info
+  user: root
+  become: yes
