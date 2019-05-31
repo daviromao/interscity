@@ -5,3 +5,7 @@ services:
     image: nginxdemos/hello
     ports:
       - "8080:80"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == gateway
