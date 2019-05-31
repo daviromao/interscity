@@ -35,3 +35,13 @@
         join_token: "{{ swarm_facts.JoinTokens.Worker }}"
   user: root
   become: yes
+- name: Manage Swarm Nodes
+  hosts: swarm-manager
+  tasks:
+    - docker_node:
+        hostname: "{{ item.swarm_node_name }}"
+        labels:
+          type: "{{ item.type }}"
+      loop: "{{ lookup('items', swarm_labels) }}"
+  user: root
+  become: yes
