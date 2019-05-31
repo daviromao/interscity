@@ -1,24 +1,49 @@
-[gatewayed]
-big-machine-1 ansible_host=10.10.10.100 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-big-machine-2 ansible_host=10.10.10.101 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-small-machine-1 ansible_host=10.10.10.102 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-small-machine-2 ansible_host=10.10.10.103 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-
-[gateway]
-gateway-machine ansible_host=10.10.10.104 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-
-[swarm-manager]
-swarm-manager-machine ansible_host=10.10.10.104 ansible_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key swarm_node_name=manager
-
-[swarm-workers]
-big-machine-1 swarm_node_name=worker-1
-big-machine-2 swarm_node_name=worker-2
-small-machine-1 swarm_node_name=worker-3
-small-machine-2 swarm_node_name=worker-4
-
-[all:vars]
-kong=10.10.10.104
-rabbitmq=10.10.10.100
-mongo=10.10.10.101
-postgres_host=10.10.10.100
-swarm_manager_ip=10.10.10.104
+all:
+  children:
+    gatewayed:
+      hosts:
+        big-machine-1:
+          ansible_host: 10.10.10.100
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        big-machine-2:
+          ansible_host: 10.10.10.101
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        small-machine-1:
+          ansible_host: 10.10.10.102
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        small-machine-2:
+          ansible_host: 10.10.10.103
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    gateway:
+      hosts:
+        gateway-machine:
+          ansible_host: 10.10.10.104
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    swarm-manager:
+      hosts:
+        swarm-manager-machine:
+          ansible_host: 10.10.10.104
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+          swarm_node_name: manager
+    swarm-workers:
+      hosts:
+        big-machine-1:
+         swarm_node_name: worker-1
+        big-machine-2:
+          swarm_node_name: worker-2
+        small-machine-1:
+          swarm_node_name: worker-3
+        small-machine-2:
+          swarm_node_name: worker-4
+  vars:
+    kong: 10.10.10.104
+    rabbitmq: 10.10.10.100
+    mongo: 10.10.10.101
+    postgres_host: 10.10.10.100
+    swarm_manager_ip: 10.10.10.104
