@@ -9,9 +9,9 @@
     state: directory
     path: "{{ swarm_deployments_path }}/stacks/"
 - name: Copy stacks to the manager
-  copy:
-    src: interscity-platform.yml
-    dest: "{{ swarm_deployments_path }}/stacks/"
+  template:
+    src: interscity-platform.yml.j2
+    dest: "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
 - docker_stack:
     state: present
     name: interscity-platform
