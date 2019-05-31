@@ -7,6 +7,7 @@
     - common
     - docker
   tasks:
+    - hostname: name={{ swarm_node_name }}
     - name: Create swarm deployment data directory
       file:
         state: directory
@@ -19,7 +20,6 @@
     - docker_swarm:
         state: present
         advertise_addr: "{{ swarm_manager_ip }}"
-    - docker_swarm_info:
       register: swarm_info
   user: root
   become: yes
