@@ -4,6 +4,9 @@
     name:
       - jsondiff
       - pyyaml
+- name: Set data path
+  set_fact:
+    swarm_deployments_data_path: "{{ swarm_deployments_path }}/data"
 - name: Create stacks diretory
   file:
     state: directory

@@ -53,6 +53,9 @@ all:
           swarm_node_name: worker-3
         small-machine-2:
           swarm_node_name: worker-4
+    swarm-data-workers:
+      hosts:
+        big-machine-1:
   vars:
     kong: 10.10.10.104
     rabbitmq: 10.10.10.100
