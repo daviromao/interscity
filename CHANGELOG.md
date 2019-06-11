@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Create Swarm deployment instructions
 * Deploy PostgreSQL to Swarm
 * Setup Docker Swarm cluster
 * Target Ansible scripts to Debian Stretch
