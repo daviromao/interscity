@@ -1,0 +1,22 @@
+---
+- name: Install python dependencies
+  pip:
+    name:
+      - jsondiff
+      - pyyaml
+- name: Set data path
+  set_fact:
+    swarm_deployments_data_path: "{{ swarm_deployments_path }}/data"
+- name: Create stacks diretory
+  file:
+    state: directory
+    path: "{{ swarm_deployments_path }}/stacks/"
+- name: Copy stacks to the manager
+  template:
+    src: interscity-platform.yml.j2
+    dest: "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
+- docker_stack:
+    state: present
+    name: interscity-platform
+    compose:
+      - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"

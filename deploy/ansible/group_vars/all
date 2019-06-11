@@ -35,3 +35,6 @@ replica_set_name: 'interscity-set'
 # Collectl
 collecting_time: 1m
 collecting_interval: 5
+
+# Swarm
+swarm_deployments_path: /opt/docker-swarm-deployments

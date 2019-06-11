@@ -6,6 +6,12 @@
   roles:
     - common
     - docker
+  tasks:
+    - hostname: name={{ swarm_node_name }}
+    - name: Create swarm deployment data directory
+      file:
+        state: directory
+        path: "{{ swarm_deployments_path }}"
   user: root
   become: yes
 - name: Initialize Docker Swarm Manager
@@ -14,7 +20,6 @@
     - docker_swarm:
         state: present
         advertise_addr: "{{ swarm_manager_ip }}"
-    - docker_swarm_info:
       register: swarm_info
   user: root
   become: yes
@@ -28,5 +33,30 @@
         remote_addrs: [ "{{ swarm_manager_ip }}" ]
         advertise_addr: "{{ swarm_manager_ip }}"
         join_token: "{{ swarm_facts.JoinTokens.Worker }}"
+  user: root
+  become: yes
+- name: Manage Swarm Nodes
+  hosts: swarm-manager
+  tasks:
+    - docker_node:
+        hostname: "{{ item.swarm_node_name }}"
+        labels:
+          type: "{{ item.type }}"
+      loop: "{{ lookup('items', swarm_labels) }}"
+  user: root
+  become: yes
+- name: Setup Swarm Data Nodes
+  hosts: swarm-data-workers
+  tasks:
+    - name: Create swarm deployment data directory
+      file:
+        state: directory
+        path: "{{ swarm_deployments_path }}/data"
+    - name: Create service data directory
+      file:
+        state: directory
+        path: "{{ swarm_deployments_path }}/data/{{ item }}"
+      loop:
+        - postgres
   user: root
   become: yes
