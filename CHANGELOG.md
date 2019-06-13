@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Improve Ansible tasks for infrastructure installation
 * Create Swarm deployment instructions
 * Deploy PostgreSQL to Swarm
 * Setup Docker Swarm cluster
