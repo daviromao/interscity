@@ -3,6 +3,8 @@
   apt:
     name: "*"
     state: latest
+    update_cache: yes
+    cache_valid_time: 3600
 
 - name: add debian backport repository
   apt_repository:
@@ -12,13 +14,11 @@
 - name: install ca-certificates package
   apt:
     name: ca-certificates
-    update_cache: yes
     state: present
 
 - name: install apt-transport-https package
   apt:
     name: apt-transport-https
-    update_cache: yes
     state: present
 
 - name: Install vim
@@ -28,7 +28,7 @@
   package: name=git state=present
 
 - name: Install collectl
-  apt: name=collectl update_cache=yes state=latest cache_valid_time=3600
+  apt: name=collectl state=latest
   register: installcollectl
 
 - name: Increase filedescriptor limits
