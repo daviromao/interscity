@@ -17,6 +17,7 @@ services:
       POSTGRES_USER: {{ postgres_user }}
     volumes:
       - {{ swarm_deployments_data_path }}/postgres:/var/lib/postgresql/data
+      - {{ swarm_deployments_data_path }}/scripts/init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
     deploy:
       placement:
         constraints:

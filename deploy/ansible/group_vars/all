@@ -26,6 +26,8 @@ postgres_image: 'postgres:9.5'
 postgres_port: 5432
 postgres_user: 'postgres'
 postgres_password: 'admin'
+postgres_kong_user: 'kong'
+postgres_kong_password: 'kongpass'
 
 # Mongo
 mongo_user: 'admin'

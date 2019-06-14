@@ -43,12 +43,11 @@
   apt_repository:
     repo: 'deb http://download.docker.com/linux/debian stretch stable'
     state: present
-  register: dockerrepository
 
 - name: update apt cache
   apt:
     update_cache: yes
-  when: dockerrepository.changed
+    cache_valid_time: 3600
 
 - name: install docker-ce
   apt:

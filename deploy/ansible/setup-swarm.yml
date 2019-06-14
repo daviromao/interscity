@@ -47,16 +47,7 @@
   become: yes
 - name: Setup Swarm Data Nodes
   hosts: swarm-data-workers
-  tasks:
-    - name: Create swarm deployment data directory
-      file:
-        state: directory
-        path: "{{ swarm_deployments_path }}/data"
-    - name: Create service data directory
-      file:
-        state: directory
-        path: "{{ swarm_deployments_path }}/data/{{ item }}"
-      loop:
-        - postgres
+  roles:
+    - setup-swarm-data-storage
   user: root
   become: yes
