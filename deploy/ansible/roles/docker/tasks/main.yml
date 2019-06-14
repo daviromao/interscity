@@ -41,7 +41,7 @@
 
 - name: add docker repository
   apt_repository:
-    repo: 'deb https://download.docker.com/linux/debian stretch stable'
+    repo: 'deb http://download.docker.com/linux/debian stretch stable'
     state: present
   register: dockerrepository
 
