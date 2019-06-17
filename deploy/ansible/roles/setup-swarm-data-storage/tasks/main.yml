@@ -9,6 +9,10 @@
     path: "{{ swarm_deployments_path }}/data/{{ item }}"
   loop:
     - postgres
+- name: Create data scripts directory
+  file:
+    state: directory
+    path: "{{ swarm_deployments_path }}/data/scripts"
 - name: Copy postgres init script
   template:
     src: init_postgres.sql.j2
