@@ -105,3 +105,8 @@ build_and_push_docker:
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/resource-discoverer
     - cd ..
+    # kong-api-gateway
+    - cd kong-api-gateway
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/kong-api-gateway .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/kong-api-gateway
+    - cd ..
