@@ -54,11 +54,6 @@
     name: docker-ce
     state: present
 
-- name: Add json config file for network ip definition
-  copy:
-    src: daemon.json
-    dest: /etc/docker/daemon.json
-
 - name: start docker daemon
   service:
     name: docker
@@ -72,21 +67,3 @@
 
 - name: install docker
   pip: name=docker
-
-  #- name: check docker-compose version
-  #  command: docker-compose --version
-
-- name: create nf_conntrack file
-  shell: 'sysctl -w net.netfilter.nf_conntrack_max=200000'
-
-- name: tunning nf_conntrack
-  sysctl:
-    name: net.netfilter.nf_conntrack_count
-    value: 200000
-    state: present
-
-- name: tunning nf_conntrack hashsize
-  shell: 'echo 50000 > /sys/module/nf_conntrack/parameters/hashsize'
-
-- name: apply tunning
-  shell: 'sysctl -p'

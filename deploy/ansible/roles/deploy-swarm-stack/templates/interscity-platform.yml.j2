@@ -1,8 +1,14 @@
 version: "3"
 
+networks:
+  swarm-network:
+    driver: overlay
+
 services:
   helloworld:
     image: nginxdemos/hello
+    networks:
+      - swarm-network
     ports:
       - "8080:80"
     deploy:
@@ -12,6 +18,10 @@ services:
   postgres:
     image: {{ postgres_image }}
     restart: always
+    ports:
+      - 5432:5432
+    networks:
+      - swarm-network
     environment:
       POSTGRES_PASSWORD: {{ postgres_password }}
       POSTGRES_USER: {{ postgres_user }}
