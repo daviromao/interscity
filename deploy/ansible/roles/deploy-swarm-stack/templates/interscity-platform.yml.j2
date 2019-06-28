@@ -70,7 +70,7 @@ services:
     restart: yes
     ports:
       - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
-    command: /bin/sh -c "bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
+    command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
     depends_on:
       - postgres
       - redis
