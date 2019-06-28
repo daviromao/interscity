@@ -6,6 +6,8 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Create Dockerfile for kong-api-gateway and push it to the registry as part of CI
+* Deploy Kong to Swarm
 * Deploy Redis to Swarm
 * Deploy RabbitMQ to Swarm
 * Improve Ansible tasks for infrastructure installation
