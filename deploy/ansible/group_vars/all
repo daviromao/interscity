@@ -40,3 +40,7 @@ collecting_interval: 5
 
 # Swarm
 swarm_deployments_path: /opt/docker-swarm-deployments
+
+# Kong
+kong_image: 'kong:0.11.0'
+kong_database: 'postgres'

@@ -32,3 +32,22 @@ services:
       placement:
         constraints:
           - node.labels.type == data
+  kong:
+    image: {{ kong_image }}
+    depends_on:
+      - postgres
+    ports:
+      - 8000:8000
+      - 8001:8001
+    networks:
+      - swarm-network
+    restart: always
+    environment:
+      KONG_PG_PASSWORD: {{ postgres_kong_password }}
+      KONG_DATABASE: {{ kong_database }}
+      KONG_PG_HOST: postgres
+    command: bash -c "kong migrations up -v && kong start"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == gateway
