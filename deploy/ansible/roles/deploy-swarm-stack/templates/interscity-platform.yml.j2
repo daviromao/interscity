@@ -51,6 +51,15 @@ services:
       placement:
         constraints:
           - node.labels.type == gateway
+  kong-api-gateway:
+    image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/kong-api-gateway:latest
+    depends_on:
+      - kong
+    ports:
+      - 8888:80
+    networks:
+      - swarm-network
+    restart: always
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
