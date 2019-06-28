@@ -28,6 +28,8 @@ postgres_user: 'postgres'
 postgres_password: 'admin'
 postgres_kong_user: 'kong'
 postgres_kong_password: 'kongpass'
+postgres_rescat_user: 'resource_cataloguer'
+postgres_rescat_password: 'rescatpass'
 
 # Mongo
 mongo_user: 'admin'
