@@ -51,3 +51,11 @@ services:
       placement:
         constraints:
           - node.labels.type == gateway
+  rabbitmq:
+    image: {{ rabbitmq_image }}
+    ports:
+      - 5672:5672
+    networks:
+      - swarm-network
+    restart: always
+

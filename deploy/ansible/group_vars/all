@@ -44,3 +44,6 @@ swarm_deployments_path: /opt/docker-swarm-deployments
 # Kong
 kong_image: 'kong:0.11.0'
 kong_database: 'postgres'
+
+# RabbitMQ
+rabbitmq_image: 'rabbitmq:3.6.5'
