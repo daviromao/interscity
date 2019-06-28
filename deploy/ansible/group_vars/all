@@ -47,3 +47,6 @@ kong_database: 'postgres'
 
 # RabbitMQ
 rabbitmq_image: 'rabbitmq:3.6.5'
+
+# Redis
+redis_image: 'redis'

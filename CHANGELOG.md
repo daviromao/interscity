@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Deploy Redis to Swarm
 * Deploy RabbitMQ to Swarm
 * Improve Ansible tasks for infrastructure installation
 * Create Swarm deployment instructions

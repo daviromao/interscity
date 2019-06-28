@@ -58,4 +58,10 @@ services:
     networks:
       - swarm-network
     restart: always
-
+  redis:
+    image: {{ redis_image }}
+    ports:
+      - 6379
+    networks:
+      - swarm-network
+    restart: always
