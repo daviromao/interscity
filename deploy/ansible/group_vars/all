@@ -15,7 +15,7 @@ kong_admin_port: 8001
 mongo_port: 27017
 
 # Docker
-resource_cataloguer_docker_image: arthurmde/resource-cataloguer:0.3
+resource_cataloguer_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-cataloguer
 resource_adaptor_docker_image: arthurmde/resource-adaptor:0.3
 data_collector_docker_image: arthurmde/data-collector:0.3
 actuator_controller_docker_image: arthurmde/actuator-controller:0.3
@@ -28,6 +28,8 @@ postgres_user: 'postgres'
 postgres_password: 'admin'
 postgres_kong_user: 'kong'
 postgres_kong_password: 'kongpass'
+postgres_rescat_user: 'resource_cataloguer'
+postgres_rescat_password: 'rescatpass'
 
 # Mongo
 mongo_user: 'admin'

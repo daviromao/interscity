@@ -65,3 +65,31 @@ services:
     networks:
       - swarm-network
     restart: always
+  resourcecataloguer:
+    image: "{{ resource_cataloguer_docker_image }}"
+    restart: yes
+    ports:
+      - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
+    command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - kong
+    environment:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: "{{ postgres_rescat_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_rescat_password }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: "rabbitmq"
+      REGISTER_METHOD: "target"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "resourcecataloguer:{{ resource_cataloguer_port }}"
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+    networks:
+      - swarm-network
+    restart: always
