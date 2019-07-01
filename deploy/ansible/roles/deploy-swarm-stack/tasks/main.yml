@@ -20,3 +20,5 @@
     name: interscity-platform
     compose:
       - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
+- name: Remove Kong docs service
+  command: docker service remove interscity-platform_kong-docs
