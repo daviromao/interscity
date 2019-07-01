@@ -51,6 +51,23 @@ services:
       placement:
         constraints:
           - node.labels.type == gateway
+  kong-api-gateway:
+    image: {{ kong_api_gateway_docker_image }}
+    depends_on:
+      - kong
+    ports:
+      - 8888:80
+    networks:
+      - swarm-network
+    restart: always
+  kong-docs:
+    image: alpine
+    depends_on:
+      - kong
+      - kong-api-gateway
+    networks:
+      - swarm-network
+    command: sh -c "apk add curl && curl -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway&strip_uri=true\" http://kong:8001/apis/"
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
