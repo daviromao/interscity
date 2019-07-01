@@ -52,7 +52,7 @@ services:
         constraints:
           - node.labels.type == gateway
   kong-api-gateway:
-    image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/kong-api-gateway:latest
+    image: {{ kong_api_gateway_docker_image }}
     depends_on:
       - kong
     ports:
