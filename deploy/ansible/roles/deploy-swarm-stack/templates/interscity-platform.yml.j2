@@ -136,7 +136,7 @@ services:
       ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
       KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "resourceadaptor-sidekiq:{{ resource_adaptor_port }}"
-      REDIS_HOST: "redis"
+      REDIS_HOST: "redis://redis"
       REDIS_PORT: 6379
   resourceadaptor:
     image: {{ resource_adaptor_docker_image }}
@@ -165,5 +165,5 @@ services:
       ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
       KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
       SELF_HOST: "resourceadaptor:{{ resource_adaptor_port }}"
-      REDIS_HOST: redis
+      REDIS_HOST: "redis://redis"
       REDIS_PORT: 6379
