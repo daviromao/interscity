@@ -150,6 +150,8 @@ services:
       - resourceadaptor-sidekiq
     networks:
       - swarm-network
+    ports:
+      - "{{ resource_adaptor_port }}:{{ resource_adaptor_port }}"
     command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_adaptor_port }} -C config/puma.rb -e production"
     environment:
       RAILS_ENV: "{{ rails_env }}"
