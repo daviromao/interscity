@@ -138,3 +138,32 @@ services:
       SELF_HOST: "resourceadaptor-sidekiq:{{ resource_adaptor_port }}"
       REDIS_HOST: "redis"
       REDIS_PORT: 6379
+  resourceadaptor:
+    image: {{ resource_adaptor_docker_image }}
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - resourcecataloguer
+      - kong
+      - resourceadaptor-sidekiq
+    networks:
+      - swarm-network
+    command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_adaptor_port }} -C config/puma.rb -e production"
+    environment:
+      RAILS_ENV: "{{ rails_env }}"
+      RAILS_MAX_THREADS: 200
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "{{ postgres_port }}"
+      POSTGRES_USER: "{{ postgres_resadapt_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_resadapt_password }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      RABBITMQ_HOST: rabbitmq
+      CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
+      REGISTER_METHOD: "target"
+      ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
+      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      SELF_HOST: "resourceadaptor:{{ resource_adaptor_port }}"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379

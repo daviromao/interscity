@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Deploy resource-adaptor to swarm
 * Deploy resource-adaptor sidekiq to swarm
 * Deploy kong-api-gateway to Swarm
 * Deploy resource-cataloguer to Swarm
