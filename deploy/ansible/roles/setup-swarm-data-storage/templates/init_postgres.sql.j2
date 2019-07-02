@@ -3,3 +3,5 @@ CREATE USER {{ postgres_kong_user }} WITH ENCRYPTED PASSWORD '{{ postgres_kong_p
 GRANT ALL PRIVILEGES ON DATABASE kong TO {{ postgres_kong_user }};
 
 CREATE USER {{ postgres_rescat_user }} WITH CREATEDB ENCRYPTED PASSWORD '{{ postgres_rescat_password }}';
+
+CREATE USER {{ postgres_resadapt_user }} WITH CREATEDB ENCRYPTED PASSWORD '{{ postgres_resadapt_password }}';
