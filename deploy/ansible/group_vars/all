@@ -38,6 +38,7 @@ postgres_resadapt_password: 'resadaptpass'
 mongo_user: 'admin'
 mongo_password: 'admin'
 replica_set_name: 'interscity-set'
+mongodb_image: 'mongo'
 
 # Collectl
 collecting_time: 1m

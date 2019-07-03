@@ -169,3 +169,12 @@ services:
       SELF_HOST: "resourceadaptor:{{ resource_adaptor_port }}"
       REDIS_HOST: "redis://redis"
       REDIS_PORT: 6379
+  mongodb:
+    image: {{ mongodb_image }}
+    ports:
+      - 27017:27017
+    networks:
+      - swarm-network
+    restart: always
+    environment:
+      AUTH: "no"
