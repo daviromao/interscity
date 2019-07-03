@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Deploy data collector to Swarm
 * Deploy MongoDB to Swarm
 * Deploy resource-adaptor to swarm
 * Deploy resource-adaptor sidekiq to swarm
