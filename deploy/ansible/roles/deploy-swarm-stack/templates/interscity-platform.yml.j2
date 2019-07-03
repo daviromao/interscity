@@ -131,10 +131,10 @@ services:
       POSTGRES_PASSWORD: "{{ postgres_resadapt_password }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: rabbitmq
-      CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
+      CATALOGUER_HOST: "kong:{{ kong_port }}/catalog"
       REGISTER_METHOD: "none"
-      ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
-      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      ADAPTOR_HOST: "kong:{{ kong_port }}/adaptor"
+      KONG_URI: "http://kong:{{ kong_admin_port }}"
       SELF_HOST: "resourceadaptor-sidekiq:{{ resource_adaptor_port }}"
       REDIS_HOST: "redis://redis"
       REDIS_PORT: 6379
@@ -162,10 +162,10 @@ services:
       POSTGRES_PASSWORD: "{{ postgres_resadapt_password }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       RABBITMQ_HOST: rabbitmq
-      CATALOGUER_HOST: "{{ kong }}:{{ kong_port }}/catalog"
+      CATALOGUER_HOST: "kong:{{ kong_port }}/catalog"
       REGISTER_METHOD: "target"
-      ADAPTOR_HOST: "{{ kong }}:{{ kong_port }}/adaptor"
-      KONG_URI: "http://{{ kong }}:{{ kong_admin_port }}"
+      ADAPTOR_HOST: "kong:{{ kong_port }}/adaptor"
+      KONG_URI: "http://kong:{{ kong_admin_port }}"
       SELF_HOST: "resourceadaptor:{{ resource_adaptor_port }}"
       REDIS_HOST: "redis://redis"
       REDIS_PORT: 6379
