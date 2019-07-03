@@ -18,7 +18,7 @@ mongo_port: 27017
 resource_cataloguer_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-cataloguer
 resource_adaptor_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-adaptor
 data_collector_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/data-collector
-actuator_controller_docker_image: arthurmde/actuator-controller:0.3
+actuator_controller_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/actuator-controller
 resource_discoverer_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-discoverer
 kong_api_gateway_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/kong-api-gateway
 
