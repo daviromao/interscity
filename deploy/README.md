@@ -80,6 +80,10 @@ There is a WIP for deploying the platform to Docker Swarm in order to improve re
 
 Within the ansible directory run: `ansible-playbook deploy-swarm-stack.yml`
 
+### Removing services
+
+The `kong-docs` is supposed to be a one-shot service. If you want to remove it after it successfully runs, you can log in the swarm manager and run: `sudo docker service remove interscity-platform_kong-docs`
+
 # Development
 
 The following instructions are relevant for developers and maintainer of the deployment scripts here. If you are interested only on running an instance of the platform follow the steps at the beginning of this file.

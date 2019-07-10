@@ -74,11 +74,11 @@ services:
       - kong-api-gateway
     networks:
       - swarm-network
-    command: sh -c "apk add curl && curl -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway:8888\" http://kong:8001/apis/"
+    command: sh -c "apk add curl && curl --fail -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway:8888\" http://kong:8001/apis/"
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 60s
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
