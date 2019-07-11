@@ -17,7 +17,6 @@ services:
           - node.labels.type == gateway
   postgres:
     image: {{ postgres_image }}
-    restart: always
     ports:
       - 5432:5432
     networks:
@@ -29,6 +28,9 @@ services:
       - {{ swarm_deployments_data_path }}/postgres:/var/lib/postgresql/data
       - {{ swarm_deployments_data_path }}/scripts/init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
     deploy:
+      restart_policy:
+        delay: 5s
+        window: 10s
       placement:
         constraints:
           - node.labels.type == data
@@ -41,13 +43,15 @@ services:
       - 8001:8001
     networks:
       - swarm-network
-    restart: always
     environment:
       KONG_PG_PASSWORD: {{ postgres_kong_password }}
       KONG_DATABASE: {{ kong_database }}
       KONG_PG_HOST: postgres
     command: bash -c "kong migrations up -v && kong start"
     deploy:
+      restart_policy:
+        delay: 120s
+        window: 10s
       placement:
         constraints:
           - node.labels.type == gateway
@@ -59,7 +63,10 @@ services:
       - 8888:80
     networks:
       - swarm-network
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 5s
+        window: 10s
   kong-docs:
     image: alpine
     depends_on:
@@ -68,23 +75,32 @@ services:
     networks:
       - swarm-network
     command: sh -c "apk add curl && curl -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway:8888\" http://kong:8001/apis/"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
       - 5672:5672
     networks:
       - swarm-network
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 5s
+        window: 10s
   redis:
     image: {{ redis_image }}
     ports:
       - 6379
     networks:
       - swarm-network
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 5s
+        window: 10s
   resourcecataloguer:
     image: "{{ resource_cataloguer_docker_image }}"
-    restart: yes
     ports:
       - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
     command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
@@ -109,10 +125,14 @@ services:
       REDIS_PORT: 6379
     networks:
       - swarm-network
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
   resourceadaptor-sidekiq:
     image: {{ resource_adaptor_docker_image }}
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
     depends_on:
       - postgres
       - redis
@@ -140,7 +160,9 @@ services:
       REDIS_PORT: 6379
   resourceadaptor:
     image: {{ resource_adaptor_docker_image }}
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
     depends_on:
       - postgres
       - redis
@@ -175,14 +197,19 @@ services:
       - 27017:27017
     networks:
       - swarm-network
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 5s
+        window: 10s
     environment:
       AUTH: "no"
   datacollector:
     image: {{ data_collector_docker_image }}
     ports:
       - "{{ data_collector_port }}:{{ data_collector_port }}"
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
     depends_on:
       - kong
       - mongodb
@@ -206,7 +233,9 @@ services:
       SELF_HOST: "datacollector:{{ data_collector_port }}"
   resourcediscoverer:
     image: {{ resource_discoverer_docker_image }}
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
     networks:
       - swarm-network
     ports:
@@ -229,7 +258,9 @@ services:
       SELF_HOST: "resourcediscoverer:{{ resource_discoverer_port }}"
   actuatorcontroller:
     image: {{ actuator_controller_docker_image }}
-    restart: always
+    deploy:
+      restart_policy:
+        delay: 120s
     networks:
       - swarm-network
     ports:
