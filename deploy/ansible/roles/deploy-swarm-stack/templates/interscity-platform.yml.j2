@@ -67,7 +67,7 @@ services:
       - kong-api-gateway
     networks:
       - swarm-network
-    command: sh -c "apk add curl && curl -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway&strip_uri=true\" http://kong:8001/apis/"
+    command: sh -c "apk add curl && curl -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway:8888\" http://kong:8001/apis/"
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
