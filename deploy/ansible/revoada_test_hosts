@@ -1,0 +1,37 @@
+all:
+  children:
+    gatewayed:
+      hosts:
+        big-machine-1:
+          ansible_host: 172.24.5.26
+          ansible_ssh_common_args: '-o ProxyCommand="ssh 143.107.45.126 -p 10120 -W %h:%p"'
+    gateway:
+      hosts:
+        gateway-machine:
+          ansible_host: 143.107.45.126
+          ansible_port: 10120
+    swarm-manager:
+      hosts:
+        swarm-manager-machine:
+          ansible_host: 143.107.45.126
+          ansible_port: 10120
+          swarm_node_name: manager
+      vars:
+        swarm_labels:
+          - swarm_node_name: manager
+            type: gateway
+          - swarm_node_name: worker-1
+            type: data
+    swarm-workers:
+      hosts:
+        big-machine-1:
+         swarm_node_name: worker-1
+    swarm-data-workers:
+      hosts:
+        big-machine-1:
+  vars:
+    kong: 172.24.5.25
+    rabbitmq: 172.24.5.26
+    mongo: 172.24.5.26
+    postgres_host: 172.24.5.26
+    swarm_manager_ip: 172.24.5.25
