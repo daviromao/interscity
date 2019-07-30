@@ -3,5 +3,5 @@
     - swarm-manager
   roles:
     - deploy-swarm-stack
-  user: root
+  become_user: root
   become: yes

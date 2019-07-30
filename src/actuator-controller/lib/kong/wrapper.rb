@@ -40,7 +40,7 @@ module Kong
 
       Rails.logger.info "Target was succesfully registered to Kong"
     rescue StandardError => e
-      Rails.logger.error "Could not register target to Kong #{e.message}"
+      raise StandardError, "Could not register target to Kong #{e.message}"
     end
 
     def register_as_api(name, uris)
