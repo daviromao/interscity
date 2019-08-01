@@ -12,6 +12,8 @@ services:
     ports:
       - "8080:80"
     deploy:
+      restart_policy:
+        delay: 1h
       placement:
         constraints:
           - node.labels.type == gateway
@@ -30,14 +32,11 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        window: 10s
       placement:
         constraints:
           - node.labels.type == data
   kong:
     image: {{ kong_image }}
-    depends_on:
-      - postgres
     ports:
       - 8000:8000
       - 8001:8001
@@ -50,35 +49,28 @@ services:
     command: bash -c "kong migrations up -v && kong start"
     deploy:
       restart_policy:
-        delay: 120s
-        window: 10s
+        delay: 30s
       placement:
         constraints:
           - node.labels.type == gateway
   kong-api-gateway:
     image: {{ kong_api_gateway_docker_image }}
-    depends_on:
-      - kong
     ports:
       - 8888:80
     networks:
       - swarm-network
     deploy:
       restart_policy:
-        delay: 5s
-        window: 10s
+        delay: 360s
   kong-docs:
     image: alpine
-    depends_on:
-      - kong
-      - kong-api-gateway
     networks:
       - swarm-network
     command: sh -c "apk add curl && curl --fail -X PUT -d \"name=swagger-docs&uris=/&upstream_url=http://kong-api-gateway:8888\" http://kong:8001/apis/"
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 60s
+        delay: 360s
   rabbitmq:
     image: {{ rabbitmq_image }}
     ports:
@@ -88,7 +80,6 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        window: 10s
   redis:
     image: {{ redis_image }}
     ports:
@@ -98,17 +89,11 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        window: 10s
   resourcecataloguer:
     image: "{{ resource_cataloguer_docker_image }}"
     ports:
       - "{{ resource_cataloguer_port }}:{{ resource_cataloguer_port }}"
     command: /bin/sh -c "bundle exec rake db:create && bundle exec rake db:migrate && bundle exec puma -p {{ resource_cataloguer_port }} -C config/puma.rb -e production"
-    depends_on:
-      - postgres
-      - redis
-      - rabbitmq
-      - kong
     environment:
       RAILS_ENV: "{{ rails_env }}"
       RAILS_MAX_THREADS: 200
@@ -127,18 +112,12 @@ services:
       - swarm-network
     deploy:
       restart_policy:
-        delay: 120s
+        delay: 480s
   resourceadaptor-sidekiq:
     image: {{ resource_adaptor_docker_image }}
     deploy:
       restart_policy:
-        delay: 120s
-    depends_on:
-      - postgres
-      - redis
-      - rabbitmq
-      - resourcecataloguer
-      - kong
+        delay: 480s
     networks:
       - swarm-network
     command: bundle exec sidekiq -C config/sidekiq.yml
@@ -162,14 +141,7 @@ services:
     image: {{ resource_adaptor_docker_image }}
     deploy:
       restart_policy:
-        delay: 120s
-    depends_on:
-      - postgres
-      - redis
-      - rabbitmq
-      - resourcecataloguer
-      - kong
-      - resourceadaptor-sidekiq
+        delay: 480s
     networks:
       - swarm-network
     ports:
@@ -200,7 +172,6 @@ services:
     deploy:
       restart_policy:
         delay: 5s
-        window: 10s
     environment:
       AUTH: "no"
   datacollector:
@@ -209,11 +180,7 @@ services:
       - "{{ data_collector_port }}:{{ data_collector_port }}"
     deploy:
       restart_policy:
-        delay: 120s
-    depends_on:
-      - kong
-      - mongodb
-      - rabbitmq
+        delay: 480s
     networks:
       - swarm-network
     command: /bin/sh -c "bundle exec rake db:mongoid:remove_indexes db:mongoid:create_indexes && bundle exec puma -p {{ data_collector_port }} -C config/puma.rb -e production"
@@ -235,16 +202,11 @@ services:
     image: {{ resource_discoverer_docker_image }}
     deploy:
       restart_policy:
-        delay: 120s
+        delay: 480s
     networks:
       - swarm-network
     ports:
       - "{{ resource_discoverer_port }}:{{ resource_discoverer_port }}"
-    depends_on:
-      - rabbitmq
-      - kong
-      - datacollector
-      - resourcecataloguer
     command: bundle exec puma -p "{{ resource_discoverer_port }}" -C config/puma.rb -e production
     environment:
       RAILS_ENV: "{{ rails_env }}"
@@ -260,16 +222,12 @@ services:
     image: {{ actuator_controller_docker_image }}
     deploy:
       restart_policy:
-        delay: 120s
+        delay: 480s
     networks:
       - swarm-network
     ports:
       - "{{ actuator_controller_port }}:{{ actuator_controller_port }}"
     command: bundle exec puma -p "{{ actuator_controller_port }}" -C config/puma.rb -e production
-    depends_on:
-      - mongodb
-      - kong
-      - rabbitmq
     environment:
       RAILS_ENV: "{{ rails_env }}"
       RAILS_MAX_THREADS: 200
