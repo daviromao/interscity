@@ -1,9 +1,0 @@
----
-- name: setup resource-adaptor
-  hosts:
-    - big-machine-1
-    - small-machine-2
-  user: root
-  become: yes
-  roles:
-    - resource-adaptor
