@@ -68,13 +68,15 @@ There is a WIP for deploying the platform to Docker Swarm in order to improve re
   * Each host must have a unique `swarm_node_name` variable defined
   * You'll use this variable to set the node label under `swarm_labels` variable defined for the `swarm-manager` group
   * Valid labels are
-    - `gateway` (at least one host must have this label)
-    - `data` (at least one host must have this label)
+    - `gateway` (at least one host must have this label as `true`)
+    - `data` (at least one host must have this label `true`)
     - `common`
   * It is important that at least one host is in each of the following groups: `swarm-manager`; and `swarm-data-workers`
   * The remaining hosts must be members of the `swarm-workers` group
 2. Install Docker Swarm
   * Within the ansible directory run: `ansible-playbook setup-swarm.yml`
+
+For standalone installations, a host must have both `gateway` and `data` labelled `true`.
 
 ### Deployment
 

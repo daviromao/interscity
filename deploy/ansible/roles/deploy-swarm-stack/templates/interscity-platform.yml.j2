@@ -16,7 +16,7 @@ services:
         delay: 1h
       placement:
         constraints:
-          - node.labels.type == gateway
+          - node.labels.gateway == true
   postgres:
     image: {{ postgres_image }}
     ports:
@@ -34,7 +34,7 @@ services:
         delay: 5s
       placement:
         constraints:
-          - node.labels.type == data
+          - node.labels.data == true
   kong:
     image: {{ kong_image }}
     ports:
@@ -52,7 +52,7 @@ services:
         delay: 30s
       placement:
         constraints:
-          - node.labels.type == gateway
+          - node.labels.gateway == true
   kong-api-gateway:
     image: {{ kong_api_gateway_docker_image }}
     ports:
