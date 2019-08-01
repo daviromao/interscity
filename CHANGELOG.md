@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Support standalone applications
 * Deploy actuator controller to Swarm
 * Deploy resource discoverer to Swarm
 * Deploy data collector to Swarm

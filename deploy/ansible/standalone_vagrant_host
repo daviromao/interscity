@@ -1,0 +1,32 @@
+all:
+  children:
+    gateway:
+      hosts:
+        gateway-machine:
+          ansible_host: 10.10.10.104
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+    swarm-manager:
+      hosts:
+        swarm-manager-machine:
+          ansible_host: 10.10.10.104
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+          swarm_node_name: manager
+      vars:
+        swarm_labels:
+          - swarm_node_name: manager
+            gateway: "true"
+            data: "true"
+            common: "false"
+    swarm-workers:
+      hosts:
+    swarm-data-workers:
+      hosts:
+        gateway-machine:
+  vars:
+    kong: 10.10.10.104
+    rabbitmq: 10.10.10.104
+    mongo: 10.10.10.104
+    postgres_host: 10.10.10.104
+    swarm_manager_ip: 10.10.10.104

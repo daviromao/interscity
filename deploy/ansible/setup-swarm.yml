@@ -41,8 +41,10 @@
     - docker_node:
         hostname: "{{ item.swarm_node_name }}"
         labels:
-          type: "{{ item.type }}"
-      loop: "{{ lookup('items', swarm_labels) }}"
+          gateway: "{{ item.gateway }}"
+          data: "{{ item.data }}"
+          common: "{{ item.common }}"
+      loop: "{{ lookup('items', swarm_labels, wantlist=True) }}"
   become_user: root
   become: yes
 - name: Setup Swarm Data Nodes
