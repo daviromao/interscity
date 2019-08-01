@@ -1,9 +1,0 @@
----
-- name: setup resource-discoverer
-  hosts:
-    - big-machine-2
-    - small-machine-1
-  user: root
-  become: yes
-  roles:
-    - resource-discoverer

@@ -1,55 +1,8 @@
 # Deploying InterSCity
 
-Ansible scripts to deploy InterSCity.
+Ansible scripts to deploy InterSCity in a Docker Swarm environment.
 
 # Requirements
-
-## Your machine
-
-* Install Python 2.7
-  * Most Linux distributions have python installed natively. To test, 
-  run on terminal: ```python --version```
-* [Install ansible](http://docs.ansible.com/ansible/intro_installation.html)
-* [Install pip](https://pip.pypa.io/en/stable/installing/)
-  * You can install pip using: ```easy_install pip```
-* Install ansible extra modules:
-  * RVM: `sudo ansible-galaxy install rvm_io.rvm1-ruby`
-
-## Remote hosts - Managed nodes:
-
-* Debian Stretch
-* Each host should be able to access the other through the network
-* In each managed node, pointed by [hosts](ansible/hosts), you need to
-communicate via **ssh** :
-  * Install python 2.4 or later
-  * Install easy_install (provided by `python-setuptools` package)
-  * Run open-ssh
-  * Enable your user to run commands as sudo without request password
-  * Add you ssh public key to your user in remote hosts. [Here's an
-  example](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
-
-# Configuration
-
-* Change [ansible/hosts](ansible/hosts) file to put your hosts IPs and SSH settings
-  * There you'll find a section called `[all:vars]`, then make sure the following matches:
-    * `kong` should have the local IP address of `gateway-machine`
-    * `rabbitmq` should have the loacal IP address of `big-machine-1`
-    * `mongo` should have the loacal IP address of `big-machine-2`
-    * `postgresql_host` should have the loacal IP address of `big-machine-1`
-
-# Running
-
-* Enter in [ansible](ansible) directory
-* Run:
-```sh
-ansible-playbook site.yml
-```
-
-## Docker Swarm (under development)
-
-There is a WIP for deploying the platform to Docker Swarm in order to improve reliability and make the deployments and releases easier. It is still incomplete but you can check below a preview of the requirements, configuration and release steps for this deployment alternative.
-
-### Requirements
 
 * At least one host, but two or more are recommended
 * Operating System
@@ -60,8 +13,12 @@ There is a WIP for deploying the platform to Docker Swarm in order to improve re
   - passwordless sudo permission
   - **Python** must be installed
 * The machine which will perform the deployment must have Ansible 2.7 or greater installed
+* Make sure to open the required ports for Docker Swarm to work. You can learn how to configure the firewall [here](https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-ubuntu-16-04). The ports are:
+  - TCP ports: `2376`, `2377` and `7946`
+  - UDP ports: `7946` and `4789`
 
-### Configuration
+
+## Configuration
 
 1. Create your `hosts` file
   * You can check an example (here)[ansible/vagrant_hosts]
@@ -78,11 +35,11 @@ There is a WIP for deploying the platform to Docker Swarm in order to improve re
 
 For standalone installations, a host must have both `gateway` and `data` labelled `true`.
 
-### Deployment
+## Deployment
 
 Within the ansible directory run: `ansible-playbook deploy-swarm-stack.yml`
 
-### Removing services
+## Removing services
 
 The `kong-docs` is supposed to be a one-shot service. If you want to remove it after it successfully runs, you can log in the swarm manager and run: `sudo docker service remove interscity-platform_kong-docs`
 
@@ -93,18 +50,14 @@ The following instructions are relevant for developers and maintainer of the dep
 ## Additional requirements
 
 * 5GB of RAM available
-* 20GB of disk
+* 25GB of disk
 * Vagrant
   * VirtualBox
 
 ## Deploying locally
 
+There's a valid `hosts` file for deploying with Vagrant and VirtualBox. The `vagrant_hosts` defines 5 hosts. The `standalone_vagrant_host` define a single host for standalone installation. For the standalone installation you do not need the 5 machines defined in the Vagrantfile. Therefore, increase the memory to `2048` and leave just the `gateway-machine` definition. Enter in the `ansible` directory and run:
+
 * `vagrant up`
-* SSH into each of the nodes and add them to your `known_hosts` files
-  * `ssh -i ~/.vagrant.d/insecure_private_key vagrant@10.10.10.100`
-  * `ssh -i ~/.vagrant.d/insecure_private_key vagrant@10.10.10.101`
-  * `ssh -i ~/.vagrant.d/insecure_private_key vagrant@10.10.10.102`
-  * `ssh -i ~/.vagrant.d/insecure_private_key vagrant@10.10.10.103`
-  * `ssh -i ~/.vagrant.d/insecure_private_key vagrant@10.10.10.104`
-* Enter in [ansible](ansible) directory
-* `ansible-playbook -i vagrant_hosts site.yml`
+* `ansible-playbook setup-swarm.yml -i <vagrant_hosts | standalone_vagrant_host>`
+* `ansible-playbook deploy-swarm-stack- i <vagrant_hosts | standalone_vagrant_host>`

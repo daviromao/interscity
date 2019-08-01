@@ -1,9 +1,0 @@
----
-- name: setup resource-cataloguer
-  hosts:
-    - big-machine-1
-    - small-machine-1
-  user: root
-  become: yes
-  roles:
-    - resource-cataloguer
