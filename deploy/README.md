@@ -17,7 +17,6 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   - TCP ports: `2376`, `2377` and `7946`
   - UDP ports: `7946` and `4789`
 
-
 ## Configuration
 
 1. Create your `hosts` file
@@ -38,6 +37,19 @@ For standalone installations, a host must have both `gateway` and `data` labelle
 ## Deployment
 
 Within the ansible directory run: `ansible-playbook deploy-swarm-stack.yml`
+
+This will bring up all services. It may take some time on the first run and you can track the progress by accessing the manager host and running `docker service ls`.
+
+## Example to check for a correct deployment
+
+Make sure you have assess to your gateway host through ports `8000` and `8001`. Then you can replace `localhost` by your gateway host address and perform the following checks:
+
+* `curl http://localhost:8001/upstreams`
+  - should return 6 entries (all applications and the kong-api-gateway)
+* `curl http://localhost:8001/apis`
+  - should return 5 entries (all applications)
+* `curl http://localhost:8000/catalog/resources`
+* `curl http://localhost:8000/collector/resources/data`
 
 ## Removing services
 
@@ -60,4 +72,4 @@ There's a valid `hosts` file for deploying with Vagrant and VirtualBox. The `vag
 
 * `vagrant up`
 * `ansible-playbook setup-swarm.yml -i <vagrant_hosts | standalone_vagrant_host>`
-* `ansible-playbook deploy-swarm-stack- i <vagrant_hosts | standalone_vagrant_host>`
+* `ansible-playbook deploy-swarm-stack -i <vagrant_hosts | standalone_vagrant_host>`
