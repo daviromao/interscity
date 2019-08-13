@@ -12,7 +12,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   - Add you ssh public key to your user in remote hosts. [Here's an example](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
   - passwordless sudo permission
   - **Python** must be installed
-* The machine which will perform the deployment must have Ansible 2.7 or greater installed
+* The machine which will perform the deployment must have Ansible 2.8 or greater installed
 * Make sure to open the required ports for Docker Swarm to work. You can learn how to configure the firewall [here](https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-ubuntu-16-04). The ports are:
   - TCP ports: `2376`, `2377` and `7946`
   - UDP ports: `7946` and `4789`
