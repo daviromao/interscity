@@ -17,7 +17,6 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   - TCP ports: `2376`, `2377` and `7946`
   - UDP ports: `7946` and `4789`
 
-
 ## Configuration
 
 1. Create your `hosts` file
@@ -38,6 +37,15 @@ For standalone installations, a host must have both `gateway` and `data` labelle
 ## Deployment
 
 Within the ansible directory run: `ansible-playbook deploy-swarm-stack.yml`
+
+This will bring up all services. It may take some time on the first run and you can track the progress by accessing the manager host and running `docker service ls`.
+
+## Example to check for a correct deployment
+
+Replace `localhost` by your gateway host address:
+
+* `curl http://localhost:8000/catalog/resources`
+* `curl http://localhost:8000/collector/resources/data`
 
 ## Removing services
 
