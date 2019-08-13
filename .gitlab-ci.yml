@@ -15,9 +15,14 @@ variables:
   POSTGRES_PASSWORD: resource_test
   RAILS_ENV: test
 
+# The following variables are defined within Gitlab configurations as secrets:
+#
+# * DEPLOY_KEY
+
 stages:
   - test
   - build
+  - deploy
 
 before_script:
   - gem install bundler --no-document
@@ -110,3 +115,31 @@ build_and_push_docker:
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/kong-api-gateway .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/kong-api-gateway
     - cd ..
+
+deploy_dry_run:
+  stage: test
+  image: python
+  services: []
+  before_script:
+    - apt-get update -y
+    - apt-get install -y ansible
+    - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
+    - chmod 600 deploy_key
+  script:
+    - pushd deploy/ansible
+    - ansible-playbook deploy-swarm-stack.yml -C -i revoada_test_hosts -u deployer --private-key ../../deploy_key --ssh-extra-args "-o StrictHostKeyChecking=no"
+
+deploy:
+  stage: deploy
+  image: python
+  only:
+    - master
+  services: []
+  before_script:
+    - apt-get update -y
+    - apt-get install -y ansible
+    - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
+    - chmod 600 deploy_key
+  script:
+    - pushd deploy/ansible
+    - ansible-playbook deploy-swarm-stack.yml -i revoada_test_hosts -u deployer --private-key ../../deploy_key --ssh-extra-args "-o StrictHostKeyChecking=no"
