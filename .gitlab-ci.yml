@@ -121,6 +121,8 @@ deploy_dry_run:
   image: python
   services: []
   before_script:
+    - echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' > /etc/apt/sources.list.d/ansible.list
+    - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
     - apt-get update -y
     - apt-get install -y ansible
     - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
@@ -136,6 +138,8 @@ deploy:
     - master
   services: []
   before_script:
+    - echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' > /etc/apt/sources.list.d/ansible.list
+    - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
     - apt-get update -y
     - apt-get install -y ansible
     - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
