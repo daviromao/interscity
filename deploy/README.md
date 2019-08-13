@@ -60,4 +60,4 @@ There's a valid `hosts` file for deploying with Vagrant and VirtualBox. The `vag
 
 * `vagrant up`
 * `ansible-playbook setup-swarm.yml -i <vagrant_hosts | standalone_vagrant_host>`
-* `ansible-playbook deploy-swarm-stack- i <vagrant_hosts | standalone_vagrant_host>`
+* `ansible-playbook deploy-swarm-stack -i <vagrant_hosts | standalone_vagrant_host>`
