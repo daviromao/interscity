@@ -42,8 +42,12 @@ This will bring up all services. It may take some time on the first run and you 
 
 ## Example to check for a correct deployment
 
-Replace `localhost` by your gateway host address:
+Make sure you have assess to your gateway host through ports `8000` and `8001`. Then you can replace `localhost` by your gateway host address and perform the following checks:
 
+* `curl http://localhost:8001/upstreams`
+  - should return 6 entries (all applications and the kong-api-gateway)
+* `curl http://localhost:8001/apis`
+  - should return 5 entries (all applications)
 * `curl http://localhost:8000/catalog/resources`
 * `curl http://localhost:8000/collector/resources/data`
 
