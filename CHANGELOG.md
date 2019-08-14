@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Establish a release routine
 * Enable continuous delivery
 * Remove legacy deployment scripts and update deployment README
 * Support standalone applications
