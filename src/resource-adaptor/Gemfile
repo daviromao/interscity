@@ -8,7 +8,7 @@ gem 'kong'
 gem 'httparty'
 gem 'rest-client'
 
-gem 'pg'
+
 
 # Sidekiq and redis
 gem 'sidekiq'
