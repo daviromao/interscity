@@ -27,6 +27,8 @@ gem 'bunny', '~> 2.5.1'
 
 gem 'colorize'
 
+gem 'service-base', path: '../gems/service-base'
+
 group :development, :test do
   gem 'rspec-rails'
 end

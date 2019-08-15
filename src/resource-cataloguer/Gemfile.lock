@@ -1,3 +1,8 @@
+PATH
+  remote: ../gems/service-base
+  specs:
+    service-base (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -190,6 +195,7 @@ DEPENDENCIES
   redis (~> 3.0)
   rest-client
   rspec-rails (~> 3.5)
+  service-base!
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
@@ -199,4 +205,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.0)
 
 BUNDLED WITH
-   1.15.1
+   1.17.2

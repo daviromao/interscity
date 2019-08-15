@@ -1,3 +1,8 @@
+PATH
+  remote: ../gems/service-base
+  specs:
+    service-base (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -271,6 +276,7 @@ DEPENDENCIES
   rspec-rails (~> 3.5.0.beta4)
   rubocop (~> 0.40.0)
   sass-rails (~> 5.0)
+  service-base!
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
@@ -279,4 +285,4 @@ DEPENDENCIES
   web-console
 
 BUNDLED WITH
-   1.15.1
+   1.17.2
