@@ -1,0 +1,21 @@
+# Releasing InterSCity
+
+In this document, we'll cover the steps necessary to release InterSCity.
+
+## Checklist
+
+You should not proceed to release unless all of these have been attended:
+
+* Check for open merge requests and notify authors giving them 3 days to merge
+* Is the CI green? If not, make it green
+
+## Release steps
+
+* Freeze the master branch
+* Update the CHANGELOG
+  - many times commits are made without the CHANGELOG being updated. You should review the commits since the last release, and fill in any missing information for each CHANGELOG. You can review the commits for the 3.0.10 release like this: `git log v3.0.9..`
+  - make sure to use semantic versioning
+  - make sure to a new `Unreleased` section
+* Create a git tag matching the CHANGELOG version
+* Push docker tags matching the CHANGELOG version
+* Announce the release to the users mailing list (interscity-platform@googlegroups.com)
