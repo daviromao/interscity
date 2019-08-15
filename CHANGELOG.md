@@ -6,6 +6,8 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+## v0.1.0 - 15/08/2019
+
 * Establish a release routine
 * Enable continuous delivery
 * Remove legacy deployment scripts and update deployment README
