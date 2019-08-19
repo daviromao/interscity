@@ -16,7 +16,7 @@ gem 'jquery-rails'
 gem 'faye'
 gem 'thin'
 
-gem 'rest-client'
+
 
 # RabbitMQ
 gem 'bunny', '~> 2.5.1'

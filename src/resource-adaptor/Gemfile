@@ -6,7 +6,7 @@ gem 'spring', :group => :development
 
 
 gem 'httparty'
-gem 'rest-client'
+
 
 
 
@@ -14,7 +14,7 @@ gem 'rest-client'
 gem 'sidekiq'
 gem 'redis'
 gem 'redis-namespace'
-gem 'rest-client'
+
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 
