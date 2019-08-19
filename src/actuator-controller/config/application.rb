@@ -28,5 +28,21 @@ module ActuatorsControl
     config.enable_dependency_loading = true
     config.api_only = true
     config.autoload_paths << Rails.root.join('lib')
+
+    # Avoid CORS issues when API is called from the frontend app.
+    # Handle Cross-Origin BasicResource Sharing (CORS) in order to accept cross-origin AJAX requests.
+
+    # Read more: https://github.com/cyu/rack-cors
+
+    require 'rack/cors'
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+
+        resource '*',
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      end
+    end
   end
 end
