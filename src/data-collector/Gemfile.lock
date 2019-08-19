@@ -1,7 +1,8 @@
 PATH
   remote: ../gems/service-base
   specs:
-    service-base (0.9.0)
+    service-base (0.10.0)
+      bunny (~> 2.5.1)
       kong (~> 0.3.1)
       pg (~> 0.21.0)
       puma (~> 3.0)
@@ -52,7 +53,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.0)
       public_suffix (~> 2.0, >= 2.0.2)
-    amq-protocol (2.1.0)
+    amq-protocol (2.3.0)
     arel (7.1.4)
     ast (2.3.0)
     bindex (0.5.0)
@@ -264,7 +265,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 2.5.1)
   byebug
   config
   database_cleaner
