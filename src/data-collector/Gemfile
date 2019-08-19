@@ -5,7 +5,7 @@ gem 'rake'
 gem 'mongoid'
 gem 'database_cleaner'
 
-gem 'puma', '~> 3.0'
+
 
 gem 'sass-rails', '~> 5.0'
 

@@ -4,7 +4,7 @@ gem 'mongoid'
 gem 'database_cleaner'
 gem 'kaminari-mongoid'
 
-gem 'puma', '~> 3.0'
+
 
 gem 'rest-client'
 
