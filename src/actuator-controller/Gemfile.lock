@@ -1,13 +1,13 @@
 PATH
   remote: ../gems/service-base
   specs:
-    service-base (0.14.0)
+    service-base (0.15.0)
       bunny (~> 2.5.1)
       jbuilder (~> 2.0)
       kong (~> 0.3.1)
       pg (~> 1.1)
       puma (~> 3.11)
-      rack-cors (~> 1.0.2)
+      rack-cors (~> 1.0.3)
       rails (~> 5.0.0)
       rest-client (~> 2.0.2)
       sqlite3 (~> 1.4)

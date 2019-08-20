@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pg', '~> 1.1'
   spec.add_dependency 'kong', '~> 0.3.1'
   spec.add_dependency 'puma', '~> 3.11'
-  spec.add_dependency 'rack-cors', '~> 1.0.2'
+  spec.add_dependency 'rack-cors', '~> 1.0.3'
   spec.add_dependency 'rest-client', '~> 2.0.2'
   spec.add_dependency 'bunny', '~> 2.5.1'
   spec.add_dependency 'jbuilder', '~> 2.0'
