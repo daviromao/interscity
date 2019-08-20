@@ -1,33 +1,17 @@
 source 'https://rubygems.org'
 
-gem 'rails', '>= 5.0.0', '< 5.1'
-
 gem 'mongoid'
 gem 'database_cleaner'
 gem 'kaminari-mongoid'
-
-gem 'puma', '~> 3.0'
-
-gem 'rest-client'
-
-gem 'kong'
-
 gem 'sass-rails', '~> 5.0'
-
 gem 'jquery-rails'
-
-gem 'jbuilder', '~> 2.0'
-
 gem 'faye'
 gem 'thin'
 
-gem 'rack-cors', :require => 'rack/cors'
-
-# RabbitMQ
-gem 'bunny', '~> 2.5.1'
-
 # Configure application
 gem 'config'
+
+gem 'service-base', path: '../gems/service-base'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5.0.beta4'

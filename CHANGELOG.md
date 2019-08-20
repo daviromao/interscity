@@ -6,6 +6,8 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Create service-base gem
+
 ## v0.1.0 - 15/08/2019
 
 * Establish a release routine
