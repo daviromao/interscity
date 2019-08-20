@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sqlite3', '~> 1.4'
   spec.add_dependency 'pg', '~> 1.1'
   spec.add_dependency 'kong', '~> 0.3.1'
-  spec.add_dependency 'puma', '~> 3.0'
+  spec.add_dependency 'puma', '~> 3.11'
   spec.add_dependency 'rack-cors', '~> 1.0.2'
   spec.add_dependency 'rest-client', '~> 2.0.2'
   spec.add_dependency 'bunny', '~> 2.5.1'
