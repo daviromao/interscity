@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'rails', '~> 5.0.0'
   spec.add_dependency 'sqlite3', '~> 1.4'
-  spec.add_dependency 'pg', '~> 0.21.0'
+  spec.add_dependency 'pg', '~> 1.1'
   spec.add_dependency 'kong', '~> 0.3.1'
   spec.add_dependency 'puma', '~> 3.0'
   spec.add_dependency 'rack-cors', '~> 1.0.2'
