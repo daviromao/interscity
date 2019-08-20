@@ -1,8 +1,8 @@
 PATH
   remote: ../gems/service-base
   specs:
-    service-base (0.15.0)
-      bunny (~> 2.5.1)
+    service-base (0.16.0)
+      bunny (~> 2.14.2)
       jbuilder (~> 2.0)
       kong (~> 0.3.1)
       pg (~> 1.1)
@@ -55,8 +55,8 @@ GEM
     amq-protocol (2.3.0)
     arel (7.1.4)
     builder (3.2.3)
-    bunny (2.5.1)
-      amq-protocol (>= 2.0.1)
+    bunny (2.14.2)
+      amq-protocol (~> 2.3, >= 2.3.0)
     byebug (9.1.0)
     concurrent-ruby (1.1.5)
     crass (1.0.4)

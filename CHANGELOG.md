@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Update bunny gem
 * Update rack-cors gem
 * Update puma gem
 * Update pg gem
