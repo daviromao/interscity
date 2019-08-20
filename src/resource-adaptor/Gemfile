@@ -1,26 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'spring', :group => :development
-
-
-
-
 gem 'httparty'
-
-
-
 
 # Sidekiq and redis
 gem 'sidekiq'
 gem 'redis'
 gem 'redis-namespace'
-
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-
-
-# RabbitMQ
-
 
 gem 'colorize'
 
@@ -31,8 +17,6 @@ group :development, :test do
 end
 
 gem 'simplecov', :require => false, :group => :test
-
-
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

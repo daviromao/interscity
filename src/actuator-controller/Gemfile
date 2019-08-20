@@ -3,22 +3,10 @@ source 'https://rubygems.org'
 gem 'mongoid'
 gem 'database_cleaner'
 gem 'kaminari-mongoid'
-
-
-
-
-
-
-
 gem 'sass-rails', '~> 5.0'
-
 gem 'jquery-rails'
-
 gem 'faye'
 gem 'thin'
-
-# RabbitMQ
-
 
 # Configure application
 gem 'config'
