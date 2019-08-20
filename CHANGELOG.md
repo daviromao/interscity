@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Update sqlite3 gem
 * Create base docker image
 * Create service-base gem
 
