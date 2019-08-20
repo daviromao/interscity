@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Create base docker image
 * Create service-base gem
 
 ## v0.1.0 - 15/08/2019
