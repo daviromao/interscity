@@ -1,5 +1,4 @@
-FROM debian:unstable
-RUN apt update -qy && apt install ruby bundler libxml2 zlib1g-dev libsqlite3-dev libpq-dev postgresql postgresql-contrib -yq
+FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:latest
 RUN mkdir -p /resource-cataloguer/
 ADD . /resource-cataloguer/
 WORKDIR /resource-cataloguer/

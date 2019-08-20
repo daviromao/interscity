@@ -1,5 +1,4 @@
-FROM debian:unstable
-RUN apt update -qy && apt install ruby bundler libxml2 libsqlite3-dev zlib1g-dev liblzma-dev libpq-dev -yq
+FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:latest
 RUN mkdir -p /data-collector/
 ADD . /data-collector/
 WORKDIR /data-collector/

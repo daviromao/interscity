@@ -85,6 +85,9 @@ build_and_push_docker:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cd src
+    # base
+    - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/base .
+    - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/base
     # actuator-controller
     - cd actuator-controller
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller .
