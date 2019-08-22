@@ -599,9 +599,9 @@ RSpec.describe SensorValuesController, type: :controller do
       it 'returns the last value for multiple uuids' do
         %i[post get].each do |verb|
           send(verb, 'resources_data_last', params: {
-                 uuids: [
-                   '2de545ae-841a-4e4a-b961-a43bb324a2b9',
-                   '989e93f2-35e1-4a2b-b80a-4bf91030085c'
+                 uuids: %w[
+                   2de545ae-841a-4e4a-b961-a43bb324a2b9
+                   989e93f2-35e1-4a2b-b80a-4bf91030085c
                  ]
                })
           returned_json = JSON.parse(response.body)

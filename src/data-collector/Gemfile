@@ -5,12 +5,12 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.4'
 
-gem 'rake'
 gem 'database_cleaner'
-gem 'mongoid'
-gem 'sass-rails', '~> 5.0'
-gem 'jquery-rails'
 gem 'faye'
+gem 'jquery-rails'
+gem 'mongoid'
+gem 'rake'
+gem 'sass-rails', '~> 5.0'
 gem 'thin'
 
 # Configure application

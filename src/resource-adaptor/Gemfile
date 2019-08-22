@@ -5,9 +5,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.4'
 
-gem 'spring', group: :development
 gem 'httparty'
 gem 'kong'
+gem 'spring', group: :development
 gem 'sqlite3'
 
 # Sidekiq and redis

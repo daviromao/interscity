@@ -6,11 +6,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.4'
 
 gem 'database_cleaner'
+gem 'faye'
+gem 'jquery-rails'
 gem 'kaminari-mongoid'
 gem 'mongoid'
 gem 'sass-rails', '~> 5.0'
-gem 'jquery-rails'
-gem 'faye'
 gem 'thin'
 
 # Configure application

@@ -1,4 +1,6 @@
-require "service/base/version"
+# frozen_string_literal: true
+
+require 'service/base/version'
 
 module Service
   module Base
