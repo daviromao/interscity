@@ -47,6 +47,21 @@ class ActuatorController < ApplicationController
     }
   end
 
+  def create_command(resource, capability, value)
+    command = ActuatorCommand.new(
+      platform_resource: resource,
+      uuid: resource.uuid,
+      capability: capability,
+      value: value
+    )
+
+    if command.save
+      @response['success'] << command
+    else
+      add_failure(resource.uuid, 400, "Invalid command #{command.errors.full_messages}", capability, value)
+    end
+  end
+
   def apply_command(actuator, _params)
     resource = PlatformResource.where(uuid: actuator['uuid']).first
 
@@ -54,18 +69,7 @@ class ActuatorController < ApplicationController
       if resource.blank?
         add_failure(actuator['uuid'], 404, 'Resource not found', capability, value)
       elsif resource.capabilities.include? capability
-        command = ActuatorCommand.new(
-          platform_resource: resource,
-          uuid: resource.uuid,
-          capability: capability,
-          value: value
-        )
-
-        if command.save
-          @response['success'] << command
-        else
-          add_failure(resource.uuid, 400, "Invalid command #{command.errors.full_messages}", capability, value)
-        end
+        create_command(resource, capability, value)
       else
         add_failure(resource.uuid, 400, 'This resource does not have such cappability', capability, value)
       end
