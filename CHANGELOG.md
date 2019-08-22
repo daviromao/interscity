@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Update resource-adaptor redis-namespace gem
 * Update resource-adaptor sidekiq gem
 * Update bunny gem
 * Update rack-cors gem
