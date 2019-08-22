@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rest-client', '~> 2.0.2'
   spec.add_dependency 'bunny', '~> 2.14.2'
   spec.add_dependency 'jbuilder', '~> 2.0'
+  spec.add_dependency 'bootsnap', '>= 1.1.0'
 
   spec.add_development_dependency "bundler", "~> 1.17"
   spec.add_development_dependency "rake", "~> 10.0"
