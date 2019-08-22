@@ -1,4 +1,4 @@
-class CreateComponents < ActiveRecord::Migration
+class CreateComponents < ActiveRecord::Migration[5.0]
   def change
     create_table :components do |t|
       t.string :uuid

@@ -1,4 +1,4 @@
-class CreateBasicResources < ActiveRecord::Migration
+class CreateBasicResources < ActiveRecord::Migration[5.0]
   def change
     create_table :basic_resources do |t|
       t.integer :uuid
