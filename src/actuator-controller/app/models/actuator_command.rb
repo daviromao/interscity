@@ -31,7 +31,7 @@ class ActuatorCommand < ApplicationRecord
 
   def publish_command
     notify_command_request(self)
-  rescue StandardError => e
+  rescue StandardError
     self.status = 'failed'
     save
   end
