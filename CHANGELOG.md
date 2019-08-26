@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Set Ruby and bundler versions on docker images
 * Update rails gem
 * Add bootsnap dependency to service-base
 * Update resource-cataloguer mock_redis gem
