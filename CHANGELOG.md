@@ -6,6 +6,16 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Update rails gem
+* Add bootsnap dependency to service-base
+* Update resource-cataloguer mock_redis gem
+* Update resource-adaptor redis-namespace gem
+* Update resource-adaptor sidekiq gem
+* Update bunny gem
+* Update rack-cors gem
+* Update puma gem
+* Update pg gem
+* Update sqlite3 gem
 * Create base docker image
 * Create service-base gem
 

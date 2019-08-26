@@ -5,7 +5,7 @@ development:
     default:
       database: actuator_controller_development
       hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+        - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
       options:
         max_pool_size: 25
         wait_queue_timeout: 10
@@ -17,7 +17,7 @@ production:
     default:
       database: actuator_controller_development
       hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+        - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
       options:
         max_pool_size: 25
         wait_queue_timeout: 10
@@ -62,7 +62,7 @@ test:
     default:
       database: actuator_controller_test
       hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+        - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
       options:
         read:
           mode: :primary

@@ -22,15 +22,16 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'rails', '~> 5.0.0'
-  spec.add_dependency 'sqlite3', '~> 1.3.13'
-  spec.add_dependency 'pg', '~> 0.21.0'
+  spec.add_dependency 'rails', '~> 5.2.3'
+  spec.add_dependency 'sqlite3', '~> 1.4'
+  spec.add_dependency 'pg', '~> 1.1'
   spec.add_dependency 'kong', '~> 0.3.1'
-  spec.add_dependency 'puma', '~> 3.0'
-  spec.add_dependency 'rack-cors', '~> 1.0.2'
+  spec.add_dependency 'puma', '~> 3.11'
+  spec.add_dependency 'rack-cors', '~> 1.0.3'
   spec.add_dependency 'rest-client', '~> 2.0.2'
-  spec.add_dependency 'bunny', '~> 2.5.1'
+  spec.add_dependency 'bunny', '~> 2.14.2'
   spec.add_dependency 'jbuilder', '~> 2.0'
+  spec.add_dependency 'bootsnap', '>= 1.1.0'
 
   spec.add_development_dependency "bundler", "~> 1.17"
   spec.add_development_dependency "rake", "~> 10.0"
