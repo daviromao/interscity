@@ -32,6 +32,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   * The remaining hosts must be members of the `swarm-workers` group
 2. Install Docker Swarm
   * Within the ansible directory run: `ansible-playbook setup-swarm.yml`
+    - this step performs, among other tasks, a full system upgrade. If you find an error while running it, please try to reboot the hosts and running it again
 
 For standalone installations, a host must have both `gateway` and `data` labelled `true`.
 
