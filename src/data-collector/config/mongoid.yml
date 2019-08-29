@@ -1,14 +1,14 @@
 defaults: &defaults
   persist_in_safe_mode: true
   hosts:
-    - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+    - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
   options:
     max_pool_size: 25
     wait_queue_timeout: 10
 
 caches: &caches
   hosts:
-    - <%= ENV['MONGO_CACHE_HOST'] %>:<%= ENV['MONGO_CACHE_PORT'] %>
+    - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
   options:
     max_pool_size: 25
     wait_queue_timeout: 10
@@ -77,7 +77,7 @@ test:
     default:
       database: data_collector_test
       hosts:
-        - <%= ENV['MONGO_HOST'] %>:<%= ENV['MONGO_PORT'] %>
+        - <%= ENV.fetch('MONGO_HOST') { 'localhost' } %>:<%= ENV.fetch('MONGO_PORT') { 27017 } %>
       options:
         read:
           mode: :primary
