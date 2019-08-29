@@ -536,7 +536,7 @@ RSpec.describe SensorValuesController, type: :controller do
           sensor_value = SensorValue.new(
             capability: capability,
             platform_resource: resource,
-            date: Faker::Time.between(DateTime.zone.now - 1, DateTime.zone.now)
+            date: Faker::Time.between(DateTime.now - 1, DateTime.now)
           )
           sensor_value[data] = Faker::Number.decimal(2, 3)
           sensor_value.save!

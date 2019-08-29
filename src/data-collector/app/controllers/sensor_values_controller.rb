@@ -57,11 +57,11 @@ class SensorValuesController < ApplicationController
 
     unless @start_date.nil?
       @sensor_values = @sensor_values
-                       .where(:date.gte => DateTime.zone.parse(@start_date))
+                       .where(:date.gte => DateTime.parse(@start_date))
     end
     unless @end_date.nil?
       @sensor_values = @sensor_values
-                       .where(:date.lte => DateTime.zone.parse(@end_date))
+                       .where(:date.lte => DateTime.parse(@end_date))
     end
   rescue StandardError
     render json: { error: 'Bad Request: resource not found' }, status: :bad_request

@@ -519,8 +519,8 @@ RSpec.describe SensorValuesController, type: :controller do
           resources_data.each do |resource|
             resource['capabilities'].each do |_key, capability|
               capability.each do |data|
-                expect(DateTime.zone.parse(data['date'])).to be >= DateTime.zone.parse('2016-02-01 01:03:43')
-                expect(DateTime.zone.parse(data['date'])).to be <= DateTime.zone.parse('2016-06-25 16:03:43')
+                expect(DateTime.parse(data['date'])).to be >= DateTime.parse('2016-02-01 01:03:43')
+                expect(DateTime.parse(data['date'])).to be <= DateTime.parse('2016-06-25 16:03:43')
               end
             end
           end
