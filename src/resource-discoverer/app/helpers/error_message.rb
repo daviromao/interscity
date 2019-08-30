@@ -2,21 +2,22 @@
 
 # Global constants for error messages
 module ErrorMessage
-  ERROR_CODE = {}.freeze
+  ERROR_CODE = {
+    200 => 'OK',
 
-  ERROR_CODE[200] = 'OK'
+    400 => 'Bad Request',
+    401 => 'Unauthorized',
+    403 => 'Forbidden',
+    404 => 'Not Found',
+    422 => 'Unprocessable Entry',
+    429 => 'Too Many Requests',
 
-  ERROR_CODE[400] = 'Bad Request'
-  ERROR_CODE[401] = 'Unauthorized'
-  ERROR_CODE[403] = 'Forbidden'
-  ERROR_CODE[404] = 'Not Found'
-  ERROR_CODE[422] = 'Unprocessable Entry'
-  ERROR_CODE[429] = 'Too Many Requests'
+    500 => 'Internal Server Error',
+    501 => 'Not Implemented',
+    502 => 'Bad Gateway',
+    503 => 'Service Unavailable',
+  }.freeze
 
-  ERROR_CODE[500] = 'Internal Server Error'
-  ERROR_CODE[501] = 'Not Implemented'
-  ERROR_CODE[502] = 'Bad Gateway'
-  ERROR_CODE[503] = 'Service Unavailable'
 
   protected
 
