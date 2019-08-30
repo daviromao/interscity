@@ -23,9 +23,8 @@ class ResourceUpdater
     @queue.bind(@topic, routing_key: '#.actuator.#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
+      @consumers << @queue.subscribe(block: false) do |_delivery_info, _properties, body|
         begin
-          routing_keys = delivery_info.routing_key.split('.')
           json = JSON.parse(body)
           resource_attributes = json.slice(
             'uuid',
