@@ -16,20 +16,8 @@ module Service
             raise 'Missing required parameters for proxy configuration: name, upstream_name'
           end
 
-          upstream = Kong::Upstream.find_by(name: upstream_name)
-          if upstream.nil?
-            upstream = Kong::Upstream.new(name: upstream_name)
-            upstream.save
-          end
-
-          if Kong::Api.find_by(name: name).nil?
-            Kong::Api.new(
-              name: name,
-              upstream_url: "http://#{upstream_name}",
-              uris: "/#{name}",
-              strip_uri: true
-            ).save
-          end
+          find_or_create_upstream(upstream_name)
+          find_or_create_api(name, upstream_name)
 
           Kong::Target.new(
             upstream_id: upstream.id,
@@ -56,6 +44,35 @@ module Service
         rescue StandardError => e
           Rails.logger.error "Could not register API to Kong #{e.message}"
         end
+      end
+
+      private
+
+      def find_or_create_upstream(upstream_name)
+        upstream = Kong::Upstream.find_by(name: upstream_name)
+
+        if upstream.nil?
+          upstream = Kong::Upstream.new(name: upstream_name)
+          upstream.save
+        end
+
+        upstream
+      end
+
+      def find_or_create_api(name, upstream_name)
+        api = Kong::Api.find_by(name: name)
+
+        if api.nil?
+          api = Kong::Api.new(
+            name: name,
+            upstream_url: "http://#{upstream_name}",
+            uris: "/#{name}",
+            strip_uri: true
+          )
+          api.save
+        end
+
+        api
       end
     end
   end
