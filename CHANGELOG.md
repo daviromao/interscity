@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Remove unused test framework
 * Extract Kong wrapper to service-base gem
 * Improve deployment instructions
 * Set Ruby and bundler versions on docker images
