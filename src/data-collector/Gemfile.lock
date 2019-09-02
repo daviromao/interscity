@@ -1,7 +1,7 @@
 PATH
   remote: ../gems/service-base
   specs:
-    service-base (0.18.0)
+    service-base (0.19.0)
       bootsnap (>= 1.1.0)
       bunny (~> 2.14.2)
       jbuilder (~> 2.0)
