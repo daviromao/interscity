@@ -22,9 +22,8 @@ module Service
             upstream.save
           end
 
-          api = Kong::Api.find_by(name: name)
-          if api.nil?
-            api = Kong::Api.new(
+          if Kong::Api.find_by(name: name).nil?
+            Kong::Api.new(
               name: name,
               upstream_url: "http://#{upstream_name}",
               uris: "/#{name}",
@@ -46,8 +45,7 @@ module Service
         def register_as_api(name, uris)
           raise 'Missing required parameters for proxy configuration: name, uris' if name.blank? || uris.blank?
 
-          api = Kong::Api.find_by(name: name)
-          api = Kong::Api.new(
+          Kong::Api.new(
             name: name,
             upstream_url: @self_host_with_http,
             uris: uris,
