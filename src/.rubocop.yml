@@ -16,6 +16,7 @@ Rails:
 Metrics/BlockLength:
   Exclude:
     - '**/*_spec.rb'
+    - '**/spec/factories/*.rb'
 
 Metrics/LineLength:
   Max: 120
