@@ -27,16 +27,7 @@ class DataReceiver
     @consumers_size.times do
       @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
         begin
-          routing_keys = delivery_info.routing_key.split('.')
-          uuid = routing_keys.first
-          resource = PlatformResource.find_by(uuid: uuid)
-          WORKERS_LOGGER.error("DataReceiver::ResourceNotFound = Could not find resource #{uuid}") if resource.nil?
-
-          capability = routing_keys[1]
-          unless resource.capabilities.include? capability
-            resource.capabilities << capability
-            WORKERS_LOGGER.info("DataReceiver::CapabilityAssociation -  #{capability} associated with resource #{uuid}")
-          end
+          resource, capability = find_resource_and_capability(delivery_info)
 
           create_sensor_value(resource, capability, body)
           WORKERS_LOGGER.info("DataReceiver::DataCreated - #{resource.uuid} - #{capability}")
@@ -61,5 +52,25 @@ class DataReceiver
       value = SensorValue.new(attributes)
       raise "Cannot save: #{value.inspect} with body #{body} and the errors: #{value.errors.messages}" unless value.save
     end
+  end
+
+  def find_resource_and_capability(delivery_info)
+    routing_keys = delivery_info.routing_key.split('.')
+    uuid = routing_keys.first
+    resource = PlatformResource.find_by(uuid: uuid)
+
+    if resource.nil?
+      error_message = "DataReceiver::ResourceNotFound = Could not find resource #{uuid}"
+      WORKERS_LOGGER.error(error_message)
+      raise error_message
+    end
+
+    capability = routing_keys[1]
+    unless resource.capabilities.include? capability
+      resource.capabilities << capability
+      WORKERS_LOGGER.info("DataReceiver::CapabilityAssociation -  #{capability} associated with resource #{uuid}")
+    end
+
+    [resource, capability]
   end
 end
