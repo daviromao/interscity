@@ -2,7 +2,7 @@
 
 class String
   # Check that given string is a Float.
-  def is_float?
+  def float?
     true if Float(self)
   rescue StandardError
     false
@@ -10,7 +10,7 @@ class String
 
   # Check that given string is an Integer and
   # verify if it is positive ahead.
-  def is_positive_int?
+  def positive_int?
     int = begin
             Integer(self)
           rescue StandardError

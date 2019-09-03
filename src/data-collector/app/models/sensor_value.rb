@@ -44,7 +44,7 @@ class SensorValue
 
   def parse_to_float
     attributes.each do |key, value|
-      self[key.to_sym] = value.to_f if value.try(:is_float?)
+      self[key.to_sym] = value.to_f if value.try(:float?)
     end
   end
 

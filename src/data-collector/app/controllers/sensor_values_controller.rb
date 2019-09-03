@@ -31,7 +31,7 @@ class SensorValuesController < ApplicationController
     limit = '1000' unless limit.to_i <= 1000
 
     [limit, start].each do |arg|
-      next if arg.nil? || arg.is_positive_int?
+      next if arg.nil? || arg.positive_int?
 
       render json: {
         error: 'Bad Request: pagination args not valid'
@@ -172,8 +172,8 @@ class SensorValuesController < ApplicationController
     return nil unless acceptable_filters.include? operator
 
     if value.is_a?(Array)
-      value.map! { |x| x.try(:is_float?) ? x.to_f : x }
-    elsif value.try(:is_float?)
+      value.map! { |x| x.try(:float?) ? x.to_f : x }
+    elsif value.try(:float?)
       value = value.to_f
     end
     filters[name] = if filters[name]
