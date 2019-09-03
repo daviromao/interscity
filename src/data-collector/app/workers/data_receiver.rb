@@ -41,17 +41,17 @@ class DataReceiver
   private
 
   def create_sensor_value(resource, capability, body)
-    if resource && capability
-      json = JSON.parse(body)
-      attributes = { uuid: resource.uuid,
-                     capability: capability,
-                     platform_resource_id: resource.id }
-      attributes.merge! json
-      attributes['date'] = attributes['timestamp'] unless attributes['date']
-      attributes.delete('timestamp')
-      value = SensorValue.new(attributes)
-      raise "Cannot save: #{value.inspect} with body #{body} and the errors: #{value.errors.messages}" unless value.save
-    end
+    return unless resource && capability
+
+    json = JSON.parse(body)
+    attributes = { uuid: resource.uuid,
+                   capability: capability,
+                   platform_resource_id: resource.id }
+    attributes.merge! json
+    attributes['date'] = attributes['timestamp'] unless attributes['date']
+    attributes.delete('timestamp')
+    value = SensorValue.new(attributes)
+    raise "Cannot save: #{value.inspect} with body #{body} and the errors: #{value.errors.messages}" unless value.save
   end
 
   def find_resource_and_capability(delivery_info)
