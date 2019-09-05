@@ -27,16 +27,17 @@ class ComponentsController < ApplicationController
 
   # POST /components/1/data/
   def data
+    data = data_params.to_unsafe_h
+
+    if data.any? { |_, values| !values.is_a?(Array) }
+      render error_payload('The data for a given capability must be placed in an Array', 400)
+      return
+    end
+
     data_manager = DataManager.instance
-    data_params.to_unsafe_h.each do |capability_name, values|
-      if values.is_a?(Array)
-        values.each do |data|
-          data_manager.publish_resource_data(@uuid, capability_name, data)
-        end
-      else
-        render error_payload("The data for a given capability must be placed
-        in an Array", 400)
-        return
+    data.each do |capability_name, values|
+      values.each do |value|
+        data_manager.publish_resource_data(@uuid, capability_name, value)
       end
     end
 
