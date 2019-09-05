@@ -66,6 +66,24 @@ class ActuatorsController < ApplicationController
   end
 
   def valid_capabilities?(subscription)
+    available_capabilities = fecth_resource_capabilities(subscription)
+    return false unless available_capabilities
+
+    match_capabilities = available_capabilities & subscription.capabilities
+    if match_capabilities.blank?
+      render(
+        json: {
+          error: "This resource does not have these capabilities: #{subscription.capabilities - match_capabilities}"
+        },
+        status: :not_found
+      )
+      return false
+    end
+
+    true
+  end
+
+  def fecth_resource_capabilities(subscription)
     response = Platform::ResourceManager.get_resource(subscription.uuid)
     if response.nil?
       render json: { error: 'Resource Cataloguer service is unavailable' }, status: :service_unavailable
@@ -75,13 +93,6 @@ class ActuatorsController < ApplicationController
       return false
     end
 
-    available_capabilities = JSON.parse(response.body)['data']['capabilities']
-    match_capabilities = available_capabilities & subscription.capabilities
-    if match_capabilities.blank?
-      render json: { error: "This resource does not have these capabilities: #{subscription.capabilities - match_capabilities}" }, status: :not_found
-      return false
-    end
-
-    true
+    JSON.parse(response.body)['data']['capabilities']
   end
 end
