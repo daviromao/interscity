@@ -79,7 +79,7 @@ RSpec.describe SensorValue, type: :model do
     )
 
     expect(last_value_before.temperature).to eq(10)
-    expect { FactoryGirl.create(:default_sensor_value, temperature: '15') }.not_to change { LastSensorValue.count }
+    expect { FactoryGirl.create(:default_sensor_value, temperature: '15') }.not_to(change { LastSensorValue.count })
 
     last_value_after = LastSensorValue.find_by(
       capability: sensor_value.capability,
@@ -98,7 +98,7 @@ RSpec.describe SensorValue, type: :model do
     )
 
     expect(last_value_before.pressure).to eq(3)
-    expect { FactoryGirl.create(:default_sensor_value, pressure: '5.2') }.not_to change { LastSensorValue.count }
+    expect { FactoryGirl.create(:default_sensor_value, pressure: '5.2') }.not_to(change { LastSensorValue.count })
 
     last_value_after = LastSensorValue.find_by(
       capability: sensor_value.capability,
