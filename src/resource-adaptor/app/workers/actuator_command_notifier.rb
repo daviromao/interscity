@@ -26,17 +26,10 @@ class ActuatorCommandNotifier
           json = JSON.parse(body)
           uuid = json['uuid']
           capability = json['capability']
-          if uuid && capability
-            subscriptions = ::Subscription.where(uuid: uuid, active: true)
-            subscriptions.each do |subscription|
-              if subscription.capabilities.include? capability
-                ::WebHookCaller.perform_async(subscription.id, subscription.url, body)
-                WORKERS_LOGGER.info("AcutatorCommandNotifier::CommandReceived - #{json}")
-              end
-            end
-          else
-            raise 'UUID and Capability not provided'
-          end
+
+          raise 'UUID and Capability not provided' unless uuid && capability
+
+          schedule_webhooks(uuid, json, capability, body)
         rescue StandardError => e
           WORKERS_LOGGER.error("AcutatorCommandNotifier::CommandNotProcessed - #{e.message}")
         end
@@ -49,5 +42,16 @@ class ActuatorCommandNotifier
       @consumer.cancel
     end
     @channel.close
+  end
+
+  private
+
+  def schedule_webhooks(uuid, json, capability, body)
+    ::Subscription.where(uuid: uuid, active: true).each do |subscription|
+      if subscription.capabilities.include? capability
+        ::WebHookCaller.perform_async(subscription.id, subscription.url, body)
+        WORKERS_LOGGER.info("AcutatorCommandNotifier::CommandReceived - #{json}")
+      end
+    end
   end
 end
