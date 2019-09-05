@@ -463,7 +463,7 @@ RSpec.describe SensorValuesController, type: :controller do
 
           expect(response.status).to eq(200)
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(2)
         end
       end
@@ -475,7 +475,7 @@ RSpec.describe SensorValuesController, type: :controller do
 
           expect(response.status).to eq(200)
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(3)
         end
       end
@@ -502,7 +502,7 @@ RSpec.describe SensorValuesController, type: :controller do
                  end_date: '2016-01-03 07:00:00'
                })
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(0)
         end
       end
