@@ -13,15 +13,7 @@ class BasicResourcesController < ApplicationController
   # Errors
   # => 422 unprocessable entity
   def search
-    response = []
-    @resources = BasicResource.all
-    @resources = filter_capabilities @resources, search_params
-    @resources = filter_position @resources, search_params
-    @resources = filter_distance @resources, search_params
-    simple_params.each do |k, v|
-      @resources = filter_resources @resources, k, v
-    end
-    @resources = @resources.paginate(page: @page, per_page: @per_page)
+    @resources = filtered_resources.paginate(page: @page, per_page: @per_page)
     render json: { resources: @resources }, status: :ok
   rescue StandardError => e
     render json: {
@@ -37,12 +29,7 @@ class BasicResourcesController < ApplicationController
     begin
       resource.save!
       if capability_params[:capabilities].present?
-        capability_params[:capabilities].each do |cap|
-          query = Capability.where(name: cap)
-          raise CapabilityNotFound if query.empty?
-
-          resource.capabilities << query.take
-        end
+        add_capabilities_to_resource(capability_params[:capabilities], resource)
       end
       notify_resource(resource)
       render json: { data: resource.to_json }, status: :created, location: basic_resource_url(resource)
@@ -85,17 +72,7 @@ class BasicResourcesController < ApplicationController
   def update
     resource = BasicResource.find_by(uuid: params[:uuid])
     begin
-      resource.update!(component_params)
-      if capability_params[:capabilities].present?
-        resource.capabilities.destroy_all
-        capability_params[:capabilities].each do |cap|
-          query = Capability.where(name: cap)
-          raise if query.empty?
-
-          resource.capabilities << query.take
-        end
-      end
-      notify_resource(resource, component_params.to_h, true)
+      update_resource_and_capabilities(resource)
       render json: { data: resource.to_json }, status: :ok
     rescue StandardError
       render json: {
@@ -125,5 +102,37 @@ class BasicResourcesController < ApplicationController
   def set_page_params
     @page = params[:page] || 1
     @per_page = params[:per_page].nil? ? 40 : params[:per_page]
+  end
+
+  def filtered_resources
+    resources = BasicResource.all
+    resources = filter_capabilities resources, search_params
+    resources = filter_position resources, search_params
+    resources = filter_distance resources, search_params
+    simple_params.each do |k, v|
+      resources = filter_resources resources, k, v
+    end
+
+    resources
+  end
+
+  def add_capabilities_to_resource(capabilities, resource)
+    capabilities.each do |cap|
+      query = Capability.where(name: cap)
+      raise CapabilityNotFound if query.empty?
+
+      resource.capabilities << query.take
+    end
+  end
+
+  def update_resource_and_capabilities(resource)
+    resource.update!(component_params)
+
+    if capability_params[:capabilities].present?
+      resource.capabilities.destroy_all
+      add_capabilities_to_resource(capability_params[:capabilities], resource)
+    end
+
+    notify_resource(resource, component_params.to_h, true)
   end
 end
