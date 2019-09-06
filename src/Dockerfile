@@ -5,7 +5,7 @@
 FROM ruby:2.6.4
 
 RUN apt update -qy && apt install libxml2 libsqlite3-dev zlib1g-dev liblzma-dev libpq-dev postgresql postgresql-contrib git -yq
-RUN gem install bundler:2.0.1
+RUN gem install bundler:2.0.2
 
 RUN mkdir -p /gems/
 ADD ./gems /gems/
