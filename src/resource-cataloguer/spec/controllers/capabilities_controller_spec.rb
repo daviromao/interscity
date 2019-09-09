@@ -206,13 +206,19 @@ describe CapabilitiesController do
 
   describe '#show' do
     let!(:capabilitySensor) do
-      Capability.create_sensor(name: 'bus_monitoring',
-                               description: 'Collects data regarding the operation of the bus such as its location and speed')
+      Capability.create_sensor(
+        name: 'bus_monitoring',
+        description: 'Collects data regarding the operation of the bus such as its location and speed'
+      )
     end
+    # rubocop:disable Metrics/LineLength
     let!(:capabilityActuator) do
-      Capability.create_actuator(name: 'semaphore',
-                                 description: 'Collects data regarding the operation of the semaphore such as its current color light and change speed')
+      Capability.create_actuator(
+        name: 'semaphore',
+        description: 'Collects data regarding the operation of the semaphore such as its current color light and change speed'
+      )
     end
+    # rubocop:enable Metrics/LineLength
     let!(:capabilityInformation) do
       Capability.create_information(name: 'info_total_capacity',
                                     description: 'Collects dada from a Health Facility regarding its maximum capacity')
