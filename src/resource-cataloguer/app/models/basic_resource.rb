@@ -75,19 +75,19 @@ class BasicResource < ApplicationRecord
 
   def get_cached_capabilities(function = nil)
     function = 'all' if function.nil?
-    $redis.smembers("#{uuid}:#{function}")
+    Rails.configuration.redis.smembers("#{uuid}:#{function}")
   end
 
   def set_cached_capabilities(names, function = nil)
     return nil if names.blank?
 
     function = 'all' if function.nil?
-    $redis.sadd("#{uuid}:#{function}", names)
+    Rails.configuration.redis.sadd("#{uuid}:#{function}", names)
   end
 
   def remove_cached_capabilities(names, function = nil)
     function = 'all' if function.nil?
-    $redis.srem("#{uuid}:#{function}", names)
+    Rails.configuration.redis.srem("#{uuid}:#{function}", names)
   end
 
   private
