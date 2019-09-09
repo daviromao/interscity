@@ -26,19 +26,9 @@ class LocationUpdater
       @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
         begin
           routing_keys = delivery_info.routing_key.split('.')
-
           uuid = routing_keys[0]
-          capability = routing_keys[1]
-          value = JSON.parse(body)
-          lat = value['location']['lat']
-          lon = value['location']['lon']
+          resource_attributes = parse_latlong(body)
 
-          raise 'Could not read latitude or longitude data' if lat.blank? || lon.blank?
-
-          resource_attributes = {
-            lat: lat,
-            lon: lon
-          }
           update_location(resource_attributes, uuid)
         rescue StandardError => e
           WORKERS_LOGGER.error("LocationUpdate::ResourceNotUpdated - #{e.message}")
@@ -57,5 +47,15 @@ class LocationUpdater
     else
       WORKERS_LOGGER.error("LocationUpdate::ResourceNotFound - #{uuid}")
     end
+  end
+
+  def parse_latlong(body)
+    value = JSON.parse(body)
+    lat = value['location']['lat']
+    lon = value['location']['lon']
+
+    raise 'Could not read latitude or longitude data' if lat.blank? || lon.blank?
+
+    { lat: lat, lon: lon }
   end
 end
