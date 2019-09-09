@@ -33,7 +33,7 @@ describe BasicResourcesController do
         expect(response.location).to match(%r{resources/\d+})
       end
       it 'is expected to return the resource in JSON' do
-        expect(json['data']['id'].class).to eq(Fixnum)
+        expect(json['data']['id'].class).to eq(Integer)
         expect(json['data']['uri']).to eq('example.com')
         expect(json['data']['lat']).to eq(-23.559616)
         expect(json['data']['lon']).to eq(-46.731386)
@@ -112,7 +112,7 @@ describe BasicResourcesController do
       end
 
       it 'does not save the resource when the uuid is not unique' do
-        a_resource = BasicResource.create!(
+        BasicResource.create!(
           uri: 'example.com',
           lat: -23.559616,
           lon: -46.731386,
@@ -165,7 +165,7 @@ describe BasicResourcesController do
         expect(response.location).to match(%r{resources/\d+})
       end
       it 'is expected to return the resource in JSON' do
-        expect(json['data']['id'].class).to eq(Fixnum)
+        expect(json['data']['id'].class).to eq(Integer)
         expect(json['data']['uri']).to eq('example.com')
         expect(json['data']['lat']).to eq(-42)
         expect(json['data']['lon']).to eq(-15)
@@ -230,7 +230,7 @@ describe BasicResourcesController do
     end
 
     context 'fails due to malformed json' do
-      def resourceCreation(params = {})
+      def create_resource(params = {})
         default_params = {
           data: {
             uri: 'example.com',
@@ -248,19 +248,19 @@ describe BasicResourcesController do
       end
 
       it 'has empty latitude' do
-        resourceCreation("lat": nil)
+        create_resource("lat": nil)
         expect(response.status).to eq(422)
         expect(json['error']).to eq("Validation failed: Lat can't be blank, Lat is not a number")
       end
 
       it 'has empty longitude' do
-        resourceCreation("lon": nil)
+        create_resource("lon": nil)
         expect(response.status).to eq(422)
         expect(json['error']).to eq("Validation failed: Lon can't be blank, Lon is not a number")
       end
 
       it 'has empty status' do
-        resourceCreation("status": nil)
+        create_resource("status": nil)
         expect(response.status).to eq(422)
         expect(json['error']).to eq("Validation failed: Status can't be blank")
       end
@@ -374,7 +374,14 @@ describe BasicResourcesController do
 
     context 'fails due to bad parameters' do
       before :each do
-        put :update, params: { uuid: resource.uuid, data: { uri: 'changed.com', lat: 'not a number', lon: -40, collect_interval: 1 } }, format: :json
+        put(
+          :update,
+          params: {
+            uuid: resource.uuid,
+            data: { uri: 'changed.com', lat: 'not a number', lon: -40, collect_interval: 1 }
+          },
+          format: :json
+        )
       end
 
       it { expect(response.status).to eq(422) }
