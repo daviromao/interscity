@@ -3,7 +3,7 @@
 # inspired by http://stackoverflow.com/questions/8430719/how-to-write-run-specs-for-files-other-than-model-view-controller
 require 'rails_helper'
 require 'spec_helper'
-require "#{Rails.root}/lib/resource_filter.rb"
+require Rails.root.join('lib', 'resource_filter.rb')
 
 describe SmartCities::ResourceFilter do
   let(:filter) do
