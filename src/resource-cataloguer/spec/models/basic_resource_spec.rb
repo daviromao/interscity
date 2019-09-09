@@ -56,15 +56,21 @@ RSpec.describe BasicResource, type: :model do
     end
 
     context 'there is one sensor and one actuator' do
-      let!(:sensor) { described_class.create(resource_params.merge(capabilities: [temperature_sensor], uri: 'example1.com')) }
-      let!(:actuator) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com')) }
+      let!(:sensor) do
+        described_class.create(resource_params.merge(capabilities: [temperature_sensor], uri: 'example1.com'))
+      end
+      let!(:actuator) do
+        described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com'))
+      end
       subject { described_class.all_sensors }
       it { is_expected.to include(sensor) }
       it { is_expected.not_to include(actuator) }
     end
 
     context 'there is a hybrid sensor-actuator' do
-      let!(:hybrid) { described_class.create(resource_params.merge(capabilities: [temperature_sensor, semaphore_actuator])) }
+      let!(:hybrid) do
+        described_class.create(resource_params.merge(capabilities: [temperature_sensor, semaphore_actuator]))
+      end
       subject { described_class.all_sensors }
       it { is_expected.to include(hybrid) }
     end
@@ -77,23 +83,33 @@ RSpec.describe BasicResource, type: :model do
     end
 
     context 'there is one actuator and one information' do
-      let!(:actuator) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com')) }
-      let!(:information) { described_class.create(resource_params.merge(capabilities: [parking_information], uri: 'example3.com')) }
+      let!(:actuator) do
+        described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com'))
+      end
+      let!(:information) do
+        described_class.create(resource_params.merge(capabilities: [parking_information], uri: 'example3.com'))
+      end
       subject { described_class.all_actuators }
       it { is_expected.to include(actuator) }
       it { is_expected.not_to include(information) }
     end
 
     context 'there is a hybrid sensor-actuator' do
-      let!(:hybrid) { described_class.create(resource_params.merge(capabilities: [parking_information, semaphore_actuator])) }
+      let!(:hybrid) do
+        described_class.create(resource_params.merge(capabilities: [parking_information, semaphore_actuator]))
+      end
       subject { described_class.all_actuators }
       it { is_expected.to include(hybrid) }
     end
   end
 
   describe '#sensor?' do
-    let!(:actuator) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com')) }
-    let!(:sensor) { described_class.create(resource_params.merge(capabilities: [temperature_sensor], uri: 'example1.com')) }
+    let!(:actuator) do
+      described_class.create(resource_params.merge(capabilities: [semaphore_actuator], uri: 'example2.com'))
+    end
+    let!(:sensor) do
+      described_class.create(resource_params.merge(capabilities: [temperature_sensor], uri: 'example1.com'))
+    end
     context 'resource is a sensor' do
       subject { sensor.sensor? }
       it { is_expected.to eq(true) }
@@ -106,7 +122,11 @@ RSpec.describe BasicResource, type: :model do
   end
 
   describe '#to_json?' do
-    let!(:resource) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator, temperature_sensor], uri: 'example2.com')) }
+    let!(:resource) do
+      described_class.create(
+        resource_params.merge(capabilities: [semaphore_actuator, temperature_sensor], uri: 'example2.com')
+      )
+    end
     context 'when no function is specified' do
       subject { resource.to_json[:capabilities] }
       it { is_expected.to include(semaphore_actuator.name) }
@@ -134,7 +154,11 @@ RSpec.describe BasicResource, type: :model do
 
   describe 'cache-related methods' do
     context 'resource with capabilities' do
-      let!(:resource) { described_class.create(resource_params.merge(capabilities: [semaphore_actuator, temperature_sensor], uri: 'example2.com')) }
+      let!(:resource) do
+        described_class.create(
+          resource_params.merge(capabilities: [semaphore_actuator, temperature_sensor], uri: 'example2.com')
+        )
+      end
 
       it 'returns the name of all capabilities' do
         expect(resource.capability_names).to include(semaphore_actuator.name)
