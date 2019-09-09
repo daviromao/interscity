@@ -28,19 +28,17 @@ class CapabilitiesController < ApplicationController
   # POST /capabilities
   def create
     begin
-      capability_type = params[:capability_type].try(:to_sym)
-      raise Exception, 'Bad capability_type' if capability_type.nil? || !Capability.valid_function?(capability_type)
-
       capability = Capability.create_with_function(capability_type, create_params)
       raise Exception, capability.errors.full_messages.first unless capability.valid?
 
       result = capability.to_json(except: :function, methods: :capability_type)
 
       status = 201
-    rescue Exception => e
+    rescue StandardError => e
       result =  { error: e }
       status =  400
     end
+
     render json: result, status: status
   end
 
@@ -80,5 +78,13 @@ class CapabilitiesController < ApplicationController
 
   def update_params
     params.permit(:name, :description)
+  end
+
+  def capability_type
+    capability_type = params[:capability_type].try(:to_sym)
+
+    raise Exception, 'Bad capability_type' if capability_type.nil? || !Capability.valid_function?(capability_type)
+
+    capability_type
   end
 end
