@@ -20,12 +20,22 @@ variables:
 # * DEPLOY_KEY
 
 stages:
+  - lint
   - test
   - build
   - deploy
 
 before_script:
   - gem install bundler --no-document
+
+rubocop:
+  stage: lint
+  services: []
+  before_script:
+    - gem install rubocop:0.74.0 rubocop-rails --no-doc
+  script:
+    - pushd src
+    - rubocop
 
 actuator-controller:
   stage: test
