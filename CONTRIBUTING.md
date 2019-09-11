@@ -6,7 +6,7 @@
 
 * **Ensure the bug was not already reported** by searching on Gitlab under [Issues](https://gitlab.com/interscity/interscity-platform/interscity-platform/issues).
 
-* If you're unable to find an open issue addressing the problem, open a new one. Be sure to include a **title and clear description**, as much relevant information as possible, and a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
+* If you're unable to find an open issue addressing the problem, open a new one. Be sure to include a **title and clear description**, with as much relevant information as possible, and a **code sample** or an **executable test case** demonstrating the expected behavior that is not occurring.
 
 #### **Did you write a patch that fixes a bug?**
 
