@@ -44,7 +44,7 @@ Given all requirements are met, you must enter the directory of each service und
 * [resource-cataloguer](src/resource-cataloguer)
 * [resource-discoverer](src/resource-discoverer)
 
-O each of them run `./bin/setup`.
+On each of them run `./bin/setup`.
 
 ## Testing
 
