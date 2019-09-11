@@ -2,7 +2,7 @@
 
 #### **Did you find a bug?**
 
-* **Do not open up a issue if the bug is a security vulnerability**, and instead to refer to our private mailing list.
+* **Do not open up a issue if the bug is a security vulnerability**. Refer to our private mailing list instead.
 
 * **Ensure the bug was not already reported** by searching on Gitlab under [Issues](https://gitlab.com/interscity/interscity-platform/interscity-platform/issues).
 
