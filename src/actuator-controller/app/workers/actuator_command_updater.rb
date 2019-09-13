@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
@@ -11,7 +13,7 @@ class ActuatorCommandUpdater
   def initialize(consumers_size = 1, thread_pool = 1)
     @consumers_size = consumers_size
     @consumers = []
-    @channel = $conn.create_channel(nil, thread_pool)
+    @channel = Rails.configuration.worker.conn.create_channel(nil, thread_pool)
     @channel.prefetch(2)
     @topic = @channel.topic(TOPIC)
     @queue = @channel.queue(QUEUE, durable: true, auto_delete: false)
@@ -21,7 +23,7 @@ class ActuatorCommandUpdater
     @queue.bind(@topic, routing_key: '#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |_delivery_info, _properties, body|
         begin
           json = JSON.parse(body)
           command = ::ActuatorCommand.find(json['command_id'])
@@ -37,7 +39,7 @@ class ActuatorCommandUpdater
   end
 
   def cancel
-    @consumers.each do |consumer|
+    @consumers.each do |_consumer|
       @consumer.cancel
     end
     @channel.close

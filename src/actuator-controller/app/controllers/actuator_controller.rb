@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 
 class ActuatorController < ApplicationController
@@ -5,7 +7,7 @@ class ActuatorController < ApplicationController
 
   # POST /commands
   def create
-    @response = Hash.new
+    @response = {}
     @response['success'] = []
     @response['failure'] = []
 
@@ -16,9 +18,9 @@ class ActuatorController < ApplicationController
         apply_command(actuator, params)
       end
 
-      render json: @response, status: 200
+      render json: @response, status: :ok
     rescue StandardError => e
-      render json: {error: e.message}, status: 400
+      render json: { error: e.message }, status: :bad_request
       return false
     end
   end
@@ -26,11 +28,11 @@ class ActuatorController < ApplicationController
   # GET /commands
   # GET /commands?status=pending&uuid=1234&capability=semaphore
   def index
-    @commands = ActuatorCommand.
-      filter(params.slice(:status, :uuid, :capability)).
-      recent.page(@page).per(@per_page)
+    @commands = ActuatorCommand
+                .filter(params.slice(:status, :uuid, :capability))
+                .recent.page(@page).per(@per_page)
 
-    render json: {commands: @commands}, status: 200
+    render json: { commands: @commands }, status: :ok
   end
 
   private
@@ -45,27 +47,31 @@ class ActuatorController < ApplicationController
     }
   end
 
-  def apply_command(actuator, params)
+  def create_command(resource, capability, value)
+    command = ActuatorCommand.new(
+      platform_resource: resource,
+      uuid: resource.uuid,
+      capability: capability,
+      value: value
+    )
+
+    if command.save
+      @response['success'] << command
+    else
+      add_failure(resource.uuid, 400, "Invalid command #{command.errors.full_messages}", capability, value)
+    end
+  end
+
+  def apply_command(actuator, _params)
     resource = PlatformResource.where(uuid: actuator['uuid']).first
 
     actuator['capabilities'].each do |capability, value|
       if resource.blank?
-        add_failure(actuator['uuid'], 404, "Resource not found", capability, value)
+        add_failure(actuator['uuid'], 404, 'Resource not found', capability, value)
       elsif resource.capabilities.include? capability
-        command = ActuatorCommand.new(
-          platform_resource: resource,
-          uuid: resource.uuid,
-          capability: capability,
-          value: value
-        )
-
-        if command.save
-          @response['success'] << command
-        else
-          add_failure(resource.uuid, 400, "Invalid command #{command.errors.full_messages}", capability, value)
-        end
+        create_command(resource, capability, value)
       else
-        add_failure(resource.uuid, 400,  "This resource does not have such cappability", capability, value)
+        add_failure(resource.uuid, 400, 'This resource does not have such cappability', capability, value)
       end
     end
   end

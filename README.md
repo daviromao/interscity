@@ -14,7 +14,9 @@ Check the specific instructions at [deploy/README.md](deploy/README.md).
 
 ## Contributing
 
-TODO
+Directions on how to get started developing can be found at [HACKING](HACKING.md)
+
+TODO: write a CONTRIBUTING file
 
 ## Code status
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Require for code coverage
 require 'simplecov'
 

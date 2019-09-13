@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'notification'
 
 class ActuatorCommand < ApplicationRecord
@@ -7,20 +9,20 @@ class ActuatorCommand < ApplicationRecord
   include Filterable
 
   field :uuid, type: String
-  field :status, type: String, default: "pending"
+  field :status, type: String, default: 'pending'
   field :capability, type: String
   field :value
 
   validates :uuid, :status, :capability, :value, presence: true
   validates :status, inclusion: {
-    in: ["pending", "failed", "processed", "rejected"]
+    in: %w[pending failed processed rejected]
   }
 
   belongs_to :platform_resource, dependent: :nullify
 
-  scope :status, -> (status) { where status: status }
-  scope :uuid, -> (uuid) { where uuid: uuid }
-  scope :capability, -> (capability) { where capability: capability }
+  scope :status, ->(status) { where status: status }
+  scope :uuid, ->(uuid) { where uuid: uuid }
+  scope :capability, ->(capability) { where capability: capability }
   scope :recent, -> { order_by(created_at: 'desc') }
 
   after_create :publish_command
@@ -28,11 +30,9 @@ class ActuatorCommand < ApplicationRecord
   protected
 
   def publish_command
-    begin
-      notify_command_request(self)
-    rescue StandardError => e
-      self.status = "failed"
-      self.save
-    end
+    notify_command_request(self)
+  rescue StandardError
+    self.status = 'failed'
+    save
   end
 end

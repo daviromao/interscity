@@ -1,5 +1,7 @@
-require "rails_helper"
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'rails_helper'
+require 'spec_helper'
 
 describe Platform::ResourceManager do
   describe '.register_resource' do
@@ -7,4 +9,3 @@ describe Platform::ResourceManager do
     end
   end
 end
-

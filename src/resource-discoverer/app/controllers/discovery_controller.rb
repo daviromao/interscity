@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rest-client'
 require 'json'
 
@@ -7,7 +9,6 @@ class DiscoveryController < ApplicationController
   before_action :validate_url_params
   before_action :find_resources_on_catalog
 
-
   attr_accessor :catalog_url
 
   def initialize
@@ -16,15 +17,16 @@ class DiscoveryController < ApplicationController
   end
 
   def resources
-    if !@found_resources.blank?
+    if @found_resources.present?
       uuids = ids_from_catalog
-      unless @informed_matchers_params.blank?
+      if @informed_matchers_params.present?
         collector_uuids = data_from_collector(uuids)
         return nil unless collector_uuids
+
         matched_resources(collector_uuids)
       end
     end
-    if !@found_resources.blank?
+    if @found_resources.present?
       render json: @found_resources
     else
       render error_payload('No resources have been found', 404)
@@ -42,18 +44,16 @@ class DiscoveryController < ApplicationController
   def data_from_collector(uuids)
     collector_response = call_to_data_collector(uuids)
     collector_response['resources']
-  rescue
+  rescue StandardError
     render error_payload('The data collector service is unavailable', 503)
-    return nil
+    nil
   end
 
   # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def find_resources_on_catalog
-    begin
-      @found_resources = call_to_resource_catalog(build_resource_catalog_url)
-    rescue Exception => e
-      render error_payload('The resource catalog service is unavailable', 503)
-    end
+    @found_resources = call_to_resource_catalog(build_resource_catalog_url)
+  rescue Exception => e
+    render error_payload('The resource catalog service is unavailable', 503)
   end
 
   def ids_from_catalog
@@ -85,29 +85,27 @@ class DiscoveryController < ApplicationController
       error_message << 'At least one filter parameter must be defined to query for resources'
     end
 
-    render error_payload(error_message, 400) unless error_message.blank?
+    render error_payload(error_message, 400) if error_message.present?
   end
 
   def verify_nil_params
     error_message = []
     @informed_search_params.each do |name|
-      if params[name].blank?
-        error_message << "The parameter #{name} can't be blank or empty"
-      end
+      error_message << "The parameter #{name} can't be blank or empty" if params[name].blank?
     end
     error_message
   end
 
   def verify_matchers_params
     error_message = []
-    @informed_matchers_params.each do |key, value|
+    @informed_matchers_params.each do |key, _value|
       index = key.to_s.rindex('.')
       if index.nil?
         error_message << "The parameter #{key} is missing an operator"
         next
       end
-      name = key.to_s[0..index-1]
-      operator = key.to_s[index+1..-1]
+      name = key.to_s[0..index - 1]
+      operator = key.to_s[index + 1..-1]
       unless @available_matchers.include?(operator)
         error_message << "The operator '#{operator}' in the parameter '#{key}' is not supported"
       end
@@ -117,24 +115,24 @@ class DiscoveryController < ApplicationController
 
   def verify_location_params
     error_message = []
-    if !params['lat'].blank? && params['lon'].blank?
+    if params['lat'].present? && params['lon'].blank?
       error_message << 'Longitude (lon) has not been specified'
-    elsif params['lat'].blank? && !params['lon'].blank?
+    elsif params['lat'].blank? && params['lon'].present?
       error_message << 'Latitude (lat) has not been specified'
-    elsif !params['radius'].blank? && params['lon'].blank? && params['lat'].blank?
+    elsif params['radius'].present? && params['lon'].blank? && params['lat'].blank?
       error_message << "You must provide the location (lat and lon) to use the 'radius' parameter"
     end
     error_message
   end
 
   def set_parameter_variables
-    @location_params = ["lat", "lon", "radius"]
-    @capability_params = ["capability"]
-    @basic_params = @location_params + @capability_params + ["controller", "action"]
-    @available_matchers = ["eq", "gt", "gte", "lt", "lte", "ne", "in", "nin"]
+    @location_params = %w[lat lon radius]
+    @capability_params = ['capability']
+    @basic_params = @location_params + @capability_params + %w[controller action]
+    @available_matchers = %w[eq gt gte lt lte ne in nin]
 
     @informed_params = params.keys
-    @informed_search_params = @informed_params - ["controller", "action"]
+    @informed_search_params = @informed_params - %w[controller action]
     @informed_matchers_params = @informed_search_params - @basic_params
   end
 
@@ -144,7 +142,7 @@ class DiscoveryController < ApplicationController
 
   # This method is not being covered by the rspec because it dependents on the real service and it response is not predictable
   def call_to_data_collector(uuids)
-    filters = {matchers: {}, uuids: uuids}
+    filters = { matchers: {}, uuids: uuids }
     @informed_matchers_params.each do |matcher|
       filters[:matchers][matcher] = params[matcher]
     end

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Capability < ApplicationRecord
-  validates :function, inclusion: { in: 0..2 , message: "Bad capability_type"}
+  validates :function, inclusion: { in: 0..2, message: 'Bad capability_type' }
   validates :name, uniqueness: true, presence: true
   has_and_belongs_to_many :basic_resources
 
-  @@TYPES = [:sensor, :actuator, :information]
-  @@TYPE_INDEX = {
+  @types = %i[sensor actuator information]
+  @type_index = {
     sensor: 0, actuator: 1, information: 2
   }
 
@@ -13,11 +15,11 @@ class Capability < ApplicationRecord
   end
 
   def function_symbol
-    @@TYPES[self[:function]]
+    @types[self[:function]]
   end
 
-  def function? function_symbol
-    @@TYPES[self[:function]] == function_symbol
+  def function?(function_symbol)
+    @types[self[:function]] == function_symbol
   end
 
   def sensor?
@@ -32,12 +34,12 @@ class Capability < ApplicationRecord
     function? :information
   end
 
-  def self.valid_function? function_symbol
-    @@TYPES.include? function_symbol
+  def self.valid_function?(function_symbol)
+    @types.include? function_symbol
   end
 
-  def self.function_index function_symbol
-    @@TYPE_INDEX[function_symbol]
+  def self.function_index(function_symbol)
+    @type_index[function_symbol]
   end
 
   def self.sensor_index
@@ -64,24 +66,23 @@ class Capability < ApplicationRecord
     all_of_function :information
   end
 
-  def self.all_of_function function_symbol
+  def self.all_of_function(function_symbol)
     where(function: function_index(function_symbol))
   end
 
-  def self.create_with_function function_symbol, params
+  def self.create_with_function(function_symbol, params)
     Capability.create(params.merge(function: function_index(function_symbol)))
   end
 
-  def self.create_sensor params
+  def self.create_sensor(params)
     create_with_function(:sensor, params)
   end
 
-  def self.create_actuator params
+  def self.create_actuator(params)
     create_with_function(:actuator, params)
   end
 
-  def self.create_information params
+  def self.create_information(params)
     create_with_function(:information, params)
   end
-
 end

@@ -6,6 +6,9 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Setup static code analysis
+* Remove legacy development files
+* Create HACKING file
 * Remove unused resource-discoverer configuration
 * Remove unused test framework
 * Extract Kong wrapper to service-base gem

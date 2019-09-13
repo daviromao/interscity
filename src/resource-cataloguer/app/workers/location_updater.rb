@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
 require "#{File.dirname(__FILE__)}/../models/basic_resource"
-
 
 class LocationUpdater
   TOPIC = 'data_stream'
@@ -11,7 +12,7 @@ class LocationUpdater
   def initialize(consumers_size = 1, thread_pool = 1, location_attr = 'location')
     @consumers_size = consumers_size
     @consumers = []
-    @channel = $conn.create_channel(nil, thread_pool)
+    @channel = Rails.configuration.worker.conn.create_channel(nil, thread_pool)
     @channel.prefetch(2)
     @topic = @channel.topic(TOPIC)
     @queue = @channel.queue(QUEUE)
@@ -19,29 +20,16 @@ class LocationUpdater
   end
 
   def perform
-    @queue.bind(@topic, routing_key: "#." + @location_attr + ".#")
+    @queue.bind(@topic, routing_key: '#.' + @location_attr + '.#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |delivery_info, _properties, body|
         begin
           routing_keys = delivery_info.routing_key.split('.')
-
           uuid = routing_keys[0]
-          capability = routing_keys[1]
-          value = JSON.parse(body)
-          lat = value["location"]["lat"]
-          lon = value["location"]["lon"]
+          resource_attributes = parse_latlong(body)
 
-          if lat.blank? || lon.blank?
-            raise "Could not read latitude or longitude data"
-          end
-
-          resource_attributes = {
-            lat: lat,
-            lon: lon
-          }
           update_location(resource_attributes, uuid)
-
         rescue StandardError => e
           WORKERS_LOGGER.error("LocationUpdate::ResourceNotUpdated - #{e.message}")
         end
@@ -59,5 +47,15 @@ class LocationUpdater
     else
       WORKERS_LOGGER.error("LocationUpdate::ResourceNotFound - #{uuid}")
     end
+  end
+
+  def parse_latlong(body)
+    value = JSON.parse(body)
+    lat = value['location']['lat']
+    lon = value['location']['lon']
+
+    raise 'Could not read latitude or longitude data' if lat.blank? || lon.blank?
+
+    { lat: lat, lon: lon }
   end
 end

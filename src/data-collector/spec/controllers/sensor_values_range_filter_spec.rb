@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SensorValuesController, type: :controller do
@@ -40,30 +41,30 @@ RSpec.describe SensorValuesController, type: :controller do
         '989e93f2-35e1-4a2b-b80a-4bf91030085c': {
           'medical_procedure': [
             { 'patient': {
-                'name': 'Thomas S. Seibel',
-                'age': '18',
-              },
+              'name': 'Thomas S. Seibel',
+              'age': '18'
+            },
               'speciality': 'surgery',
               'date': '2016-03-01 09:01:00' },
             { 'patient': {
-                'name': 'Jose R. Garcia',
-                'age': '17',
-              },
+              'name': 'Jose R. Garcia',
+              'age': '17'
+            },
               'speciality': 'psychiatry',
               'date': '2016-03-01 10:01:00' },
             { 'patient': {
-                'name': 'Débora M. Wright',
-                'age': '26',
-              },
+              'name': 'Débora M. Wright',
+              'age': '26'
+            },
               'speciality': 'psychiatry',
               'date': '2016-03-02 08:01:00' },
             { 'patient': {
-                'name': 'Jose J. Whetsel',
-                'age': '55',
-              },
+              'name': 'Jose J. Whetsel',
+              'age': '55'
+            },
               'speciality': 'surgery',
-              'date': '2016-03-03 07:01:00'}
-          ],
+              'date': '2016-03-03 07:01:00' }
+          ]
         },
         'a9f4d13b-1c10-474c-9754-a0a92adcc72d': {
           'environment_monitoring': [
@@ -82,30 +83,30 @@ RSpec.describe SensorValuesController, type: :controller do
           ],
           'bus_trip': [
             { 'location': {
-                'lat': -23.1,
-                'lon': -46.8,
-              },
+              'lat': -23.1,
+              'lon': -46.8
+            },
               'speed': 45.2,
               'occupancy': 10,
               'date': '2016-03-01 09:30:00' },
             { 'location': {
-                'lat': -23.2,
-                'lon': -46.7,
-              },
+              'lat': -23.2,
+              'lon': -46.7
+            },
               'speed': 50.8,
               'occupancy': 10,
               'date': '2016-03-01 10:30:00' },
             { 'location': {
-                'lat': -23.2,
-                'lon': -46.7,
-              },
+              'lat': -23.2,
+              'lon': -46.7
+            },
               'speed': 62.0,
               'occupancy': 12,
               'date': '2016-03-02 08:30:00' },
             { 'location': {
-                'lat': -23.2,
-                'lon': -46.4,
-              },
+              'lat': -23.2,
+              'lon': -46.4
+            },
               'speed': 34.0,
               'occupancy': 9,
               'date': '2016-03-03 07:30:00' }
@@ -126,7 +127,7 @@ RSpec.describe SensorValuesController, type: :controller do
             fields = {
               capability: capability,
               platform_resource_id: resource.id,
-              uuid: resource.uuid,
+              uuid: resource.uuid
             }
             fields.merge!(value_hash)
             SensorValue.create!(fields)
@@ -137,14 +138,14 @@ RSpec.describe SensorValuesController, type: :controller do
 
     context 'with the matchers of values parameters' do
       it 'responds with success' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "pressure.gte": 0,
-              "pressure.lte": 22
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "pressure.gte": 0,
+                   "pressure.lte": 22
+                 }
+               })
           expect(response.status).to eq(200)
           expect(response.body).to_not be_nil
           expect(response.body.empty?).to be_falsy
@@ -152,14 +153,14 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'correctly list value by their capabilities' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gte": 0,
-              "temperature.lte": 100
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gte": 0,
+                   "temperature.lte": 100
+                 }
+               })
           retrieved_uuids, retrieved_resource = parse_response
 
           expect(retrieved_uuids.empty?).to be_falsy
@@ -177,14 +178,14 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns no resource for a request with inexistent capability values' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "wontfindnocap.gte": 0,
-              "wontfindnocap.lte": 22
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "wontfindnocap.gte": 0,
+                   "wontfindnocap.lte": 22
+                 }
+               })
           retrieved_uuids, = parse_response
 
           expect(retrieved_uuids.size).to eq(0)
@@ -192,15 +193,15 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns the data that match the matchers filters for multiple values' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gte": 0,
-              "temperature.lte": 100,
-              "humidity.gte": 40,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gte": 0,
+                   "temperature.lte": 100,
+                   "humidity.gte": 40
+                 }
+               })
 
           retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(2)
@@ -208,14 +209,14 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns an empty list for invalid gte/lte params' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gte": "Zeni",
-              "temperature.lte": "Foo",
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gte": 'Zeni',
+                   "temperature.lte": 'Foo'
+                 }
+               })
 
           retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(0)
@@ -223,210 +224,210 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'correctly filter resources data by greater than (gt) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gt": 22.15,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gt": 22.15
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["temperature"].to_f).to be > 22.15
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['temperature'].to_f).to be > 22.15
             end
           end
         end
       end
 
       it 'correctly filter resources data by greater than or equal (gte) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gte": 22.15,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gte": 22.15
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["temperature"].to_f).to be >= 22.15
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['temperature'].to_f).to be >= 22.15
             end
           end
         end
       end
 
       it 'correctly filter resources data by less than (lt) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.lt": 22.15,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.lt": 22.15
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(1)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["temperature"].to_f).to be < 22.15
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['temperature'].to_f).to be < 22.15
             end
           end
         end
       end
 
       it 'correctly filter resources data by less than or equal (lte) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.lte": 22.15,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.lte": 22.15
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(1)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["temperature"].to_f).to be <= 22.15
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['temperature'].to_f).to be <= 22.15
             end
           end
         end
       end
 
       it 'correctly filter resources data by equal (eq) operator on numbers' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.eq": 22.15,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.eq": 22.15
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(1)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["temperature"].to_f).to eq(22.15)
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['temperature'].to_f).to eq(22.15)
             end
           end
         end
       end
 
       it 'correctly filter resources data by equal (eq) operator on non-numbers' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              'speciality.eq': 'psychiatry',
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   'speciality.eq': 'psychiatry'
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(1)
           resources_data.each do |resource|
-            resource["capabilities"]["medical_procedure"].each do |data|
-              expect(data["speciality"]).to eq("psychiatry")
+            resource['capabilities']['medical_procedure'].each do |data|
+              expect(data['speciality']).to eq('psychiatry')
             end
           end
         end
       end
 
       it 'correctly filter resources data by not equal (ne) operator on non-numbers' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            capabilities: ["medical_procedure"],
-            matchers: {
-              'speciality.ne': 'psychiatry',
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 capabilities: ['medical_procedure'],
+                 matchers: {
+                   'speciality.ne': 'psychiatry'
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(1)
           resources_data.each do |resource|
-            resource["capabilities"]["medical_procedure"].each do |data|
-              expect(data["speciality"]).to_not eq("psychiatry")
+            resource['capabilities']['medical_procedure'].each do |data|
+              expect(data['speciality']).to_not eq('psychiatry')
             end
           end
         end
       end
 
       it 'correctly filter resources data by in (in) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "humidity.in": [70, 72, 68]
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "humidity.in": [70, 72, 68]
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect([70, 72, 68]).to include(data["humidity"])
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect([70, 72, 68]).to include(data['humidity'])
             end
           end
         end
       end
 
       it 'correctly filter resources data by not in (nin) operator' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            capabilities: ["environment_monitoring"],
-            matchers: {
-              "humidity.nin": [70, 72, 68]
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 capabilities: ['environment_monitoring'],
+                 matchers: {
+                   "humidity.nin": [70, 72, 68]
+                 }
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect([70, 72, 68]).to_not include(data["humidity"])
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect([70, 72, 68]).to_not include(data['humidity'])
             end
           end
         end
       end
 
       it 'correctly filter resources when mixing several simultaneously' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "temperature.gte": 25,
-              "temperature.lte": 30,
-              "humidity.gt": 40,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "temperature.gte": 25,
+                   "temperature.lte": 30,
+                   "humidity.gt": 40
+                 }
+               })
 
-          retrieved_uuids, resources_data= parse_response
+          retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["humidity"]).to be > 40
-              expect(data["temperature"]).to be >= 25
-              expect(data["temperature"]).to be <= 30
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['humidity']).to be > 40
+              expect(data['temperature']).to be >= 25
+              expect(data['temperature']).to be <= 30
             end
           end
         end
       end
 
       it 'returns an empty list for invalid matchers' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "humidity.gte": 100,
-              "humidity.lte": 0
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "humidity.gte": 100,
+                   "humidity.lte": 0
+                 }
+               })
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
 
@@ -435,19 +436,19 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'applies eq operator over othe comparissing operators' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: {
-            matchers: {
-              "humidity.eq": 72,
-              "humidity.gte": 0,
-            }
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: {
+                 matchers: {
+                   "humidity.eq": 72,
+                   "humidity.gte": 0
+                 }
+               })
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(2)
           resources_data.each do |resource|
-            resource["capabilities"]["environment_monitoring"].each do |data|
-              expect(data["humidity"]).to eq(72)
+            resource['capabilities']['environment_monitoring'].each do |data|
+              expect(data['humidity']).to eq(72)
             end
           end
         end
@@ -456,25 +457,25 @@ RSpec.describe SensorValuesController, type: :controller do
 
     context 'without matchers parameters' do
       it 'correctly filters based on a single capability' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: { capabilities: %w(environment_monitoring) })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: { capabilities: %w[environment_monitoring] })
 
           expect(response.status).to eq(200)
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(2)
         end
       end
 
       it 'correctly filters based on multiple capabilities' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data',
-                    params: { capabilities: %w(environment_monitoring medical_procedure) })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data',
+               params: { capabilities: %w[environment_monitoring medical_procedure] })
 
           expect(response.status).to eq(200)
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(3)
         end
       end
@@ -482,11 +483,11 @@ RSpec.describe SensorValuesController, type: :controller do
 
     context 'with date-based parameters' do
       it 'responds with success' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data', params: {
-            start_date: '2016-01-01 09:21:29',
-            end_date: '2016-03-03 07:00:00'
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data', params: {
+                 start_date: '2016-01-01 09:21:29',
+                 end_date: '2016-03-03 07:00:00'
+               })
 
           expect(response.status).to eq(200)
           expect(response.body).to_not be_nil
@@ -495,31 +496,31 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns an empty list for a date range with no data' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data', params: {
-            start_date: '2016-01-01 09:21:29',
-            end_date: '2016-01-03 07:00:00'
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data', params: {
+                 start_date: '2016-01-01 09:21:29',
+                 end_date: '2016-01-03 07:00:00'
+               })
 
-          retrieved_uuids, resources_data = parse_response
+          retrieved_uuids, = parse_response
           expect(retrieved_uuids.size).to eq(0)
         end
       end
 
       it 'correctly filters for a valid range of date' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data', params: {
-            start_date: '2016-02-01 01:03:43',
-            end_date: '2016-06-25 16:03:43'
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data', params: {
+                 start_date: '2016-02-01 01:03:43',
+                 end_date: '2016-06-25 16:03:43'
+               })
 
           retrieved_uuids, resources_data = parse_response
           expect(retrieved_uuids.size).to eq(3)
           resources_data.each do |resource|
-            resource["capabilities"].each do |key, capability|
+            resource['capabilities'].each do |_key, capability|
               capability.each do |data|
-                expect(DateTime.parse(data["date"])).to be >= DateTime.parse('2016-02-01 01:03:43')
-                expect(DateTime.parse(data["date"])).to be <= DateTime.parse('2016-06-25 16:03:43')
+                expect(DateTime.parse(data['date'])).to be >= DateTime.parse('2016-02-01 01:03:43')
+                expect(DateTime.parse(data['date'])).to be <= DateTime.parse('2016-06-25 16:03:43')
               end
             end
           end
@@ -529,26 +530,26 @@ RSpec.describe SensorValuesController, type: :controller do
 
     context 'Most recent data' do
       it 'returns the last value for all uuids' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data_last')
+        %i[post get].each do |verb|
+          send(verb, 'resources_data_last')
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-            .map(&proc { |element| element['uuid'] })
+                            .map(&proc { |element| element['uuid'] })
 
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
 
             json_capabilities = retrieved_resource
-              .select { |element| element['uuid'] == uuid }
-              .first['capabilities']
+                                .select { |element| element['uuid'] == uuid }
+                                .first['capabilities']
 
             platform.capabilities.each do |cap|
               last_values =
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
-              )
-                .map(&proc{|obj| obj.dynamic_attributes.to_json})
+                )
+                               .map(&proc { |obj| obj.dynamic_attributes.to_json })
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -563,25 +564,25 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns the last value for one uuid' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resource_data_last', params:
+        %i[post get].each do |verb|
+          send(verb, 'resource_data_last', params:
                     { uuid: '2de545ae-841a-4e4a-b961-a43bb324a2b9' })
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-            .map(&proc { |element| element['uuid'] })
+                            .map(&proc { |element| element['uuid'] })
           expect(retrieved_uuids.size).to eq(1)
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
             json_capabilities = retrieved_resource
-              .select { |element| element['uuid'] == uuid }
-              .first['capabilities']
+                                .select { |element| element['uuid'] == uuid }
+                                .first['capabilities']
             platform.capabilities.each do |cap|
               last_values =
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
-              )
-                .map(&proc{|obj| obj.dynamic_attributes.to_json})
+                )
+                               .map(&proc { |obj| obj.dynamic_attributes.to_json })
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -596,28 +597,28 @@ RSpec.describe SensorValuesController, type: :controller do
       end
 
       it 'returns the last value for multiple uuids' do
-        [:post, :get].each do |verb|
-          self.send(verb, 'resources_data_last', params: {
-            uuids: [
-              '2de545ae-841a-4e4a-b961-a43bb324a2b9',
-              '989e93f2-35e1-4a2b-b80a-4bf91030085c'
-            ]
-          })
+        %i[post get].each do |verb|
+          send(verb, 'resources_data_last', params: {
+                 uuids: %w[
+                   2de545ae-841a-4e4a-b961-a43bb324a2b9
+                   989e93f2-35e1-4a2b-b80a-4bf91030085c
+                 ]
+               })
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-            .map(&proc { |element| element['uuid'] })
+                            .map(&proc { |element| element['uuid'] })
           expect(retrieved_uuids.size).to eq(2)
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
             json_capabilities = retrieved_resource
-              .select { |element| element['uuid'] == uuid }
-              .first['capabilities']
+                                .select { |element| element['uuid'] == uuid }
+                                .first['capabilities']
             platform.capabilities.each do |cap|
               last_values =
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
-              ).map(&proc{|obj| obj.dynamic_attributes.to_json})
+                ).map(&proc { |obj| obj.dynamic_attributes.to_json })
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -631,14 +632,13 @@ RSpec.describe SensorValuesController, type: :controller do
         end
       end
     end
-
   end
 
   def parse_response
     returned_json = JSON.parse(response.body)
     retrieved_resources = returned_json['resources']
     retrieved_uuids = retrieved_resources
-      .map(&proc { |element| element['uuid'] })
-    return retrieved_uuids, retrieved_resources
+                      .map(&proc { |element| element['uuid'] })
+    [retrieved_uuids, retrieved_resources]
   end
 end

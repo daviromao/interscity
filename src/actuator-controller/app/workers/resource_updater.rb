@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bunny'
 require 'rubygems'
 require 'json'
@@ -11,7 +13,7 @@ class ResourceUpdater
   def initialize(consumers_size = 1, thread_pool = 1)
     @consumers_size = consumers_size
     @consumers = []
-    @channel = $conn.create_channel(nil, thread_pool)
+    @channel = Rails.configuration.worker.conn.create_channel(nil, thread_pool)
     @channel.prefetch(2)
     @topic = @channel.topic(TOPIC)
     @queue = @channel.queue(QUEUE)
@@ -21,9 +23,8 @@ class ResourceUpdater
     @queue.bind(@topic, routing_key: '#.actuator.#')
 
     @consumers_size.times do
-      @consumers << @queue.subscribe(block: false) do |delivery_info, properties, body|
+      @consumers << @queue.subscribe(block: false) do |_delivery_info, _properties, body|
         begin
-          routing_keys = delivery_info.routing_key.split('.')
           json = JSON.parse(body)
           resource_attributes = json.slice(
             'uuid',
@@ -42,7 +43,7 @@ class ResourceUpdater
   end
 
   def cancel
-    @consumers.each do |consumer|
+    @consumers.each do |_consumer|
       @consumer.cancel
     end
     @channel.close
@@ -52,7 +53,7 @@ class ResourceUpdater
 
   def update_resource(resource_attributes, json)
     resource = PlatformResource.find_by(uuid: json['uuid'])
-    resource.update!(resource_attributes) if resource
+    resource&.update!(resource_attributes)
     WORKERS_LOGGER.info("ResourcesUpdater::ResourceUpdated -  #{resource_attributes}")
   end
 end

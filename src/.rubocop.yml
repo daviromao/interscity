@@ -1,0 +1,40 @@
+require: rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - '**/bin/**/*'
+    - '**/db/**/*'
+    - '**/config/**/*'
+    - '**/script/**/*'
+    - '**/features/support/env.rb'
+    - '**/vendor/**/*'
+    - '**/data-collector/app/controllers/sensor_values_controller.rb' # FIXME: refactor this code and stop excluding it from verifications
+    - '**/data-collector/spec/controllers/sensor_values_controller_spec.rb' # FIXME: refactor this code and stop excluding it from verifications
+    - '**/resource-discoverer/app/controllers/discovery_controller.rb' # FIXME: refactor this code and stop excluding it from verifications
+
+Rails:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - '**/*_spec.rb'
+    - '**/spec/factories/*.rb'
+
+Metrics/LineLength:
+  Max: 120
+  # To make it possible to copy or click on URIs in the code, we allow lines
+  # containing a URI to be longer than Max.
+  AllowHeredoc: true
+  AllowURI: true
+  URISchemes:
+    - http
+    - https
+  Exclude:
+    - '**/*.gemspec'
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20

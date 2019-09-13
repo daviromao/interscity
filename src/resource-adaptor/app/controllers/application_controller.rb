@@ -1,29 +1,31 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
-  ERROR_CODE = {}
+  ERROR_CODE = {
+    200 => 'OK',
 
-  ERROR_CODE[200] = "OK"
+    400 => 'BadRequest',
+    401 => 'Unauthorized',
+    403 => 'Forbidden',
+    404 => 'NotFound',
+    405 => 'MethodNotAllowed',
+    422 => 'UnprocessableEntry',
+    429 => 'TooManyRequests',
 
-  ERROR_CODE[400] = "BadRequest"
-  ERROR_CODE[401] = "Unauthorized"
-  ERROR_CODE[403] = "Forbidden"
-  ERROR_CODE[404] = "NotFound"
-  ERROR_CODE[405] = "MethodNotAllowed"
-  ERROR_CODE[422] = "UnprocessableEntry"
-  ERROR_CODE[429] = "TooManyRequests"
-
-  ERROR_CODE[500] = "InternalError"
-  ERROR_CODE[501] = "NotImplemented"
-  ERROR_CODE[502] = "BadGateway"
-  ERROR_CODE[503] = "ServiceUnavailable"
+    500 => 'InternalError',
+    501 => 'NotImplemented',
+    502 => 'BadGateway',
+    503 => 'ServiceUnavailable'
+  }.freeze
 
   protected
 
-    def error_payload(message, status)
-      payload = {
-        code: ERROR_CODE[status],
-        message: message,
-      }
+  def error_payload(message, status)
+    payload = {
+      code: ERROR_CODE[status],
+      message: message
+    }
 
-      {json: payload, status: status}
-    end
+    { json: payload, status: status }
+  end
 end
