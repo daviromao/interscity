@@ -15,7 +15,7 @@ class DataReceiver
   def initialize(consumers_size = 1, thread_pool = 1)
     @consumers_size = consumers_size
     @consumers = []
-    @channel = Rails.configuration.worker.conn.create_channel(nil, thread_pool)
+    @channel = Rails.configuration.worker_conn.create_channel(nil, thread_pool)
     @channel.prefetch(2)
     @topic = @channel.topic(TOPIC)
     @queue = @channel.queue(QUEUE, durable: true, auto_delete: false)

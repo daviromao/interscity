@@ -1,13 +1,12 @@
 PATH
   remote: ../gems/service-base
   specs:
-    service-base (0.19.0)
+    service-base (0.19.1)
       bootsnap (>= 1.1.0)
       bunny (~> 2.14.2)
       jbuilder (~> 2.0)
       kong (~> 0.3.1)
       pg (~> 1.1)
-      puma (~> 3.11)
       rack-cors (~> 1.0.3)
       rails (~> 5.2.3)
       rest-client (~> 2.0.2)
@@ -117,9 +116,9 @@ GEM
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (0.8.2)
-    mime-types (3.2.2)
+    mime-types (3.3)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2019.0331)
+    mime-types-data (3.2019.0904)
     mimemagic (0.3.3)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
@@ -257,6 +256,8 @@ DEPENDENCIES
   byebug
   guard-rspec
   listen (>= 3.0.5, < 3.2)
+  puma (~> 3.0)
+  rest-client
   rspec-rails
   rubocop
   rubocop-rails
@@ -264,6 +265,7 @@ DEPENDENCIES
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
+  sqlite3
   tzinfo-data
   web-console (>= 3.3.0)
 
