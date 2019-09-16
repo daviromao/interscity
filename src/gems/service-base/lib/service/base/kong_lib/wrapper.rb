@@ -44,35 +44,41 @@ module Service
         rescue StandardError => e
           Rails.logger.error "Could not register API to Kong #{e.message}"
         end
-      end
 
-      private
+        private
 
-      def find_or_create_upstream(upstream_name)
-        upstream = Kong::Upstream.find_by(name: upstream_name)
+        def find_or_create_upstream(upstream_name)
+          # rubocop:disable Rails/DynamicFindBy
+          # find_by(name: name) is not supported by the kong gem
+          upstream = Kong::Upstream.find_by_name(upstream_name)
+          # rubocop:enable Rails/DynamicFindBy
 
-        if upstream.nil?
-          upstream = Kong::Upstream.new(name: upstream_name)
-          upstream.save
+          if upstream.nil?
+            upstream = Kong::Upstream.new(name: upstream_name)
+            upstream.save
+          end
+
+          upstream
         end
 
-        upstream
-      end
+        def find_or_create_api(name, upstream_name)
+          # rubocop:disable Rails/DynamicFindBy
+          # find_by(name: name) is not supported by the kong gem
+          api = Kong::Api.find_by_name(name)
+          # rubocop:enable Rails/DynamicFindBy
 
-      def find_or_create_api(name, upstream_name)
-        api = Kong::Api.find_by(name: name)
+          if api.nil?
+            api = Kong::Api.new(
+              name: name,
+              upstream_url: "http://#{upstream_name}",
+              uris: "/#{name}",
+              strip_uri: true
+            )
+            api.save
+          end
 
-        if api.nil?
-          api = Kong::Api.new(
-            name: name,
-            upstream_url: "http://#{upstream_name}",
-            uris: "/#{name}",
-            strip_uri: true
-          )
-          api.save
+          api
         end
-
-        api
       end
     end
   end
