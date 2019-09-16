@@ -3,11 +3,11 @@ if Rails.env.development? || Rails.env.production?
 
   WORKERS_LOGGER ||= Logger.new("#{Rails.root}/log/workers.log")
 
-  Rails.configuration.worker.conn = Bunny.new(
+  Rails.configuration.worker_conn = Bunny.new(
     hostname: SERVICES_CONFIG['services']['rabbitmq'],
     logger: WORKERS_LOGGER,
   )
-  Rails.configuration.worker.conn.start
+  Rails.configuration.worker_conn.start
 
   resource_creator_worker = ResourceCreator.new(2, 2)
   resource_creator_worker.perform
