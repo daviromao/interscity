@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Create integration tests
 ## v0.2.0 - 22/10/2019
 
 * Target new revoada servers for deployment
