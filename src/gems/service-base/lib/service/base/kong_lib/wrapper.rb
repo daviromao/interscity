@@ -16,7 +16,7 @@ module Service
             raise 'Missing required parameters for proxy configuration: name, upstream_name'
           end
 
-          find_or_create_upstream(upstream_name)
+          upstream = find_or_create_upstream(upstream_name)
           find_or_create_api(name, upstream_name)
 
           Kong::Target.new(
