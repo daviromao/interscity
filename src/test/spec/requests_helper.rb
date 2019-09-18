@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'faraday'
+require 'json'
 
 module RequestsHelper
   def connection
@@ -9,5 +10,9 @@ module RequestsHelper
     @conn ||= Faraday.new(url: url, request: { timeout: 1 })
 
     @conn
+  end
+
+  def response_json(response)
+    JSON.parse(response.body)
   end
 end
