@@ -57,6 +57,12 @@ Make sure you have assess to your gateway host through ports `8000` and `8001`. 
 
 The `kong-docs` is supposed to be a one-shot service. If you want to remove it after it successfully runs, you can log in the swarm manager and run: `sudo docker service remove interscity-platform_kong-docs`
 
+## Troubleshooting
+
+* **Force service deployment**
+  - if a given service is taking too long to retry, on the swarm manager host you can force it with the following
+  - `docker service update --force <SERVICE IDENTIFIER>`
+
 # Development
 
 The following instructions are relevant for developers and maintainer of the deployment scripts here. If you are interested only on running an instance of the platform follow the steps at the beginning of this file.
