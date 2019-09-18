@@ -19,9 +19,13 @@ all:
       vars:
         swarm_labels:
           - swarm_node_name: manager
-            type: gateway
+            gateway: "true"
+            data: "false"
+            common: "false"
           - swarm_node_name: worker-1
-            type: data
+            gateway: "false"
+            data: "true"
+            common: "false"
     swarm-workers:
       hosts:
         big-machine-1:

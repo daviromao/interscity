@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Fix revoada's deployment inventory
 * Setup static code analysis
 * Remove legacy development files
 * Create HACKING file
