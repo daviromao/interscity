@@ -38,6 +38,7 @@ class BasicResource < ApplicationRecord
     names = get_cached_capabilities(function)
     return names if names.present? || !capabilities.exists?
 
+    selected_capabilities = capabilities
     selected_capabilities = capabilities.send('all_' + function.to_s) if function.present?
     names = []
     selected_capabilities.each do |cap|
