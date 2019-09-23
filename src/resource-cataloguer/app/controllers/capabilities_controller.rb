@@ -29,7 +29,7 @@ class CapabilitiesController < ApplicationController
   def create
     begin
       capability = Capability.create_with_function(capability_type, create_params)
-      raise Exception, capability.errors.full_messages.first unless capability.valid?
+      raise StandardError, capability.errors.full_messages.first unless capability.valid?
 
       result = capability.to_json(except: :function, methods: :capability_type)
 
@@ -83,7 +83,7 @@ class CapabilitiesController < ApplicationController
   def capability_type
     capability_type = params[:capability_type].try(:to_sym)
 
-    raise Exception, 'Bad capability_type' if capability_type.nil? || !Capability.valid_function?(capability_type)
+    raise StandardError, 'Bad capability_type' if capability_type.nil? || !Capability.valid_function?(capability_type)
 
     capability_type
   end
