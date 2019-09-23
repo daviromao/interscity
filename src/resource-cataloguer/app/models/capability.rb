@@ -5,21 +5,21 @@ class Capability < ApplicationRecord
   validates :name, uniqueness: true, presence: true
   has_and_belongs_to_many :basic_resources
 
-  @types = %i[sensor actuator information]
-  @type_index = {
+  TYPES = %i[sensor actuator information].freeze
+  TYPE_INDEX = {
     sensor: 0, actuator: 1, information: 2
-  }
+  }.freeze
 
   def capability_type
     function_symbol
   end
 
   def function_symbol
-    @types[self[:function]]
+    TYPES[self[:function]]
   end
 
   def function?(function_symbol)
-    @types[self[:function]] == function_symbol
+    TYPES[self[:function]] == function_symbol
   end
 
   def sensor?
@@ -35,11 +35,11 @@ class Capability < ApplicationRecord
   end
 
   def self.valid_function?(function_symbol)
-    @types.include? function_symbol
+    TYPES.include? function_symbol
   end
 
   def self.function_index(function_symbol)
-    @type_index[function_symbol]
+    TYPE_INDEX[function_symbol]
   end
 
   def self.sensor_index
