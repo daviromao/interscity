@@ -87,4 +87,29 @@ RSpec.describe 'catalog' do
       expect(@response.status).to eq(204) # 204 - No Content
     end
   end
+
+  describe 'GET resources/sensors' do
+    before do
+      @response = connection.get('catalog/resources/sensors')
+      @json = response_json(@response)
+    end
+
+    it 'is expected to respond with success' do
+      expect(@response.status).to be(200)
+    end
+
+    context 'JSON format' do
+      before do
+        @json = response_json(@response)
+      end
+
+      it 'is expected to have the "capabilities" key' do
+        expect(@json.key?('resources')).to be true
+      end
+
+      it 'is expected to have an Array as value to the "capabilities" key' do
+        expect(@json['resources']).to be_an(Array)
+      end
+    end
+  end
 end
