@@ -52,11 +52,9 @@ RSpec.describe 'catalog' do
     before do
       @response = connection.post(
         'catalog/capabilities',
-        {
-          name: name,
-          description: description,
-          capability_type: type
-        }
+        name: name,
+        description: description,
+        capability_type: type
       )
     end
 
@@ -77,11 +75,9 @@ RSpec.describe 'catalog' do
     before do
       connection.post(
         'catalog/capabilities',
-        {
-          name: name,
-          description: description,
-          capability_type: type
-        }
+        name: name,
+        description: description,
+        capability_type: type
       )
       @response = connection.delete("catalog/capabilities/#{name}")
     end
