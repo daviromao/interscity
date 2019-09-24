@@ -65,4 +65,26 @@ RSpec.describe 'catalog' do
       connection.delete("catalog/capabilities/#{name}")
     end
   end
+
+  describe 'DELETE capabilities' do
+    let(:name) { 'temperature' }
+    let(:description) { 'Environment temperature' }
+    let(:type) { 'sensor' }
+
+    before do
+      connection.post(
+        'catalog/capabilities',
+        {
+          name: name,
+          description: description,
+          capability_type: type
+        }
+      )
+      @response = connection.delete("catalog/capabilities/#{name}")
+    end
+
+    it 'is expected to respond with success' do
+      expect(@response.status).to eq(204) # 204 - No Content
+    end
+  end
 end
