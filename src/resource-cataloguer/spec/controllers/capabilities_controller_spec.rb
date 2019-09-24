@@ -257,7 +257,7 @@ describe CapabilitiesController do
       end
 
       it 'returns error code 500 when an internal error occurs' do
-        allow(Capability).to receive(:find_by_name).and_raise('Internal Error')
+        allow(Capability).to receive(:find_by).and_raise('Internal Error')
 
         get 'show', params: { name: 'bus_monitoring' }, format: :json
 
