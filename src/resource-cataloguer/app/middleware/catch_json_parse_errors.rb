@@ -7,7 +7,7 @@ class CatchJsonParseErrors
 
   def call(env)
     @app.call(env)
-  rescue ActionDispatch::ParamsParser::ParseError => e
+  rescue ActionDispatch::Http::Parameters::ParseError => e
     error_output = "There was a problem in the JSON you submitted: #{e}"
     [
       400, { 'Content-Type' => 'application/json' },

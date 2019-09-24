@@ -43,7 +43,7 @@ describe BasicResourcesController do
         expect(json['data']['capabilities']).to eq(['temperature'])
       end
 
-      it 'is expected to automatically fill in location parameters' do
+      xit 'is expected to automatically fill in location parameters' do
         resource = BasicResource.last
         expect(resource.country).to eq('Brazil')
         expect(resource.state).to eq('São Paulo')
@@ -364,7 +364,7 @@ describe BasicResourcesController do
         expect(updated_resource.capabilities).to eq([temperature_sensor])
       end
 
-      it 'is expected to automatically update location parameters' do
+      xit 'is expected to automatically update location parameters' do
         updated_resource = BasicResource.find(resource.id)
         expect(updated_resource.city).to eq('São José dos Campos')
         expect(updated_resource.state).to eq('São Paulo')
