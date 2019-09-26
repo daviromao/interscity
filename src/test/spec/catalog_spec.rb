@@ -94,4 +94,8 @@ RSpec.describe 'catalog' do
   describe 'GET resources/actuators' do
     include_examples 'capability search', 'resources/actuators', 'resources'
   end
+
+  describe 'GET resources/search' do
+    include_examples 'capability search', 'resources/search', 'resources'
+  end
 end
