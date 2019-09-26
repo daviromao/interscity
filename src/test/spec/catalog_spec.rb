@@ -35,6 +35,9 @@ RSpec.describe '/catalog' do
   let(:name) { 'temperature' }
   let(:description) { 'Environment temperature' }
   let(:type) { 'sensor' }
+  let(:status) { 'active' }
+  let(:lat) { -23.559616 }
+  let(:lon) {-46.731386 }
 
   describe '/resources' do
     describe 'GET /' do
@@ -42,6 +45,35 @@ RSpec.describe '/catalog' do
         response = connection.get('catalog/resources')
 
         expect(response.status).to be(200)
+      end
+    end
+
+    describe 'POST /' do
+      before do
+        connection.post(
+          'catalog/capabilities',
+          name: name,
+          description: description,
+          capability_type: type
+        )
+        @response = connection.post(
+          'catalog/resources',
+          data: {
+            description: description,
+            capabilities: [name],
+            status: status,
+            lat: lat,
+            lon: lon
+          }
+        )
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to be(201) # 201 - Created
+      end
+
+      after do
+        connection.delete("catalog/capabilities/#{name}")
       end
     end
 
@@ -72,9 +104,9 @@ RSpec.describe '/catalog' do
           data: {
             description: description,
             capabilities: [name],
-            status: 'active',
-            lat: -23.559616,
-            lon: -46.731386
+            status: status,
+            lat: lat,
+            lon: lon
           }
         )
 
