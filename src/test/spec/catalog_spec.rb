@@ -98,4 +98,51 @@ RSpec.describe 'catalog' do
   describe 'GET resources/search' do
     include_examples 'capability search', 'resources/search', 'resources'
   end
+
+  describe 'PUT resources/{uuid}' do
+    let(:name) { 'temperature' }
+    let(:description) { 'Environment temperature' }
+    let(:new_description) { "#{description} new description" }
+    let(:type) { 'sensor' }
+
+    before do
+      connection.post(
+        'catalog/capabilities',
+        name: name,
+        description: description,
+        capability_type: type
+      )
+      create_response = connection.post(
+        'catalog/resources',
+        data: {
+          description: description,
+          capabilities: [name],
+          status: 'active',
+          lat: -23.559616,
+          lon: -46.731386
+        }
+      )
+
+      uuid = response_json(create_response)['data']['uuid']
+
+      @response = connection.put(
+        "catalog/resources/#{uuid}",
+        description: new_description
+      )
+    end
+
+    xit 'is expected to respond with success' do
+      expect(@response.status).to be(200)
+    end
+
+    xit 'is expected to update the resource' do
+      json = response_json(@response)
+
+      expect(json['data']['description']).to eq(new_description)
+    end
+
+    after do
+      connection.delete("catalog/capabilities/#{name}")
+    end
+  end
 end
