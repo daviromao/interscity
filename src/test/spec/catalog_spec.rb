@@ -31,118 +31,115 @@ RSpec.shared_examples 'capability search' do |path, hash_key|
   end
 end
 
-RSpec.describe 'catalog' do
-  describe 'GET resources' do
-    it 'is expected to respond with success' do
-      response = connection.get('catalog/resources')
+RSpec.describe '/catalog' do
+  let(:name) { 'temperature' }
+  let(:description) { 'Environment temperature' }
+  let(:type) { 'sensor' }
 
-      expect(response.status).to be(200)
-    end
-  end
+  describe '/resources' do
+    describe 'GET /' do
+      it 'is expected to respond with success' do
+        response = connection.get('catalog/resources')
 
-  describe 'GET capabilities' do
-    include_examples 'capability search', 'capabilities', 'capabilities'
-  end
-
-  describe 'POST capabilities' do
-    let(:name) { 'temperature' }
-    let(:description) { 'Environment temperature' }
-    let(:type) { 'sensor' }
-
-    before do
-      @response = connection.post(
-        'catalog/capabilities',
-        name: name,
-        description: description,
-        capability_type: type
-      )
+        expect(response.status).to be(200)
+      end
     end
 
-    it 'is expected to respond with success' do
-      expect(@response.status).to be(201) # 201 - Created
+    describe 'GET /sensors' do
+      include_examples 'capability search', 'resources/sensors', 'resources'
     end
 
-    after do
-      connection.delete("catalog/capabilities/#{name}")
-    end
-  end
-
-  describe 'DELETE capabilities' do
-    let(:name) { 'temperature' }
-    let(:description) { 'Environment temperature' }
-    let(:type) { 'sensor' }
-
-    before do
-      connection.post(
-        'catalog/capabilities',
-        name: name,
-        description: description,
-        capability_type: type
-      )
-      @response = connection.delete("catalog/capabilities/#{name}")
+    describe 'GET /actuators' do
+      include_examples 'capability search', 'resources/actuators', 'resources'
     end
 
-    it 'is expected to respond with success' do
-      expect(@response.status).to eq(204) # 204 - No Content
+    describe 'GET /search' do
+      include_examples 'capability search', 'resources/search', 'resources'
     end
-  end
 
-  describe 'GET resources/sensors' do
-    include_examples 'capability search', 'resources/sensors', 'resources'
-  end
+    describe 'PUT /{uuid}' do
+      let(:new_description) { "#{description} new description" }
 
-  describe 'GET resources/actuators' do
-    include_examples 'capability search', 'resources/actuators', 'resources'
-  end
-
-  describe 'GET resources/search' do
-    include_examples 'capability search', 'resources/search', 'resources'
-  end
-
-  describe 'PUT resources/{uuid}' do
-    let(:name) { 'temperature' }
-    let(:description) { 'Environment temperature' }
-    let(:new_description) { "#{description} new description" }
-    let(:type) { 'sensor' }
-
-    before do
-      connection.post(
-        'catalog/capabilities',
-        name: name,
-        description: description,
-        capability_type: type
-      )
-      create_response = connection.post(
-        'catalog/resources',
-        data: {
+      before do
+        connection.post(
+          'catalog/capabilities',
+          name: name,
           description: description,
-          capabilities: [name],
-          status: 'active',
-          lat: -23.559616,
-          lon: -46.731386
-        }
-      )
+          capability_type: type
+        )
+        create_response = connection.post(
+          'catalog/resources',
+          data: {
+            description: description,
+            capabilities: [name],
+            status: 'active',
+            lat: -23.559616,
+            lon: -46.731386
+          }
+        )
 
-      uuid = response_json(create_response)['data']['uuid']
+        uuid = response_json(create_response)['data']['uuid']
 
-      @response = connection.put(
-        "catalog/resources/#{uuid}",
-        description: new_description
-      )
+        @response = connection.put(
+          "catalog/resources/#{uuid}",
+          data: { description: new_description }
+        )
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to be(200)
+      end
+
+      it 'is expected to update the resource' do
+        json = response_json(@response)
+
+        expect(json['data']['description']).to eq(new_description)
+      end
+
+      after do
+        connection.delete("catalog/capabilities/#{name}")
+      end
+    end
+  end
+
+  describe '/capabilities' do
+    describe 'GET /' do
+      include_examples 'capability search', 'capabilities', 'capabilities'
     end
 
-    xit 'is expected to respond with success' do
-      expect(@response.status).to be(200)
+    describe 'POST /' do
+      before do
+        @response = connection.post(
+          'catalog/capabilities',
+          name: name,
+          description: description,
+          capability_type: type
+        )
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to be(201) # 201 - Created
+      end
+
+      after do
+        connection.delete("catalog/capabilities/#{name}")
+      end
     end
 
-    xit 'is expected to update the resource' do
-      json = response_json(@response)
+    describe 'DELETE /{name}' do
+      before do
+        connection.post(
+          'catalog/capabilities',
+          name: name,
+          description: description,
+          capability_type: type
+        )
+        @response = connection.delete("catalog/capabilities/#{name}")
+      end
 
-      expect(json['data']['description']).to eq(new_description)
-    end
-
-    after do
-      connection.delete("catalog/capabilities/#{name}")
+      it 'is expected to respond with success' do
+        expect(@response.status).to eq(204) # 204 - No Content
+      end
     end
   end
 end
