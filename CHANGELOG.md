@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Improve resource-cataloguer resource update error message
 * Fix revoada's deployment inventory
 * Setup static code analysis
 * Remove legacy development files

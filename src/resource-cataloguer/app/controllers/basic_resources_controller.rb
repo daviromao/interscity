@@ -74,9 +74,9 @@ class BasicResourcesController < ApplicationController
     begin
       update_resource_and_capabilities(resource)
       render json: { data: resource.to_json }, status: :ok
-    rescue StandardError
+    rescue StandardError => e
       render json: {
-        error: 'Error while updating basic resource'
+        error: "Error while updating basic resource: #{e}"
       }, status: :unprocessable_entity
     end
   end
