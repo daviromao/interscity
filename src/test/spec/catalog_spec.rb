@@ -37,7 +37,7 @@ RSpec.describe '/catalog' do
   let(:type) { 'sensor' }
   let(:status) { 'active' }
   let(:lat) { -23.559616 }
-  let(:lon) {-46.731386 }
+  let(:lon) { -46.731386 }
 
   describe '/resources' do
     describe 'GET /' do
