@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Upgrade to Ruby 2.6.5
 * Improve resource-cataloguer resource update error message
 * Fix revoada's deployment inventory
 * Setup static code analysis
