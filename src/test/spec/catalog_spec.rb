@@ -191,6 +191,22 @@ RSpec.describe '/catalog' do
       end
     end
 
+    describe 'GET /{name}' do
+      before do
+        connection.post(
+          'catalog/capabilities',
+          name: name,
+          description: description,
+          capability_type: type
+        )
+        @response = connection.get("catalog/capabilities/#{name}")
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to eq(200)
+      end
+    end
+
     describe 'DELETE /{name}' do
       before do
         connection.post(
