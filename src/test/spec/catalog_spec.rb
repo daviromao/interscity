@@ -205,6 +205,41 @@ RSpec.describe '/catalog' do
       it 'is expected to respond with success' do
         expect(@response.status).to eq(200)
       end
+
+      after do
+        connection.delete("catalog/capabilities/#{name}")
+      end
+    end
+
+    describe 'PUT /{name}' do
+      let(:new_description) { "#{description} new description" }
+
+      before do
+        connection.post(
+          'catalog/capabilities',
+          name: name,
+          description: description,
+          capability_type: type
+        )
+        @response = connection.put(
+          "catalog/capabilities/#{name}",
+          data: { description: new_description }
+        )
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to eq(202) # 202 - Accepted
+      end
+
+      xit 'is expected to update the resource' do # See: https://gitlab.com/interscity/interscity-platform/interscity-platform/issues/35
+        json = response_json(@response)
+
+        expect(json['description']).to eq(new_description)
+      end
+
+      after do
+        connection.delete("catalog/capabilities/#{name}")
+      end
     end
 
     describe 'DELETE /{name}' do
