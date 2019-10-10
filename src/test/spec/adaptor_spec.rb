@@ -89,6 +89,50 @@ RSpec.describe '/adaptor' do
           connection.delete("catalog/capabilities/#{name}")
         end
       end
+
+      describe '/data' do
+        describe 'POST /' do
+          before do
+            connection.post(
+              'catalog/capabilities',
+              name: name,
+              description: description,
+              capability_type: type
+            )
+            create_response = connection.post(
+              'catalog/resources',
+              data: {
+                description: description,
+                capabilities: [name],
+                status: status,
+                lat: lat,
+                lon: lon
+              }
+            )
+
+            uuid = response_json(create_response)['data']['uuid']
+
+            @response = connection.post(
+              "/adaptor/resources/#{uuid}/data",
+              data: {
+                "environment_monitoring": [
+                  {
+                    "temperature": 10
+                  }
+                ]
+              }
+            )
+          end
+
+          it 'is expected to respond with success' do
+            expect(@response.status).to be(201) # 201 - Created
+          end
+
+          after do
+            connection.delete("catalog/capabilities/#{name}")
+          end
+        end
+      end
     end
   end
 end
