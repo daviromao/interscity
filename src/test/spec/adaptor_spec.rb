@@ -138,5 +138,48 @@ RSpec.describe '/adaptor' do
         expect(@response.status).to be(201) # 201 - Created
       end
     end
+
+    describe 'GET /' do
+      before do
+        @response = connection.get('/adaptor/subscriptions')
+      end
+
+      it 'is expected to respond with success' do
+        expect(@response.status).to be(200)
+      end
+    end
+
+    describe '/{id}' do
+      describe 'PUT /' do
+        let(:new_subscription) { { url: 'new endpoint' } }
+
+        before do
+          @response = connection.put(
+            '/adaptor/subscriptions/1',
+            subscription: new_subscription
+          )
+        end
+
+        it 'is expected to respond with success' do
+          expect(@response.status).to eq(200)
+        end
+
+        it 'is expected to update the subscription' do
+          json = response_json(@response)
+
+          expect(json['subscription']['url']).to eq(new_subscription[:url])
+        end
+      end
+
+      describe 'GET /' do
+        before do
+          @response = connection.get('/adaptor/subscriptions/1')
+        end
+
+        it 'is expected to respond with success' do
+          expect(@response.status).to eq(200)
+        end
+      end
+    end
   end
 end
