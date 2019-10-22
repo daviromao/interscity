@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:latest
+FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:0.2.0
 RUN mkdir -p /resource-adaptor/
 ADD . /resource-adaptor/
 WORKDIR /resource-adaptor/
