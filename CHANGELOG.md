@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Target new revoada servers for deployment
 * Upgrade to Ruby 2.6.5
 * Improve resource-cataloguer resource update error message
 * Fix revoada's deployment inventory
