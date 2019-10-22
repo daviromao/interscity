@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:0.2.0
+FROM registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:latest
 RUN mkdir -p /data-collector/
 ADD . /data-collector/
 WORKDIR /data-collector/
