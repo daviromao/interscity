@@ -97,6 +97,7 @@ build_and_push_docker:
     # base
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/base .
     - docker push $CI_REGISTRY/interscity/interscity-platform/interscity-platform/base
+    - docker pull registry.gitlab.com/interscity/interscity-platform/interscity-platform/base:latest
     # actuator-controller
     - cd actuator-controller
     - docker build -t $CI_REGISTRY/interscity/interscity-platform/interscity-platform/actuator-controller .
