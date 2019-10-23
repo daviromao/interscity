@@ -147,6 +147,12 @@ RSpec.describe '/adaptor' do
       it 'is expected to respond with success' do
         expect(@response.status).to be(200)
       end
+
+      it 'is expected to have subscriptions data' do
+        json = response_json(@response)
+
+        expect(json['subscriptions'].empty?).to be(false)
+      end
     end
 
     describe '/{id}' do
@@ -178,6 +184,14 @@ RSpec.describe '/adaptor' do
 
         it 'is expected to respond with success' do
           expect(@response.status).to eq(200)
+        end
+
+        it 'is expected to have subscription fields' do
+          json = response_json(@response)
+
+          %w[id active uuid capabilities url created_at updated_at].each do |f|
+            expect(json['subscription'][f]).not_to be_nil
+          end
         end
       end
     end
