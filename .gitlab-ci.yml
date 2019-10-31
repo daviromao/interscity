@@ -24,6 +24,7 @@ stages:
   - test
   - build
   - deploy
+  - integration_test
 
 before_script:
   - gem install bundler --no-document
@@ -160,3 +161,15 @@ deploy:
   script:
     - pushd deploy/ansible
     - ansible-playbook deploy-swarm-stack.yml -i revoada_test_hosts -u deployer --private-key ../../deploy_key --ssh-extra-args "-o StrictHostKeyChecking=no"
+
+integration_test:
+  stage: integration_test
+  image: ruby:2.6
+  only:
+    - master
+  before_script:
+    - pushd src/test
+    - bundle check || bundle install
+    - sleep 60
+  script:
+    - ISCITY_URL="http://api.playground.interscity.org" rspec
