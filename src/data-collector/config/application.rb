@@ -7,6 +7,7 @@ require "action_controller/railtie"
 require "action_cable/engine"
 require "action_mailer/railtie"
 require "action_view/railtie"
+require "healthcheck/railtie"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
 require 'net/http'

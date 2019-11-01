@@ -4,6 +4,7 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'service/base/version'
 
+# rubocop: disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name          = 'service-base'
   spec.version       = Service::Base::VERSION
@@ -31,9 +32,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'puma', '~> 3.11'
   spec.add_dependency 'rack-cors', '~> 1.0.3'
   spec.add_dependency 'rails', '~> 5.2.3'
+  spec.add_dependency 'rails-healthcheck', '~> 1.0.3'
   spec.add_dependency 'rest-client', '~> 2.0.2'
   spec.add_dependency 'sqlite3', '~> 1.4'
 
   spec.add_development_dependency 'bundler', '~> 1.17'
   spec.add_development_dependency 'rake', '~> 10.0'
 end
+# rubocop:enable Metrics/BlockLength
