@@ -1,6 +1,8 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  Healthcheck.routes(self)
+
   mount Sidekiq::Web => '/sidekiq'
 
   get 'health_check', to: 'health_check#index'
