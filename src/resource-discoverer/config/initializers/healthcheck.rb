@@ -9,7 +9,7 @@ Healthcheck.configure do |config|
 
   # -- Checks --
   # Check if the db is available
-  # config.add_check :database, -> { ActiveRecord::Base.connection.execute('select 1') }
+  config.add_check :database, -> { ActiveRecord::Base.connection.execute('select 1') }
   # Check if the db is available and without pending migrations
   # config.add_check :migrations,-> { ActiveRecord::Migration.check_pending! }
   # Check if the cache is available
