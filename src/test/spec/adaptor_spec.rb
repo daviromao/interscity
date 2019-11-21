@@ -156,12 +156,25 @@ RSpec.describe '/adaptor' do
     end
 
     describe '/{id}' do
+      before do
+        response = connection.post(
+          '/adaptor/subscriptions',
+          subscription: {
+            uuid: @resource_uuid,
+            capabilities: [name],
+            url: 'http://127.0.0.1'
+          }
+        )
+
+        @subscription_id = response_json(response)['subscription']['id']
+      end
+
       describe 'PUT /' do
         let(:new_subscription) { { url: 'new endpoint' } }
 
         before do
           @response = connection.put(
-            '/adaptor/subscriptions/1',
+            "/adaptor/subscriptions/#{@subscription_id}",
             subscription: new_subscription
           )
         end
@@ -179,7 +192,9 @@ RSpec.describe '/adaptor' do
 
       describe 'GET /' do
         before do
-          @response = connection.get('/adaptor/subscriptions/1')
+          @response = connection.get(
+            "/adaptor/subscriptions/#{@subscription_id}"
+          )
         end
 
         it 'is expected to respond with success' do
