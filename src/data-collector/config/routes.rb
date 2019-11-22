@@ -3,7 +3,6 @@
 Rails.application.routes.draw do
   Healthcheck.routes(self)
 
-  get 'health_check', to: 'health_check#index'
   scope 'resources', via: [:post, :get], defaults: { format: :json } do
     match 'data', as: 'resources_data',
                   to: 'sensor_values#resources_data'

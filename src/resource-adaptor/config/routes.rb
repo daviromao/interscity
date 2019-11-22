@@ -5,7 +5,6 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => '/sidekiq'
 
-  get 'health_check', to: 'health_check#index'
   resources :components, except: [:new, :edit] do
     member do
       post 'data/:capability', to: "components#data_specific"
