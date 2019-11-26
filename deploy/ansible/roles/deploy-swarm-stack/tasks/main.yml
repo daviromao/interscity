@@ -20,3 +20,18 @@
     name: interscity-platform
     compose:
       - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
+- name: Check services
+  uri:
+    url: "http://{{ ansible_host }}:{{ kong_port }}/{{ item }}/healthcheck"
+  failed_when: false
+  register: _check
+  until: _check['status'] == 200
+  retries: 360
+  delay: 10
+  loop:
+    - actuator
+    - adaptor
+    - catalog
+    - collector
+    - discovery
+  ignore_errors: "{{ ansible_check_mode }}"
