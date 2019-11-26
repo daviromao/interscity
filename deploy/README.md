@@ -33,6 +33,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
 2. Install Docker Swarm
   * Within the ansible directory run: `ansible-playbook setup-swarm.yml`
     - this step performs, among other tasks, a full system upgrade. If you find an error while running it, please try to reboot the hosts and running it again
+    - if this step hangs on the task `docker_swarm` for a while, stop it and run it again
 
 For standalone installations, a host must have both `gateway` and `data` labelled `true`.
 
@@ -40,7 +41,7 @@ For standalone installations, a host must have both `gateway` and `data` labelle
 
 Within the ansible directory run: `ansible-playbook deploy-swarm-stack.yml`
 
-This will bring up all services. It may take some time on the first run and you can track the progress by accessing the manager host and running `docker service ls`.
+This will bring up all services. It may take some time on the first run. You can track the progress further by accessing the manager host and running `docker service ls`.
 
 ## Example to check for a correct deployment
 
@@ -52,6 +53,8 @@ Make sure you have assess to your gateway host through ports `8000` and `8001`. 
   - should return 5 entries (all applications)
 * `curl http://localhost:8000/catalog/resources`
 * `curl http://localhost:8000/collector/resources/data`
+
+You can also run the [integration tests](src/test/README.md) to verify everything works as expected.
 
 ## Removing services
 
