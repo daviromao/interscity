@@ -20,3 +20,30 @@
     name: interscity-platform
     compose:
       - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
+- name: Check services
+  uri:
+    url: "http://{{ ansible_host }}:{{ kong_port }}/{{ item }}/healthcheck"
+  failed_when: false
+  register: _check
+  until: _check['status'] == 200
+  retries: 360
+  delay: 10
+  loop:
+    - actuator
+    - adaptor
+    - catalog
+    - collector
+    - discovery
+  ignore_errors: "{{ ansible_check_mode }}"
+- name: Success
+  vars:
+    message: |
+      The deploy was successful.
+      You can find the InterSCity services at:
+        - Actuator: http://{{ ansible_host }}:{{ kong_port }}/actuator
+        - Adaptor: http://{{ ansible_host }}:{{ kong_port }}/adaptor
+        - Catalog: http://{{ ansible_host }}:{{ kong_port }}/catalog
+        - Collector: http://{{ ansible_host }}:{{ kong_port }}/collector
+        - Discovery: http://{{ ansible_host }}:{{ kong_port }}/discovery
+  debug:
+    msg: "{{ message.split('\n') }}"
