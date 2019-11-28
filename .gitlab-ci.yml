@@ -33,7 +33,7 @@ rubocop:
   stage: lint
   services: []
   before_script:
-    - gem install rubocop:0.74.0 rubocop-rails --no-doc
+    - gem install rubocop:0.74.0 rubocop-rails:2.3.1 --no-doc
   script:
     - pushd src
     - rubocop
