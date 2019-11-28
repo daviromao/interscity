@@ -22,7 +22,7 @@
       - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
 - name: Check services
   uri:
-    url: "http://{{ ansible_host }}:{{ kong_port }}/{{ item }}/healthcheck"
+    url: "http://{{ kong }}:{{ kong_port }}/{{ item }}/healthcheck"
   failed_when: false
   register: _check
   until: _check['status'] == 200
