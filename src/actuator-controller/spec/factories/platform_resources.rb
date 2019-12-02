@@ -4,7 +4,6 @@
 FactoryGirl.define do
   # Abstract factory for PlatformResource
   factory :platform_resource do
-    initialize_with { PlatformResource.find_or_create_by(uuid: uuid) }
     # Factory with not all necessary attributes
     factory :missing_args do
       uuid 'ab631116-2837-11e6-b67b-9e71128cae77'
