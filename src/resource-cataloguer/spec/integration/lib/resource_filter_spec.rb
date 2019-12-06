@@ -12,9 +12,9 @@ describe SmartCities::ResourceFilter do
     end
     Filter.new
   end
-  let(:temperature_sensor) { Capability.create(name: 'temperature', function: Capability.sensor_index) }
-  let(:semaphore_actuator) { Capability.create(name: 'semaphore', function: Capability.actuator_index) }
-  let(:parking_information) { Capability.create(name: 'parking slot', function: Capability.information_index) }
+  let(:temperature_sensor) { Capability.new(name: 'temperature', function: Capability.sensor_index) }
+  let(:semaphore_actuator) { Capability.new(name: 'semaphore', function: Capability.actuator_index) }
+  let(:parking_information) { Capability.new(name: 'parking slot', function: Capability.information_index) }
   let!(:resource1) do
     BasicResource.create(
       description: 'just a resource',

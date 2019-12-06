@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Capability, type: :model do
+RSpec.describe Capability, :integration, type: :model do
   let!(:temperature_sensor) { Capability.create_sensor(name: 'collect_temperature') }
   let!(:semaphore_actuator) { Capability.create_actuator(name: 'manipulate_semaphore') }
   let!(:parking_information) { Capability.create_information(name: 'parking_information') }
