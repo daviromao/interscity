@@ -11,13 +11,13 @@ FactoryGirl.define do
     factory :default_last_value do
       date '2016-06-16 20:43:13'
       capability 'temperature'
-      uuid { FactoryGirl.create(:essential_args).uuid }
+      uuid { FactoryGirl.build(:essential_args).uuid }
       value '68.6345'
     end
     factory :default_last_value_2 do
       date '2016-06-16 20:43:13'
       capability 'temperature'
-      uuid { FactoryGirl.create(:resource_default_2).uuid }
+      uuid { FactoryGirl.build(:resource_default_2).uuid }
       value '68.6345'
     end
   end

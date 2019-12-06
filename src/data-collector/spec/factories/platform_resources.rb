@@ -4,7 +4,7 @@
 FactoryGirl.define do
   # Abstract factory for PlatformResource
   factory :platform_resource do
-    initialize_with { PlatformResource.find_or_create_by(uuid: uuid) }
+    initialize_with { PlatformResource.new(uuid: uuid) }
     # Factory with not all necessary attributes
     factory :missing_args do
       uri 'http://localhost:3000/basic_resources/1/components/1/collect'
