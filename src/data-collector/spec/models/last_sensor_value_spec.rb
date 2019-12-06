@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe LastSensorValue, type: :model do
-  let(:sensor_value_default) { create(:default_last_value) }
+  let(:sensor_value_default) { build(:default_last_value) }
 
   it 'has a valid factory' do
     expect(sensor_value_default).to be_valid
