@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'spec_helper'
 
-describe BasicResourcesController do
+describe BasicResourcesController, :integration, type: :controller do
   let!(:temperature_sensor) { Capability.create(name: 'temperature', function: Capability.sensor_index) }
   let!(:semaphore_actuator) { Capability.create(name: 'semaphore', function: Capability.actuator_index) }
   let!(:parking_information) { Capability.create(name: 'parking slot', function: Capability.information_index) }
