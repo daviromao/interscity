@@ -4,7 +4,7 @@
 FactoryGirl.define do
   # Abstract factory for PlatformResource
   factory :actuator_command do
-    association :platform_resource, factory: :with_capability
+    association :platform_resource, factory: :with_capability, strategy: :build
 
     factory :valid_actuator_command do
       uuid { platform_resource.uuid }

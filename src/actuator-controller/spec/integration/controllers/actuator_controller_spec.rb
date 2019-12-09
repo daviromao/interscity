@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'json'
 
-describe ActuatorController, type: :controller do
+describe ActuatorController, :integration, type: :controller do
   let(:json) { JSON.parse(response.body) }
   let(:semaphore) do
     PlatformResource.create!(uuid: '1', status: 'active', capabilities: ['semaphore'])
