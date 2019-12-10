@@ -20,7 +20,7 @@ gem 'colorize'
 gem 'service-base', path: '../gems/service-base'
 
 group :development, :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.8.0'
   gem 'rubocop', '~> 0.74.0', require: false
   gem 'rubocop-rails', require: false
 end

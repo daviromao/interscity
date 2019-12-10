@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'spec_helper'
 
-describe ComponentsController do
+describe ComponentsController, type: :controller do
   subject { response }
   let(:json) { JSON.parse(response.body) }
   describe '#create' do

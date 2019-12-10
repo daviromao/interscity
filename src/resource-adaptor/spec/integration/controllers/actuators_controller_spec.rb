@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'spec_helper'
 
-describe ActuatorsController do
+describe ActuatorsController, :integration, type: :controller do
   let(:json) { JSON.parse(response.body) }
 
   describe '#subscribe' do
