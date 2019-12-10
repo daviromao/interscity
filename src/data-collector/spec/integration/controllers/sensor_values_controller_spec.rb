@@ -432,7 +432,6 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def do_range_value_filter(route, _use_uuid)
     params = {
       uuid: sensor_value_default.platform_resource.uuid,
@@ -451,9 +450,7 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
     expect(response.body.empty?).to be_falsy
     expect(response.content_type).to eq('application/json')
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # rubocop:disable Metrics/AbcSize
   def do_equal_value_filter(route, _use_uuid, dynamic_attributes)
     params = {
       uuid: sensor_value_default.platform_resource.uuid,
@@ -472,9 +469,7 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
     expect(response.body.empty?).to be_falsy
     expect(response.content_type).to eq('application/json')
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # rubocop:disable Metrics/AbcSize
   def do_wrong_pagination_filter(route, use_uuid)
     foo_limits = [-1, 1.23, 'foobar']
     foo_starts = [-4, 9.87, 'barfoo']
@@ -502,7 +497,6 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def use_array_as_mongo_collection
     Array.class_eval do
@@ -518,7 +512,6 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def generate_data(total)
     status_opt = %w[on off unknown wtf]
     capability = 'environment_monitoring'
@@ -551,5 +544,4 @@ RSpec.describe SensorValuesController, :integration, type: :controller do
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end

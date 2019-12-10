@@ -10,7 +10,7 @@ AllCops:
     - '**/features/support/env.rb'
     - '**/vendor/**/*'
     - '**/data-collector/app/controllers/sensor_values_controller.rb' # FIXME: refactor this code and stop excluding it from verifications
-    - '**/data-collector/spec/controllers/sensor_values_controller_spec.rb' # FIXME: refactor this code and stop excluding it from verifications
+    - '**/data-collector/spec/integration/controllers/sensor_values_controller_spec.rb' # FIXME: refactor this code and stop excluding it from verifications
     - '**/resource-discoverer/app/controllers/discovery_controller.rb' # FIXME: refactor this code and stop excluding it from verifications
 
 Rails:
