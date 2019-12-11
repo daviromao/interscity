@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SensorValuesController, type: :controller do
+RSpec.describe SensorValuesController, :integration, type: :controller do
   let(:sensor_value_default) { create(:default_sensor_value) }
 
   before :each do
@@ -24,7 +24,7 @@ RSpec.describe SensorValuesController, type: :controller do
     context 'with paginated connection' do
       before(:all) do
         use_array_as_mongo_collection
-        @sensor = FactoryGirl.create(:default_sensor_value)
+        @sensor = FactoryGirl.build(:default_sensor_value)
       end
 
       context 'with unset limit param' do
@@ -141,7 +141,7 @@ RSpec.describe SensorValuesController, type: :controller do
 
             expect(retrieved_resource.size).to eq(@uuids.size)
 
-            uuids = retrieved_resource.map(&proc { |element| element['uuid'] })
+            uuids = retrieved_resource.map { |element| element['uuid'] }
             expect(uuids).to match_array(@uuids)
           end
         end
@@ -192,7 +192,7 @@ RSpec.describe SensorValuesController, type: :controller do
             platform.capabilities.each do |cap|
               sensor_values = SensorValue.where(capability: cap,
                                                 platform_resource_id: platform.id)
-                                         .map(&proc { |obj| obj.dynamic_attributes })
+                                         .map(&:dynamic_attributes)
               sensor_values.each do |item|
                 item['date'] = item['date'].as_json
               end
@@ -500,13 +500,13 @@ RSpec.describe SensorValuesController, type: :controller do
 
   def use_array_as_mongo_collection
     Array.class_eval do
-      def limit(l)
+      def limit(lim)
         entry = FactoryGirl.create(:default_sensor_value)
-        l = l.to_i
-        Array.new(l, entry)
+        lim = lim.to_i
+        Array.new(lim, entry)
       end
 
-      def offset(_l)
+      def offset(_lim)
         self
       end
     end
@@ -529,8 +529,8 @@ RSpec.describe SensorValuesController, type: :controller do
       resource.capabilities << capability
       total_cap = Faker::Number.between(1, 3)
       # Create capabilities
-      total_cap.times do |index|
-        data = list_of_data[index]
+      total_cap.times do |i|
+        data = list_of_data[i]
 
         2.times do |_j|
           sensor_value = SensorValue.new(

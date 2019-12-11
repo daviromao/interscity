@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SensorValuesController, type: :controller do
+RSpec.describe SensorValuesController, :integration, type: :controller do
   context 'Request with filters' do
     before :each do
       status_opt = 'on'
@@ -535,7 +535,7 @@ RSpec.describe SensorValuesController, type: :controller do
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-                            .map(&proc { |element| element['uuid'] })
+                            .map { |element| element['uuid'] }
 
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
@@ -549,7 +549,7 @@ RSpec.describe SensorValuesController, type: :controller do
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
                 )
-                               .map(&proc { |obj| obj.dynamic_attributes.to_json })
+                               .map { |obj| obj.dynamic_attributes.to_json }
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -570,7 +570,7 @@ RSpec.describe SensorValuesController, type: :controller do
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-                            .map(&proc { |element| element['uuid'] })
+                            .map { |element| element['uuid'] }
           expect(retrieved_uuids.size).to eq(1)
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
@@ -582,7 +582,7 @@ RSpec.describe SensorValuesController, type: :controller do
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
                 )
-                               .map(&proc { |obj| obj.dynamic_attributes.to_json })
+                               .map { |obj| obj.dynamic_attributes.to_json }
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -607,7 +607,7 @@ RSpec.describe SensorValuesController, type: :controller do
           returned_json = JSON.parse(response.body)
           retrieved_resource = returned_json['resources']
           retrieved_uuids = retrieved_resource
-                            .map(&proc { |element| element['uuid'] })
+                            .map { |element| element['uuid'] }
           expect(retrieved_uuids.size).to eq(2)
           retrieved_uuids.each do |uuid|
             platform = PlatformResource.find_by(uuid: uuid)
@@ -618,7 +618,7 @@ RSpec.describe SensorValuesController, type: :controller do
               last_values =
                 LastSensorValue.where(
                   capability: cap, uuid: platform.uuid
-                ).map(&proc { |obj| obj.dynamic_attributes.to_json })
+                ).map { |obj| obj.dynamic_attributes.to_json }
 
               retrieved_values = []
               json_capabilities[cap].each do |capability|
@@ -638,7 +638,7 @@ RSpec.describe SensorValuesController, type: :controller do
     returned_json = JSON.parse(response.body)
     retrieved_resources = returned_json['resources']
     retrieved_uuids = retrieved_resources
-                      .map(&proc { |element| element['uuid'] })
+                      .map { |element| element['uuid'] }
     [retrieved_uuids, retrieved_resources]
   end
 end
