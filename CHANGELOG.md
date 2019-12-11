@@ -9,6 +9,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 * Upgrade to Ruby 2.7.1
 * Fix wrong deployment verification value
 * Create integration tests
+* Segment services unit and integration tests
 * Persist MongoDB data
 
 ## v0.2.0 - 22/10/2019
