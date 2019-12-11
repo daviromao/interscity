@@ -22,9 +22,10 @@ variables:
 stages:
   - lint
   - test
+  - integration_test
   - build
   - deploy
-  - integration_test
+  - post_deploy_integration_test
 
 before_script:
   - gem install bundler --no-document
@@ -44,7 +45,7 @@ actuator-controller:
     - pushd src/actuator-controller
     - cp config/mongoid-ci.yml config/mongoid.yml
     - bundle check || bundle install
-    - bundle exec rspec
+    - bundle exec rails spec
 
 data-collector:
   stage: test
@@ -52,7 +53,7 @@ data-collector:
     - pushd src/data-collector
     - cp config/mongoid-ci.yml config/mongoid.yml
     - bundle check || bundle install
-    - bundle exec rspec
+    - bundle exec rails spec
 
 resource-adaptor:
   stage: test
@@ -62,7 +63,7 @@ resource-adaptor:
     - bundle check || bundle install
     - bundle exec rake db:create
     - bundle exec rake db:migrate
-    - bundle exec rspec
+    - bundle exec rails spec
 
 resource-cataloguer:
   stage: test
@@ -72,14 +73,57 @@ resource-cataloguer:
     - bundle check || bundle install
     - bundle exec rake db:create
     - bundle exec rake db:migrate
-    - bundle exec rspec
+    - bundle exec rails spec
 
 resource-discoverer:
   stage: test
   script:
     - pushd src/resource-discoverer
     - bundle check || bundle install
-    - bundle exec rspec
+    - bundle exec rails spec
+
+actuator-controller-integration:
+  stage: integration_test
+  script:
+    - pushd src/actuator-controller
+    - cp config/mongoid-ci.yml config/mongoid.yml
+    - bundle check || bundle install
+    - bundle exec rails spec:integration
+
+data-collector-integration:
+  stage: integration_test
+  script:
+    - pushd src/data-collector
+    - cp config/mongoid-ci.yml config/mongoid.yml
+    - bundle check || bundle install
+    - bundle exec rails spec:integration
+
+resource-adaptor-integration:
+  stage: integration_test
+  script:
+    - pushd src/resource-adaptor
+    - cp config/database-ci.yml config/database.yml
+    - bundle check || bundle install
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate
+    - bundle exec rails spec:integration
+
+resource-cataloguer-integration:
+  stage: integration_test
+  script:
+    - pushd src/resource-cataloguer
+    - cp config/database-ci.yml config/database.yml
+    - bundle check || bundle install
+    - bundle exec rake db:create
+    - bundle exec rake db:migrate
+    - bundle exec rails spec:integration
+
+resource-discoverer-integration:
+  stage: integration_test
+  script:
+    - pushd src/resource-discoverer
+    - bundle check || bundle install
+    - bundle exec rails spec:integration
 
 build_and_push_docker:
   stage: build
@@ -162,8 +206,8 @@ deploy:
     - pushd deploy/ansible
     - ansible-playbook deploy-swarm-stack.yml -i revoada_test_hosts -u deployer --private-key ../../deploy_key --ssh-extra-args "-o StrictHostKeyChecking=no"
 
-integration_test:
-  stage: integration_test
+post_deploy_integration_test:
+  stage: post_deploy_integration_test
   image: ruby:2.6
   only:
     - master
