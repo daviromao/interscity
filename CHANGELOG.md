@@ -6,8 +6,9 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
-* Fix wrong deployment verificantion value
+* Fix wrong deployment verification value
 * Create integration tests
+* Persist MongoDB data
 
 ## v0.2.0 - 22/10/2019
 
