@@ -9,6 +9,7 @@
     path: "{{ swarm_deployments_path }}/data/{{ item }}"
   loop:
     - postgres
+    - mongodb
 - name: Create data scripts directory
   file:
     state: directory

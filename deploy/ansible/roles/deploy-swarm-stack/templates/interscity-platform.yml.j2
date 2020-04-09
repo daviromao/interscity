@@ -169,9 +169,14 @@ services:
       - 27017:27017
     networks:
       - swarm-network
+    volumes:
+      - {{ swarm_deployments_data_path }}/mongodb:/data/db
     deploy:
       restart_policy:
         delay: 5s
+      placement:
+        constraints:
+          - node.labels.data == true
     environment:
       AUTH: "no"
   datacollector:
