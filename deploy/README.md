@@ -65,6 +65,8 @@ The `kong-docs` is supposed to be a one-shot service. If you want to remove it a
 * **Force service deployment**
   - if a given service is taking too long to retry, on the swarm manager host you can force it with the following
   - `docker service update --force <SERVICE IDENTIFIER>`
+* **Timeout (12s) waiting for privilege escalation prompt**
+  - Add `-c paramiko` at the end of the ansible command
 
 # Development
 
