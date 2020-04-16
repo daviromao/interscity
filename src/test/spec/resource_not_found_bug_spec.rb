@@ -41,11 +41,20 @@ RSpec.describe 'Resource not found bug' do
     @responses << resource_response
     @resource_uuid = response_json(resource_response)['data']['uuid']
 
+    @responses << connection.post(
+      "adaptor/resources/#{@resource_uuid}/data",
+      data: {
+        '::not created capacity::' => [{ value: 50, timestamp: '20/01/2019T10:27:29' }]
+      }
+    )
+
     (0..9).each do |i|
       @responses << connection.post(
         "adaptor/resources/#{@resource_uuid}/data",
         data: {
-          environment_monitoring: [{ cap_1_name => 50, cap_2_name => '15', cap_3_name => '30', timestamp: "20/01/2019T10:27:3#{i}" }]
+          cap_1_name => [{ value: 50, timestamp: "20/01/2019T10:27:3#{i}" }],
+          cap_2_name => [{ value: '15', timestamp: "20/01/2019T10:27:3#{i}" }],
+          cap_3_name => [{ value: '30', timestamp: "20/01/2019T10:27:3#{i}" }]
         }
       )
     end

@@ -172,12 +172,13 @@ paths:
         - Resource Adaptor
       summary: Post several context data
       description: |
-        Post a set of data collected by city resources. Resources may
-        collect observations about the city environment through sensor
-        devices, which provide its sensor capabilities, such as
-        temperature, humidity, to cite a few. It is possible to post
-        several observed data by time. Thus, the body must specify the
-        correspondent capability for each observation.
+        Post a set of data collected by a given city resource specified
+        by the uuid. The set may contain an entry for each of the
+        resource capabilities (environment_monitoring and bus_monitoring
+        for instance) that points to an array of observations for each
+        capability. This array may contain complex documents such as
+        hashes with the capability measurements (temperature and
+        humidity for instance).
       parameters:
         - in: path
           name: uuid
@@ -195,6 +196,8 @@ paths:
               properties:
                 data:
                   type: object
+                  description: >-
+                    The set with a key for each capability
                   properties:
                     environment_monitoring:
                       type: array
