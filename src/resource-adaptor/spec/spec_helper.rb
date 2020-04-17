@@ -3,7 +3,7 @@
 require 'simplecov'
 require 'yaml'
 
-SimpleCov.minimum_coverage 85
+SimpleCov.minimum_coverage 80
 SimpleCov.start
 
 SERVICES_CONFIG = YAML.load_file('spec/files/services.yml')
