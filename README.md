@@ -18,9 +18,6 @@ Directions on how to get started developing can be found at [HACKING](HACKING.md
  
 If you wish to send a code contribution back to the project check the [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Code status
-
-TODO
 
 ## License
 
