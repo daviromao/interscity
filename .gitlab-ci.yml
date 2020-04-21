@@ -208,7 +208,7 @@ deploy:
 
 post_deploy_integration_test:
   stage: post_deploy_integration_test
-  image: ruby:2.6
+  image: ruby:2.7
   only:
     - master
   before_script:
