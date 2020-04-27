@@ -6,6 +6,7 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Handle intermitent CI deployment failures
 * Improve resource data creation documentation
 * Upgrade to Ruby 2.7.1
 * Fix wrong deployment verification value
