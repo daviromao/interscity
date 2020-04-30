@@ -40,4 +40,36 @@ RSpec.describe ActuatorCommand, type: :model do
       expect(actuator_command.errors[:capability].size).to eq(1)
     end
   end
+
+  describe 'private methods' do
+    subject(:actuator_command) { FactoryGirl.build(:valid_actuator_command) }
+
+    describe 'publish_command' do
+      context 'successful notification' do
+        before do
+          allow(subject).to receive(:notify_command_request)
+
+          subject.send(:publish_command)
+        end
+
+        it 'is expected to notify command request' do
+          expect(subject).to have_received(:notify_command_request)
+        end
+      end
+
+      context 'failed notification' do
+        before do
+          allow(subject).to receive(:notify_command_request) { raise StandardError }
+          allow(subject).to receive(:save)
+
+          subject.send(:publish_command)
+        end
+
+        it 'is expected to update the status' do
+          expect(subject).to have_received(:save)
+          expect(subject.status).to eq('failed')
+        end
+      end
+    end
+  end
 end
