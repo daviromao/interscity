@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'workers/worker_helper'
 
 RSpec.describe ResourceUpdater do
   let(:channel) { double('channel') }
@@ -13,25 +14,7 @@ RSpec.describe ResourceUpdater do
     allow(channel).to receive(:queue).and_return(queue)
   end
 
-  describe 'initialize' do
-    before { subject }
-
-    it 'is expected to create a channel' do
-      expect(Rails.configuration.worker_conn).to have_received(:create_channel)
-    end
-
-    it 'is expected to prefetch the channel' do
-      expect(channel).to have_received(:prefetch).with(2)
-    end
-
-    it 'is expected to get the channel topic' do
-      expect(channel).to have_received(:topic).with(described_class::TOPIC)
-    end
-
-    it 'is expected to get the channel queue' do
-      expect(channel).to have_received(:queue).with(described_class::QUEUE)
-    end
-  end
+  include_examples 'resource_init with queue parameters', described_class::QUEUE
 
   describe 'perform' do
     let(:body) { double('body') }
@@ -82,26 +65,7 @@ RSpec.describe ResourceUpdater do
     end
   end
 
-  describe 'cancel' do
-    let(:consumer) { double('consumer') }
-    let(:consumers) { [consumer] }
-
-    before do
-      allow(consumer).to receive(:cancel)
-      allow(channel).to receive(:close)
-
-      subject.instance_variable_set('@consumers', consumers)
-      subject.cancel
-    end
-
-    it 'is expected to cancel the consumers' do
-      expect(consumer).to have_received(:cancel)
-    end
-
-    it 'is expected to close the channel' do
-      expect(channel).to have_received(:close)
-    end
-  end
+  include_examples 'resource_cancel'
 
   describe 'private methods' do
     describe 'update_resource' do
