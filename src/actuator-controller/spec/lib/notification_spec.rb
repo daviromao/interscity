@@ -5,17 +5,17 @@ require 'notification'
 require 'bunny'
 
 RSpec.describe SmartCities::Notifier do
-  let(:dummy_class) do
+  let(:test_class) do
     Class.new do
       include SmartCities::Notifier
       attr_accessor :conn, :channel
     end
   end
-  let(:instance) { dummy_class.new }
+  let(:instance) { test_class.new }
 
   describe 'instance methods' do
     describe 'setup_connection' do
-      it 'is expected to connect' do # You can do better...
+      it 'is expected to connect using the module method' do
         expect(SmartCities::Notifier).to receive(:connect)
         instance.setup_connection
       end
