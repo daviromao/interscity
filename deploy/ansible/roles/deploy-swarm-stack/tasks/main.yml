@@ -20,6 +20,8 @@
     name: interscity-platform
     compose:
       - "{{ swarm_deployments_path }}/stacks/interscity-platform.yml"
+  retries: 5
+  delay: 10
 - name: Check services
   uri:
     url: "http://{{ kong }}:{{ kong_port }}/{{ item }}/healthcheck"
