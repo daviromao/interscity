@@ -155,5 +155,84 @@ describe ActuatorController, :integration, type: :controller do
         end
       end
     end
+
+    describe 'apply_command' do
+      let(:actuator) do
+        {
+          'uuid' => 'uuid',
+          'capabilities' => capabilities
+        }
+      end
+      let(:resource) { instance_double('PlatformResource') }
+
+      before do
+        allow(PlatformResource).to(receive_message_chain(:where, :first)
+                                   .and_return(resource))
+
+        allow(subject).to receive(:add_failure)
+        allow(subject).to receive(:create_command)
+
+        allow(resource).to receive(:blank?)
+        allow(resource).to receive(:capabilities).and_return([capability])
+        allow(resource).to receive(:uuid).and_return('uuid')
+      end
+
+      context 'blank resource' do
+        let(:capability) { 'capability' }
+        let(:capabilities) { { capability => 'a' } }
+        let(:value) { capabilities[capability] }
+
+        before do
+          allow(resource).to receive(:blank?).and_return(true)
+
+          subject.send(:apply_command, actuator, nil)
+        end
+
+        it 'is expected to add a resource not found failure' do
+          expect(subject).to have_received(:add_failure).with(
+            actuator['uuid'], 404, 'Resource not found',
+            capability, value
+          )
+        end
+      end
+
+      context 'when the actuator capability is available on the resource' do
+        let(:capability) { 'capability' }
+        let(:capabilities) { { capability => 'a' } }
+        let(:value) { capabilities[capability] }
+
+        before do
+          subject.send(:apply_command, actuator, nil)
+        end
+
+        it 'is expected to create a command' do
+          expect(subject).to have_received(:create_command).with(resource, capability, value)
+        end
+      end
+
+      context 'when the actuator capability is not included in the resource' do
+        let(:capability) { 'capability' }
+        let(:capabilities) { { capability => 'a' } }
+        let(:value) { capabilities[capability] }
+
+        before do
+          allow(resource).to receive(:capabilities).and_return([])
+          subject.send(:apply_command, actuator, nil)
+        end
+
+        it 'is expected to add not valid capability failure' do
+          expect(subject).to have_received(:add_failure).with(
+            resource.uuid, 400, 'This resource does not have such capability',
+            capability, value
+          )
+        end
+      end
+    end
+
+    describe 'set_page_params' do
+      it 'is expected not to raise any errors' do
+        expect { subject.send(:set_page_params) }.not_to raise_error
+      end
+    end
   end
 end
