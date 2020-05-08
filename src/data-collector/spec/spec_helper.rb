@@ -22,8 +22,8 @@
 # including factory_girl support
 require 'simplecov'
 
-SimpleCov.minimum_coverage 80
-SimpleCov.start
+SimpleCov.minimum_coverage 22
+SimpleCov.start 'rails'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
