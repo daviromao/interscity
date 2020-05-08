@@ -30,7 +30,9 @@ class ActuatorCommandUpdater
           command.status = json['status']
           command.save!
 
-          WORKERS_LOGGER.info("ActuatorCommandUpdater::CommandUpdated - command=#{command_id}&status=#{status}")
+          WORKERS_LOGGER.info(
+            "ActuatorCommandUpdater::CommandUpdated - command=#{json['command_id']}&status=#{json['status']}"
+          )
         rescue StandardError => e
           WORKERS_LOGGER.error("ActuatorCommandUpdater::CommandNotUpdated - #{e.message}")
         end
@@ -39,9 +41,7 @@ class ActuatorCommandUpdater
   end
 
   def cancel
-    @consumers.each do |_consumer|
-      @consumer.cancel
-    end
+    @consumers.each(&:cancel)
     @channel.close
   end
 end

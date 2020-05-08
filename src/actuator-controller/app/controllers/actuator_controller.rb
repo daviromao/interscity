@@ -71,7 +71,7 @@ class ActuatorController < ApplicationController
       elsif resource.capabilities.include? capability
         create_command(resource, capability, value)
       else
-        add_failure(resource.uuid, 400, 'This resource does not have such cappability', capability, value)
+        add_failure(resource.uuid, 400, 'This resource does not have such capability', capability, value)
       end
     end
   end

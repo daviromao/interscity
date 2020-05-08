@@ -36,16 +36,14 @@ class ResourceUpdater
 
           update_resource(resource_attributes, json)
         rescue StandardError => e
-          WORKERS_LOGGER.error("ResourcesUpdater::ResourceNotUpdated - #{e.message}")
+          WORKERS_LOGGER.error("ResourceUpdater::ResourceNotUpdated - #{e.message}")
         end
       end
     end
   end
 
   def cancel
-    @consumers.each do |_consumer|
-      @consumer.cancel
-    end
+    @consumers.each(&:cancel)
     @channel.close
   end
 
@@ -54,6 +52,6 @@ class ResourceUpdater
   def update_resource(resource_attributes, json)
     resource = PlatformResource.find_by(uuid: json['uuid'])
     resource&.update!(resource_attributes)
-    WORKERS_LOGGER.info("ResourcesUpdater::ResourceUpdated -  #{resource_attributes}")
+    WORKERS_LOGGER.info("ResourceUpdater::ResourceUpdated -  #{resource_attributes}")
   end
 end
