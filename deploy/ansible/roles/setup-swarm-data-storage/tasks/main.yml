@@ -18,3 +18,15 @@
   template:
     src: init_postgres.sql.j2
     dest: "{{ swarm_deployments_path }}/data/scripts/init_postgres.sql"
+- name: Copy backup script to server
+  template:
+    src: backup_db.sh
+    dest: /srv/backup_db.sh
+    mode: 0755
+- name: Schedule backup with cron
+  cron:
+    name: backup databases
+    hour: 23
+    minute: 59
+    user: kinoforum
+    job: "bash /srv/backup_db.sh"
