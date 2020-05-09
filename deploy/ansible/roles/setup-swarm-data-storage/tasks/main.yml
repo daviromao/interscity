@@ -28,5 +28,4 @@
     name: backup databases
     hour: 23
     minute: 59
-    user: kinoforum
     job: "bash /srv/backup_db.sh"
