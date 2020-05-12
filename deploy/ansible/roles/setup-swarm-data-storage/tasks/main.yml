@@ -18,6 +18,15 @@
   template:
     src: init_postgres.sql.j2
     dest: "{{ swarm_deployments_path }}/data/scripts/init_postgres.sql"
+- name: Get gdrive
+  get_url:
+    url: https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64
+    dest: /srv/gdrive
+    mode: 0755
+- name: Copy google service account key to server
+  template:
+    src: service-account.json
+    dest: /srv/service-account.json
 - name: Copy backup script to server
   template:
     src: backup_db.sh
