@@ -6,6 +6,10 @@ name_for_container() {
   docker ps | awk "/$1/  { print \$NF }"
 }
 
+gdrive() {
+  /srv/gdrive --service-account ../../../../srv/service-account.json "$@"
+}
+
 (
   POSTGRES_CONTAINER="$(name_for_container postgres)"
   MONGO_CONTAINER="$(name_for_container mongo)"
@@ -36,8 +40,14 @@ name_for_container() {
   rm $BACKUPFILES
 
   # Upload the file using gdrive or rclone
-  # I don't like those parent dirs, but I don't see a better way now
-  /srv/gdrive --service-account ../../../../srv/service-account.json upload "$BACKUPARCHIVE"
+  gdrive upload --delete "$BACKUPARCHIVE"
 
-  rm "$BACKUPARCHIVE"
+
+  gdrive list > .tmp-list.txt
+
+  if (( "$(grep backup .tmp-list.txt -c)" > 2 )); then
+    THIRD_OLDEST_BACKUP_ID=$(awk '/backup/ { if(NR == 3) { print $1 } }' .tmp-list.txt)
+    gdrive delete "$THIRD_OLDEST_BACKUP_ID"
+  fi
+
 ) >> /srv/cron_log.txt 2>&1
