@@ -4,6 +4,8 @@
 rails_env: production
 secret_key_base: 'admin'
 
+enabled_db_backups: false
+
 # Ports
 resource_cataloguer_port: 3000
 resource_adaptor_port: 3001

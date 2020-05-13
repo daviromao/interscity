@@ -184,6 +184,8 @@ deploy_dry_run:
     - apt-get update -y
     - apt-get install -y ansible
     - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
+    - echo $VAULT_PASS > deploy/ansible/.vault-pass.txt
+    - "sed -i 's/enabled_db_backups: false/enabled_db_backups: true/g' deploy/ansible/group_vars/all"
     - chmod 600 deploy_key
   script:
     - pushd deploy/ansible
@@ -201,6 +203,8 @@ deploy:
     - apt-get update -y
     - apt-get install -y ansible
     - echo $DEPLOY_KEY | base64 -d > deploy_key # encoded with `base64 deploy_key | tr -d '\n'`
+    - echo $VAULT_PASS > deploy/ansible/.vault-pass.txt
+    - "sed -i 's/enabled_db_backups: false/enabled_db_backups: true/g' deploy/ansible/group_vars/all"
     - chmod 600 deploy_key
   script:
     - pushd deploy/ansible
