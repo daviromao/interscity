@@ -37,16 +37,14 @@ class ResourceCreator
 
           WORKERS_LOGGER.info("ResourceCreator::ResourceCreated - #{resource_attributes}")
         rescue StandardError => e
-          WORKERS_LOGGER.error("ResourcesCreator::ResourceNotCreated - #{e.message}")
+          WORKERS_LOGGER.error("ResourceCreator::ResourceNotCreated - #{e.message}")
         end
       end
     end
   end
 
   def cancel
-    @consumers.each do |_consumer|
-      @consumer.cancel
-    end
+    @consumers.each(&:cancel)
     @channel.close
   end
 end
