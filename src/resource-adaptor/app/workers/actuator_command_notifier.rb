@@ -31,16 +31,14 @@ class ActuatorCommandNotifier
 
           schedule_webhooks(uuid, json, capability, body)
         rescue StandardError => e
-          WORKERS_LOGGER.error("AcutatorCommandNotifier::CommandNotProcessed - #{e.message}")
+          WORKERS_LOGGER.error("ActuatorCommandNotifier::CommandNotProcessed - #{e.message}")
         end
       end
     end
   end
 
   def cancel
-    @consumers.each do |_consumer|
-      @consumer.cancel
-    end
+    @consumers.each(&:cancel)
     @channel.close
   end
 
@@ -50,7 +48,7 @@ class ActuatorCommandNotifier
     ::Subscription.where(uuid: uuid, active: true).each do |subscription|
       if subscription.capabilities.include? capability
         ::WebHookCaller.perform_async(subscription.id, subscription.url, body)
-        WORKERS_LOGGER.info("AcutatorCommandNotifier::CommandReceived - #{json}")
+        WORKERS_LOGGER.info("ActuatorCommandNotifier::CommandReceived - #{json}")
       end
     end
   end
