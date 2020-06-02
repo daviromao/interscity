@@ -41,11 +41,11 @@ class WebHookCaller
       content_type: :json, accept: :json
     )
 
-    WORKERS_LOGGER.info("WebHookCaller::CommandSend - notification_id: #{id}, url: #{url}")
+    WORKERS_LOGGER.info("WebHookCaller::CommandSent - notification_id: #{id}, url: #{url}")
     DataManager.instance.publish_actuation_command_status(
       command['uuid'],
       command['capability'],
-      command_id,
+      command['_id']['$oid'],
       'processed'
     )
   end

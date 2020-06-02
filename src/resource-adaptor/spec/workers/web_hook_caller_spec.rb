@@ -4,17 +4,17 @@ require 'rails_helper'
 require 'rest-client'
 
 RSpec.describe WebHookCaller do
-  describe 'perform' do
-    let(:id) { 'id' }
-    let(:url) { 'http://www.example.com' }
-    let(:body) { '[]' }
-    let(:command) do
-      {
-        'url' => url,
-        '_id' => { '$oid' => '1' }
-      }
-    end
+  let(:command) do
+    {
+      'url' => url,
+      '_id' => { '$oid' => '1' }
+    }
+  end
+  let(:id) { 'id' }
+  let(:url) { 'http://www.example.com' }
+  let(:body) { '[]' }
 
+  describe 'perform' do
     before do
       allow(JSON).to receive_message_chain(:parse, :slice).and_return(command)
 
@@ -54,8 +54,9 @@ RSpec.describe WebHookCaller do
       end
 
       it 'is expected to log the error' do
+        error = 'RestClient::ExceptionWithResponse'
         expect(WORKERS_LOGGER).to have_received(:error).with(
-          "WebHookCaller::CommandNotSent - notification_id: #{id}, url: #{url}, error: RestClient::ExceptionWithResponse"
+          "WebHookCaller::CommandNotSent - notification_id: #{id}, url: #{url}, error: #{error}"
         )
       end
 
@@ -79,6 +80,34 @@ RSpec.describe WebHookCaller do
 
         expect(WORKERS_LOGGER).to have_received(:error).with(
           "WebHookCaller::CommandNotSent - notification_id: #{id}, url: #{url}, error: StandardError"
+        )
+      end
+    end
+  end
+
+  describe 'private methods' do
+    describe 'call_webhook' do
+      before do
+        allow(RestClient).to receive(:post)
+        allow(DataManager).to receive_message_chain(:instance, :publish_actuation_command_status)
+
+        WORKERS_LOGGER = double('workers_logger')
+        allow(WORKERS_LOGGER).to receive(:info)
+
+        subject.send(:call_webhook, command, id, url)
+      end
+
+      it 'is expected to send the command to actuator_command' do
+        expect(RestClient).to have_received(:post).with(
+          url,
+          { action: 'actuator_command', command: command }.to_json,
+          content_type: :json, accept: :json
+        )
+      end
+
+      it 'is expected to log the sent command' do
+        expect(WORKERS_LOGGER).to have_received(:info).with(
+          "WebHookCaller::CommandSent - notification_id: #{id}, url: #{url}"
         )
       end
     end
