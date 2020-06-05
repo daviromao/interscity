@@ -13,7 +13,7 @@ module Platform
     rescue RestClient::Exception => e
       e.response
     rescue StandardError => e
-      puts "Could not register Resource - ERROR #{e}"
+      Rails.logger.error "Could not register Resource - ERROR #{e}"
       nil
     end
 
@@ -26,7 +26,7 @@ module Platform
     rescue RestClient::Exception => e
       e.response
     rescue StandardError => e
-      puts "Could not register Resource - ERROR #{e}"
+      Rails.logger.error "Could not register Resource - ERROR #{e}"
       nil
     end
 
@@ -38,7 +38,7 @@ module Platform
     rescue RestClient::Exception => e
       e.response
     rescue StandardError => e
-      puts "Could not register Resource - ERROR #{e}"
+      Rails.logger.error "Could not register Resource - ERROR #{e}"
       nil
     end
   end
