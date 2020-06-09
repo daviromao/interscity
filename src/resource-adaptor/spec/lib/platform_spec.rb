@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'spec_helper'
+require 'unit_helper'
 
 RSpec.shared_examples 'make request and handle errors with method' do |method, params, request_action, request_params|
   let(:data) { double('data') }

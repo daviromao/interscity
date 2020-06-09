@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'spec_helper'
+require 'unit_helper'
 
 RSpec.describe DataManager do
   let(:channel) { double('channel') }

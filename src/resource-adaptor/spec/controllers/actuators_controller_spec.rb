@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'spec_helper'
+require 'unit_helper'
 
 describe ActuatorsController, type: :controller do
   let(:json) { JSON.parse(response.body) }
