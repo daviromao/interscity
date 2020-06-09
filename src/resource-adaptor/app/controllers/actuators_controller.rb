@@ -66,7 +66,7 @@ class ActuatorsController < ApplicationController
   end
 
   def valid_capabilities?(subscription)
-    available_capabilities = fecth_resource_capabilities(subscription)
+    available_capabilities = fetch_resource_capabilities(subscription)
     return false unless available_capabilities
 
     match_capabilities = available_capabilities & subscription.capabilities
@@ -83,7 +83,7 @@ class ActuatorsController < ApplicationController
     true
   end
 
-  def fecth_resource_capabilities(subscription)
+  def fetch_resource_capabilities(subscription)
     response = Platform::ResourceManager.get_resource(subscription.uuid)
     if response.nil?
       render json: { error: 'Resource Cataloguer service is unavailable' }, status: :service_unavailable

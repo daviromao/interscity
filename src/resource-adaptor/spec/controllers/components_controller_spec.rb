@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'spec_helper'
+require 'unit_helper'
 
 describe ComponentsController, type: :controller do
   subject { response }
@@ -137,6 +137,42 @@ describe ComponentsController, type: :controller do
       end
 
       it { is_expected.to have_http_status(400) }
+    end
+  end
+
+  describe 'update' do
+    context 'when the service is available' do
+      let(:service_response) { double('response', body: '{"body":1}', code: 200) }
+
+      before do
+        expect(Platform::ResourceManager).to receive(:update_resource).and_return(service_response)
+        put :update, params: { id: 1, data: { lat: 2, lon: 2 } }
+      end
+
+      it 'is expected to return the same status code of the service' do
+        expect(response).to have_http_status(service_response.code)
+      end
+
+      it 'is expected to render a json response' do
+        expect(response.body).to eq(service_response.body)
+      end
+    end
+
+    context 'when the service is unavailable' do
+      let(:service_response) { nil }
+
+      before do
+        expect(Platform::ResourceManager).to receive(:update_resource).and_return(service_response)
+        put :update, params: { id: 1, data: { lat: 2, lon: 2 } }
+      end
+
+      it 'is expected to return an unavailable code' do
+        expect(response).to have_http_status(503)
+      end
+
+      it 'is expected to give a service unavailable message' do
+        expect(json['message']).to eq('Service is unavailable')
+      end
     end
   end
 end
