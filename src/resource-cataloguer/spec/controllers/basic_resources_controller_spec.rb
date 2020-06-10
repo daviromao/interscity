@@ -16,11 +16,11 @@ describe BasicResourcesController, type: :controller do
         get :search
       end
 
-      it 'todo' do
+      it 'is expected to return a json with the resources' do
         expect(json['resources']).to eq(resources)
       end
 
-      it 'todo 1' do
+      it 'is expected to respond with success' do
         expect(response).to have_http_status(200)
       end
     end
@@ -340,10 +340,9 @@ describe BasicResourcesController, type: :controller do
         end
 
         it 'is expected to raise a CapabilityNotFound error' do
-          # TODO: Use more specific error
           expect do
             subject.send(:add_capabilities_to_resource, capabilities, resource)
-          end.to raise_error(StandardError)
+          end.to raise_error(CapabilityNotFound)
         end
       end
 
