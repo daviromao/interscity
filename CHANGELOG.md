@@ -6,11 +6,11 @@ The version numbers below try to follow the conventions at http://semver.org/.
 
 ## Unreleased
 
+* Upgrade to Ruby 2.7.2
 * Cover resource-adaptor with unit tests
 * Add external backup option on deploy setup
 * Handle intermitent CI deployment failures
 * Improve resource data creation documentation
-* Upgrade to Ruby 2.7.1
 * Fix wrong deployment verification value
 * Create integration tests
 * Segment services unit and integration tests

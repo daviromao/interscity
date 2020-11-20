@@ -8,7 +8,7 @@ environments.
 ## Dependencies
 
 * Git
-* Ruby 2.7.1
+* Ruby 2.7.2
   * You can install it using [RVM](https://rvm.io)
 * [Docker (>= 1.13)](https://www.docker.com/)
 * [Docker Compose (>= 1.10)](https://docs.docker.com/compose/)
