@@ -34,7 +34,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   * To enable backups, change the `enabled_db_backups` variable on `group_vars/all` to `true`
   * Create a [Google service account](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount), if you don't have one
   * Download your private key as a json file and put it under `roles/setup-swarm-data-storage/templates/service-account.json`
-    - You can use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypting-unencrypted-files) to encrypt that file if needed
+    - You can use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypting-unencrypted-files) to encrypt that file if needed (in which case you may also want to check the commented `vault_password_file` line in [ansible.cfg](ansible/ansible.cfg))
   * Activate the [Google Drive API](https://console.developers.google.com/apis/library/drive.googleapis.com) for your project
   * To configure how often the backups will occur, you can change the values on the `Schedule backup with cron` task on `roles/setup-swarm-data-storage/tasks/db_backup.yml`
     - By default, the backup will be performed daily at 23:59.
