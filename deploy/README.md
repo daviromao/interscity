@@ -20,7 +20,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
 ## Configuration
 
 1. Create your `hosts` file
-  * You can check an example (here)[ansible/vagrant_hosts]
+  * You can check an example [here](ansible/vagrant_hosts)
     - It is important to note that if you use `localhost` or `127.0.0.1` you may find issues getting all the services up. Instead use other valid IP addresses on your network.
   * Each host must have a unique `swarm_node_name` variable defined
   * You'll use this variable to set the node label under `swarm_labels` variable defined for the `swarm-manager` group
