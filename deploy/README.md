@@ -30,15 +30,16 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
     - `common`
   * It is important that at least one host is in each of the following groups: `swarm-manager`; and `swarm-data-workers`
   * The remaining hosts must be members of the `swarm-workers` group
-2. Set up database backup (optional)
+2. If you do *not* want automated backups, either comment out the `vault_password_file` line in [ansible.cfg](ansible/ansible.cfg) or create an empty `.vault-pass.txt` file (notice the dot), otherwise ansible will abort with an error
+3. Set up database backup (optional)
   * To enable backups, change the `enabled_db_backups` variable on `group_vars/all` to `true`
   * Create a [Google service account](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount), if you don't have one
   * Download your private key as a json file and put it under `roles/setup-swarm-data-storage/templates/service-account.json`
-    - You can use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypting-unencrypted-files) to encrypt that file if needed (in which case you may also want to check the commented `vault_password_file` line in [ansible.cfg](ansible/ansible.cfg))
+    - You should use [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html#encrypting-unencrypted-files) to encrypt that file; then, save the password in the `.vault-pass.txt` file (or modify the `vault_password_file` line in [ansible.cfg](ansible/ansible.cfg) to suit your needs)
   * Activate the [Google Drive API](https://console.developers.google.com/apis/library/drive.googleapis.com) for your project
   * To configure how often the backups will occur, you can change the values on the `Schedule backup with cron` task on `roles/setup-swarm-data-storage/tasks/db_backup.yml`
     - By default, the backup will be performed daily at 23:59.
-3. Install Docker Swarm
+4. Install Docker Swarm
   * Within the ansible directory run: `ansible-playbook setup-swarm.yml`
     - this step performs, among other tasks, a full system upgrade. If you find an error while running it, please try to reboot the hosts and running it again
     - if this step hangs on the task `docker_swarm` for a while, stop it and run it again
