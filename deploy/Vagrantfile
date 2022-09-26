@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "debian/stretch64"
 
   # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
+  # boxes will only be checked for updatses when the user runs
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
   #   vb.gui = true
   #
     # Customize the amount of memory on the VM:
-    vb.memory = "512"
+    vb.memory = "2048" #ALTERADO A MEMORIAs
   end
   #
   # View the documentation for the provider you are using for more
@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y aptitude python python-setuptools
+    apt-get install -y aptitude python python-setuptools python-pip #ADICIONADO PIP
   SHELL
 
   # Allows us to use a single key for all machines located at ~/.vagrant.d/insecure_private_key
@@ -74,40 +74,40 @@ Vagrant.configure("2") do |config|
 
   # Configure multiple machines
   # More at: https://www.vagrantup.com/docs/multi-machine/
-  config.vm.define "big-machine-1" do |big_machine_1|
-    big_machine_1.vm.network "private_network", ip: "10.10.10.100"
+  #config.vm.define "big-machine-1" do |big_machine_1|
+    #big_machine_1.vm.network "private_network", ip: "192.168.56.11"
 
-    big_machine_1.vm.provider "virtualbox" do |vb|
-      vb.name = "big-machine-1"
-    end
-  end
+    #big_machine_1.vm.provider "virtualbox" do |vb|
+      #vb.name = "big-machine-1"
+    #end
+  #end
 
-  config.vm.define "big-machine-2" do |big_machine_2|
-    big_machine_2.vm.network "private_network", ip: "10.10.10.101"
+  #config.vm.define "big-machine-2" do |big_machine_2|
+  #  big_machine_2.vm.network "private_network", ip: "192.168.56.2"
 
-    big_machine_2.vm.provider "virtualbox" do |vb|
-      vb.name = "big-machine-2"
-    end
-  end
+  #  big_machine_2.vm.provider "virtualbox" do |vb|
+  #    vb.name = "big-machine-2"
+  #  end
+  #end
 
-  config.vm.define "small-machine-1" do |small_machine_1|
-    small_machine_1.vm.network "private_network", ip: "10.10.10.102"
+  #config.vm.define "small-machine-1" do |small_machine_1|
+  #  small_machine_1.vm.network "private_network", ip: "192.168.56.3"
 
-    small_machine_1.vm.provider "virtualbox" do |vb|
-      vb.name = "small-machine-1"
-    end
-  end
+    #small_machine_1.vm.provider "virtualbox" do |vb|
+    #  vb.name = "small-machine-1"
+    #end
+  #end
 
-  config.vm.define "small-machine-2" do |small_machine_2|
-    small_machine_2.vm.network "private_network", ip: "10.10.10.103"
+  #config.vm.define "small-machine-2" do |small_machine_2|
+    #small_machine_2.vm.network "private_network", ip: "192.168.56.4"
 
-    small_machine_2.vm.provider "virtualbox" do |vb|
-      vb.name = "small-machine-2"
-    end
-  end
+    #small_machine_2.vm.provider "virtualbox" do |vb|
+      #vb.name = "small-machine-2"
+    #end
+  #end
 
   config.vm.define "gateway-machine" do |gateway_machine|
-    gateway_machine.vm.network "private_network", ip: "10.10.10.104"
+    gateway_machine.vm.network "private_network", ip: "200.18.99.122"
 
     gateway_machine.vm.provider "virtualbox" do |vb|
       vb.name = "gateway-machine"

@@ -2,32 +2,32 @@ all:
   children:
     gatewayed:
       hosts:
-        big-machine-1:
-          ansible_host: 10.10.10.100
-          ansible_user: vagrant
-          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
-        big-machine-2:
-          ansible_host: 10.10.10.101
-          ansible_user: vagrant
-          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
-        small-machine-1:
-          ansible_host: 10.10.10.102
-          ansible_user: vagrant
-          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
-        small-machine-2:
-          ansible_host: 10.10.10.103
-          ansible_user: vagrant
-          ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        #big-machine-1:
+          #ansible_host: 192.168.56.1
+          #ansible_user: vagrant
+          #ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        #big-machine-2:
+          #ansible_host: 192.168.56.2
+          #ansible_user: vagrant
+          #ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        #small-machine-1:
+          #ansible_host: 192.168.56.3
+          #ansible_user: vagrant
+          #ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+        #small-machine-2:
+          #ansible_host: 192.168.56.4
+          #ansible_user: vagrant
+          #ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
     gateway:
       hosts:
         gateway-machine:
-          ansible_host: 10.10.10.104
+          ansible_host: 200.18.98.122
           ansible_user: vagrant
           ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
     swarm-manager:
       hosts:
         swarm-manager-machine:
-          ansible_host: 10.10.10.104
+          ansible_host: 200.18.98.122
           ansible_user: vagrant
           ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
           swarm_node_name: manager
@@ -37,38 +37,38 @@ all:
             gateway: "true"
             data: "false"
             common: "false"
-          - swarm_node_name: worker-1
-            gateway: "false"
-            data: "true"
-            common: "false"
-          - swarm_node_name: worker-2
-            gateway: "false"
-            data: "false"
-            common: "true"
-          - swarm_node_name: worker-3
-            gateway: "false"
-            data: "false"
-            common: "true"
-          - swarm_node_name: worker-4
-            gateway: "false"
-            data: "false"
-            common: "true"
+          #- swarm_node_name: worker-1
+          #  gateway: "false"
+          #  data: "true"
+          #  common: "false"
+          #- swarm_node_name: worker-2
+          #  gateway: "false"
+          #  data: "false"
+          #  common: "true"
+          #- swarm_node_name: worker-3
+          #  gateway: "false"
+          #  data: "false"
+          #  common: "true"
+          #- swarm_node_name: worker-4
+          #  gateway: "false"
+          #  data: "false"
+          #  common: "true"
     swarm-workers:
       hosts:
-        big-machine-1:
-         swarm_node_name: worker-1
-        big-machine-2:
-          swarm_node_name: worker-2
-        small-machine-1:
-          swarm_node_name: worker-3
-        small-machine-2:
-          swarm_node_name: worker-4
+        #big-machine-1:
+         #swarm_node_name: worker-1
+        #big-machine-2:
+        #  swarm_node_name: worker-2
+        #small-machine-1:
+        #  swarm_node_name: worker-3
+        #small-machine-2:
+        #  swarm_node_name: worker-4
     swarm-data-workers:
       hosts:
-        big-machine-1:
+        #big-machine-1:
   vars:
-    kong: 10.10.10.104
-    rabbitmq: 10.10.10.100
-    mongo: 10.10.10.101
-    postgres_host: 10.10.10.100
-    swarm_manager_ip: 10.10.10.104
+    kong: 200.18.98.122
+    rabbitmq: 200.18.98.122
+    mongo: 200.18.98.122
+    postgres_host: 200.18.98.122
+    swarm_manager_ip: 200.18.98.122

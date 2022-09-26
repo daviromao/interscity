@@ -62,7 +62,7 @@
 - name: run docker default test
   command: docker run hello-world
 
-- name: install pip
+- name: install python-pip #ACHO QUE E O MESMO PROBLEMA, ENTAO NAO INSTALOU O PIP E NAO RODA O CODIGO DO ANSIBLE
   easy_install: name=pip state=latest
 
 - name: install docker

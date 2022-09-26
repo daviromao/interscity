@@ -90,8 +90,10 @@ The following instructions are relevant for developers and maintainer of the dep
 
 ## Deploying locally
 
-There's a valid `hosts` file for deploying with Vagrant and VirtualBox. The `vagrant_hosts` defines 5 hosts. The `standalone_vagrant_host` define a single host for standalone installation. For the standalone installation you do not need the 5 machines defined in the Vagrantfile. Therefore, increase the memory to `2048` and leave just the `gateway-machine` definition. Enter in the `ansible` directory and run:
+There's a valid `hosts` file for deploying with Vagrant and VirtualBox. The `vagrant_hosts` defines 5 hosts. The `standalone_vagrant_host` define a single host for standalone installation. For the standalone installation you do not need the 5 machines defined in the Vagrantfile. Therefore, increase the memory to `c` and leave just the `gateway-machine` definition. Enter in the `ansible` directory and run:
 
 * `vagrant up`
-* `ansible-playbook setup-swarm.yml -i <vagrant_hosts | standalone_vagrant_host>`
-* `ansible-playbook deploy-swarm-stack -i <vagrant_hosts | standalone_vagrant_host>`
+* `ansible-playbook setup-swarm.yaml -i <vagrant_hosts | standalone_vagrant_host>`
+* `ansible-playbook deploy-swarm-stack.yaml -i <vagrant_hosts | standalone_vagrant_host>`
+
+## Atualizado erros como a ausência de deploy-swarm-stack.yml (yml estava ausente)
