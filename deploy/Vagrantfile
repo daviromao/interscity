@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y aptitude python python-setuptools python-pip #ADICIONADO PIP
+    apt-get install -y aptitude python python-setuptools python-pip
   SHELL
 
   # Allows us to use a single key for all machines located at ~/.vagrant.d/insecure_private_key
@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   # Configure multiple machines
   # More at: https://www.vagrantup.com/docs/multi-machine/
   #config.vm.define "big-machine-1" do |big_machine_1|
-    #big_machine_1.vm.network "private_network", ip: "192.168.56.11"
+    #big_machine_1.vm.network "private_network", ip: "10.10.10.1001"
 
     #big_machine_1.vm.provider "virtualbox" do |vb|
       #vb.name = "big-machine-1"
@@ -83,7 +83,7 @@ Vagrant.configure("2") do |config|
   #end
 
   #config.vm.define "big-machine-2" do |big_machine_2|
-  #  big_machine_2.vm.network "private_network", ip: "192.168.56.2"
+  #  big_machine_2.vm.network "private_network", ip: "10.10.10.101"
 
   #  big_machine_2.vm.provider "virtualbox" do |vb|
   #    vb.name = "big-machine-2"
@@ -91,7 +91,7 @@ Vagrant.configure("2") do |config|
   #end
 
   #config.vm.define "small-machine-1" do |small_machine_1|
-  #  small_machine_1.vm.network "private_network", ip: "192.168.56.3"
+  #  small_machine_1.vm.network "private_network", ip: "10.10.10.102"
 
     #small_machine_1.vm.provider "virtualbox" do |vb|
     #  vb.name = "small-machine-1"
@@ -99,7 +99,7 @@ Vagrant.configure("2") do |config|
   #end
 
   #config.vm.define "small-machine-2" do |small_machine_2|
-    #small_machine_2.vm.network "private_network", ip: "192.168.56.4"
+    #small_machine_2.vm.network "private_network", ip: "10.10.10.103"
 
     #small_machine_2.vm.provider "virtualbox" do |vb|
       #vb.name = "small-machine-2"
@@ -107,7 +107,7 @@ Vagrant.configure("2") do |config|
   #end
 
   config.vm.define "gateway-machine" do |gateway_machine|
-    gateway_machine.vm.network "private_network", ip: "200.18.99.122"
+    gateway_machine.vm.network "private_network", ip: "10.10.10.104"
 
     gateway_machine.vm.provider "virtualbox" do |vb|
       vb.name = "gateway-machine"
