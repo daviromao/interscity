@@ -203,6 +203,55 @@ into /etc/vbox/networks.conf:
   ```
   $ rspec ./spec/requests_helper.rb
   ```
-  ## Documentation ##
+  # Documentation
   
    interscity-platform documentation: https://gitlab.com/interscity/interscity-platform/docs
+  # Postman
+
+  Install desktop postman
+  ```
+  $ wget https://dl.pstmn.io/download/latest/linux
+  $ tar zxvf postman-linux-x64-*.tar.gz
+  $ sudo mv Postman /opt
+  $ sudo ln -s /opt/Postman/Postman /usr/local/bin/postman
+  $ sudo nano /usr/share/applications/postman.desktop
+  [Desktop Entry]
+  Type=Application
+  Name=Postman
+  Icon=/opt/Postman/app/resources/app/assets/icon.png
+  Exec="/opt/Postman/Postman"
+  Comment=Postman GUI
+  Categories=Development;Code;
+  $ postman
+  ```
+  # Register resources
+  
+  Let's add a new capabilities:
+
+  At Postman, create a HTTP request
+  
+  Select POST and enter the URL: 
+  ```
+  http://10.10.10.104:8000/catalog/capabilities
+  ```
+  At header add the KEY: 
+  ```
+  Content-type = application/json
+  ```
+  At Body select raw, JASON, and enter:
+  ```
+{
+  "name": "temperature",
+  "description": "Measure the temperature of the environment",
+  "capability_type": "sensor"
+}
+  ```
+After SEND the request you should receive the follwo response:
+  ```
+{
+    "id": 69,
+    "name": "temperature",
+    "description": "Measure the temperature of the environment",
+    "capability_type": "sensor"
+}
+  ```
