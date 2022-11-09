@@ -4,7 +4,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
 
 # Requirements
 
-## At Local Machine
+# At Local Machine (Check local enviroment)
 
 * 5GB of RAM available
 * 25GB of disk
@@ -37,6 +37,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   - **Virtualbox**
   ```
   $ sudo apt install virtualbox
+  virtualbox --help
   ```
   - **Upgrade Vagrant**
 
@@ -44,6 +45,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   $ wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
   $ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
   $ sudo apt update && sudo apt install vagrant
+  $ vagrant --version
   ```
    - **Setup ip range**
   https://www.virtualbox.org/manual/ch06.html#network_hostonly
@@ -55,19 +57,17 @@ into /etc/vbox/networks.conf:
   $ sudo mkdir /etc/vbox/
   $ sudo touch /etc/vbox/networks.conf 
   $ sudo nano /etc/vbox/networks.conf
-  * 10.0.0.0/8 192.168.0.0/16"
+  * 10.0.0.0/8 192.168.0.0/16
   * 2001::/64
   $ cat /etc/vbox/networks.conf
   ```
   save the file
   
-
  **Docker**
   ```
  $ sudo apt install docker-compose
  $ docker --version
   ```
-
  **Open ports**
   - TCP ports: `2376`, `2377` and `7946`
   - UDP ports: `7946` and `4789`
@@ -78,11 +78,26 @@ into /etc/vbox/networks.conf:
   $ sudo ufw allow 7946/udp
   $ sudo ufw allow 4789/udp
   ```
- **Vagrant up**
- ```
-$ cd interscity-platform/deploy
-$ vagrant up
-```
+  **Local public key**
+  ```
+  $ cat ~/.ssh/id_rsa.pub
+  ```
+  Note the output
+
+  If necessary, create your public keys as:
+  ```
+  $ ssh-keygen
+  id_rsa
+  ```
+  The private *id_rsa* and public *id_rsa.pub* keys will be generated at (/home/$user/.ssh/)
+
+**Vagrant up (Create hosts)**
+  ```
+  $ cd interscity-platform/deploy
+  $ vagrant up
+  ```
+
+# At Host Machine (Check enviroment)
 
 * Virtual machine depencies (step-by-step)
 
@@ -94,6 +109,11 @@ $ vagrant up
   ```
   $ vagrant ssh gateway-machine
   ```
+ - **Save your public key into host machine**
+  ```
+  $ echo public_key_string >> ~/.ssh/authorized_keys
+  ```
+  replace *public_key_string* as your outupt from public key executed from a step before at "Note the output"
 
  - **Verify SSH**
   ```
@@ -111,7 +131,7 @@ $ vagrant up
   ```
   $ exit
   ```
-## At Local Machine (Deploy)
+# At Local Machine (Deploy to hosts)
 
  - **Deploy services**
   ```
@@ -130,10 +150,11 @@ $ vagrant up
   ```
   The setup swarm script is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
 
-  ## At host machine
+# At host machine (Check services)
+
   Enter host machine
   ```
-  $ sudo vagrant gateway-machine
+  $ vagrant ssh gateway-machine
   ```
   Verify docker services:
   ```
