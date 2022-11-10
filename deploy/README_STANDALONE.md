@@ -1,45 +1,54 @@
-# Step-by-Step for a standalone Deploying InterSCity
+# Step-by-Step for a standalone Deploying interSCity
 
-Ansible scripts to deploy InterSCity in a Docker Swarm environment.
+Ansible scripts to deploy interSCity in a Docker Swarm environment.
 
 # Requirements
 
-# At Local Machine (Check local enviroment)
+# STEP 1 - At Local Machine (Check local enviroment)
 
 * 5GB of RAM available
 * 25GB of disk
-* VirtualBox
-* Vagrant
 
-* Local machine depencies (step-by-step)
+## Local machine depencies (step-by-step)
 
- - **Python 3.8+** Needed for Ansible
+* *Option 1*: __Fast-way__ : run use the script file: [localScript.sh](./localScript.sh)
+
+and jump to *Local public key* item
+
+ ```
+  $ chmod +x localScript.sh
+  $ ./localScript.sh
+```
+
+* *Option 2*: __Step-by-Step__: use the follow commends below:
+
+ - **Python 3.8+** Needed for Ansible [skip if localScript.sh]
  ```
   $ sudo apt install python3.10
   $ python3.10 --version
   ```
- - **PIP 3**
+ - **PIP 3** [skip if localScript.sh]
   ```
   $ sudo apt install python3-pip
   $ pip -V
   ```
- - **Ansible 2.8+** Needed for Ansible
+ - **Ansible 2.8+** Needed for Ansible [skip if localScript.sh]
   ```
   $ sudo apt install ansible
   $ ansible --version
   ```
- - **OpenSSH**
+ - **OpenSSH** [skip if localScript.sh]
   ```
   $ sudo apt install openssh-server
   $ ssh -v Protocol
   ```
 
-  - **Virtualbox**
+  - **Virtualbox** [skip if localScript.sh]
   ```
   $ sudo apt install virtualbox
-  virtualbox --help
+  $ virtualbox --help
   ```
-  - **Upgrade Vagrant**
+  - **Upgrade Vagrant** [skip if localScript.sh]
 
   ```
   $ wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -47,7 +56,7 @@ Ansible scripts to deploy InterSCity in a Docker Swarm environment.
   $ sudo apt update && sudo apt install vagrant
   $ vagrant --version
   ```
-   - **Setup ip range**
+   - **Setup ip range** [skip if localScript.sh]
   https://www.virtualbox.org/manual/ch06.html#network_hostonly
   
   Since Virtual Box 6.1.24 hosts are limited to the range 192.168.56.0/21 so configure the file of new range.
@@ -56,19 +65,17 @@ into /etc/vbox/networks.conf:
   ```
   $ sudo mkdir /etc/vbox/
   $ sudo touch /etc/vbox/networks.conf 
-  $ sudo nano /etc/vbox/networks.conf
-  * 10.0.0.0/8 192.168.0.0/16
-  * 2001::/64
+  $ sudo echo "* 10.0.0.0/8 192.168.0.0/16" >> /etc/vbox/networks.conf
+  $ sudo echo "* 2001::/64" >> /etc/vbox/networks.conf
   $ cat /etc/vbox/networks.conf
   ```
-  save the file
   
- **Docker**
+ **Docker** [skip if localScript.sh]
   ```
  $ sudo apt install docker-compose
  $ docker --version
   ```
- **Open ports**
+ **Open ports** [skip if localScript.sh]
   - TCP ports: `2376`, `2377` and `7946`
   - UDP ports: `7946` and `4789`
   ```
@@ -78,7 +85,7 @@ into /etc/vbox/networks.conf:
   $ sudo ufw allow 7946/udp
   $ sudo ufw allow 4789/udp
   ```
-  **Local public key**
+  **Local public key** [printed at the end of localScript.sh]
   ```
   $ cat ~/.ssh/id_rsa.pub
   ```
@@ -87,7 +94,6 @@ into /etc/vbox/networks.conf:
   If necessary, create your public keys as:
   ```
   $ ssh-keygen
-  id_rsa
   ```
   The private *id_rsa* and public *id_rsa.pub* keys will be generated at (/home/$user/.ssh/)
 
@@ -97,7 +103,7 @@ into /etc/vbox/networks.conf:
   $ vagrant up
   ```
 
-# At Host Machine (Check enviroment)
+# STEP 2 - At Host Machine (Check enviroment)
 
 * Virtual machine depencies (step-by-step)
 
@@ -113,7 +119,7 @@ into /etc/vbox/networks.conf:
   ```
   $ echo public_key_string >> ~/.ssh/authorized_keys
   ```
-  replace *public_key_string* as your outupt from public key executed from a step before at "Note the output"
+  replace *public_key_string* as your outupt from public key executed from a step before at "Note the output" [printed at the end of localScript.sh]
 
  - **Verify SSH**
   ```
@@ -131,7 +137,7 @@ into /etc/vbox/networks.conf:
   ```
   $ exit
   ```
-# At Local Machine (Deploy to hosts)
+# STEP 3 - At Local Machine (Deploy to hosts)
 
  - **Deploy services**
   ```
@@ -150,7 +156,7 @@ into /etc/vbox/networks.conf:
   ```
   The setup swarm script is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
 
-# At host machine (Check services)
+# STEP 4 - At host machine (Check services)
 
   Enter host machine
   ```
@@ -178,11 +184,14 @@ into /etc/vbox/networks.conf:
   $ curl http://10.10.10.104:8000/collector/resources/data
   ```
 
-  # Run test cases
+  # STEP 5 - Run test cases
+
+  Install Ruby [skip if localScript.sh]
   ```
   $ sudo apt install ruby-full
   $ ruby --version
   ```
+  Install bundler [skip if localScript.sh]
   ```
   $ sudo apt install ruby-bundler
   $ bundle --version
@@ -202,29 +211,38 @@ into /etc/vbox/networks.conf:
   faraday and rspec are the gems needed for test
   ```
   $ rspec ./spec/requests_helper.rb
+  $ rspec ./spec/actuator_spec.rb
+  $ rspec ./spec/catalog_spec.rb
+  $ rspec ./spec/discovery_spec.rb
+  $ rspec ./spec/spec_helper.rb
+  $ rspec ./spec/adaptor_spec.rb
+  $ rspec ./spec/collector_spec.rb
+  $ rspec ./spec/resource_not_found_bug_spec.rb    
   ```
-  # Documentation
+  # STEP 6 - Using interSCity with API Requests
   
-   interscity-platform documentation: https://gitlab.com/interscity/interscity-platform/docs
+   interscity-platform API: https://playground.interscity.org/
   # Postman
 
-  Install desktop postman
+  Install desktop postman [skip if localScript.sh]
   ```
-  $ wget https://dl.pstmn.io/download/latest/linux
-  $ tar zxvf postman-linux-x64-*.tar.gz
+  $ wget --content-disposition https://dl.pstmn.io/download/latest/linux 
+  $ tar zxvf postman-linux-x64ls.tar.gz
   $ sudo mv Postman /opt
   $ sudo ln -s /opt/Postman/Postman /usr/local/bin/postman
-  $ sudo nano /usr/share/applications/postman.desktop
-  [Desktop Entry]
-  Type=Application
-  Name=Postman
-  Icon=/opt/Postman/app/resources/app/assets/icon.png
-  Exec="/opt/Postman/Postman"
-  Comment=Postman GUI
-  Categories=Development;Code;
-  $ postman
+  $ echo "[Desktop Entry]" >> /usr/share/applications/postman.desktop
+  $ echo "Type=Application" >> /usr/share/applications/postman.desktop
+  $ echo "Name=Postman" >> /usr/share/applications/postman.desktop
+  $ echo "Icon=/opt/Postman/app/resources/app/assets/icon.png" >> /usr/share/applications/postman.desktop
+  $ echo "Exec="/opt/Postman/Postman"" >> /usr/share/applications/postman.desktop
+  $ echo "Comment=Postman GUI" >> /usr/share/applications/postman.desktop
+  $ echo "Categories=Development;Code;" >> /usr/share/applications/postman.desktop
   ```
-  # Register resources
+
+  Now use Postman (or any other api tool) to use the interSCity platform system
+
+  Follow an example below:
+  # Registering a capability
   
   Let's add a new capabilities:
 
@@ -246,7 +264,7 @@ into /etc/vbox/networks.conf:
   "capability_type": "sensor"
 }
   ```
-After SEND the request you should receive the follwo response:
+After SEND the request you should receive the follow response:
   ```
 {
     "id": 69,
@@ -255,3 +273,19 @@ After SEND the request you should receive the follwo response:
     "capability_type": "sensor"
 }
   ```
+
+  # Others - Documentation
+  
+   interscity-platform documentation: https://gitlab.com/interscity/interscity-platform/docs
+
+   Architecture: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/architecture/Architecture.md
+
+   API documentation: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/api/API.md
+
+   Microservices documentation: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/microservices/Microservices.md
+
+   Deployment: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/deployment/Deployment.md
+
+   Applications: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/applications/applications.md
+
+   Research & Development opportunities: https://gitlab.com/interscity/interscity-platform/docs/-/blob/master/research/opportunities.md
