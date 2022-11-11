@@ -1,3 +1,22 @@
+echo "STARTING SCRIPT..."
+echo "CLEANING CACHE FILES..."
+sudo rm -rf /var/lib/dpkg/updates/*
+sudo rm -rf /var/lib/apt/lists/*
+sudo rm /var/cache/apt/*.bin
+sudo rm -rfv /var/tmp/flatpak-cache-*
+sudo apt-get clean
+sudo apt-get autoremove -y
+echo "CLEANUP COMPLETE!"
+echo "UPDATING SYSTEM..."
+sudo dpkg --configure -a
+sudo apt-get install -f
+sudo apt --fix-broken install
+sudo apt-get update -y
+sudo apt-get dist-upgrade -y
+flatpak update -y
+snap refresh -y
+echo "SYSTEM UP TO DATE"
+echo "INSTALLING APPS..."
 sudo apt update
 sudo apt upgrade -y
 sudo apt install python3.10 -y
@@ -43,4 +62,7 @@ sudo echo "Icon=/opt/Postman/app/resources/app/assets/icon.png" >> /usr/share/ap
 sudo echo "Exec="/opt/Postman/Postman"" >> /usr/share/applications/postman.desktop
 sudo echo "Comment=Postman GUI" >> /usr/share/applications/postman.desktop
 sudo echo "Categories=Development;Code;" >> /usr/share/applications/postman.desktop
+echo "APPS COMPLETE!"
+echo "SHH PUBLIC KEY: TAKE NOTE:"
 cat ~/.ssh/id_rsa.pub
+notify-send "SCRIPT FINISHED!"
