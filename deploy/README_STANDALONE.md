@@ -6,8 +6,10 @@ Ansible scripts to deploy interSCity in a Docker Swarm environment.
 
 # STEP 1 - At Local Machine (Check local enviroment)
 
-* 5GB of RAM available
-* 25GB of disk
+* Local machine:
+  * Linux Debian based
+  * 5GB of RAM available
+  * 25GB of disk
 
 ## Local machine depencies (step-by-step)
 
@@ -134,10 +136,10 @@ Finishing it, **reboot the PC** to finish the setup!
 
 **Vagrant up (Create hosts)**
 
-Go to deploy subfolder:
+vagrant upGo to deploy subfolder:
 ```
 $ cd interscity-platform/deploy
-$ vagrant up
+$ 
 ```
 
 The host *gateway-machine* should be created!
@@ -147,10 +149,8 @@ ___Troubleshoot___: If you are trying to build a VM with the same name, delete/r
 # STEP 2 - At Host Machine (Check enviroment)
 
 * Virtual machine depencies (step-by-step)
-
-* One host: gateway-machine
-* Operating System
-- GNU/Linux Debian Stretch
+  * One host: gateway-machine
+  * Operating System: GNU/Linux Debian Stretch
 
 - **Acess vagrant machine**
 ```
@@ -183,16 +183,21 @@ $ exit
 
 # STEP 3 - At Local Machine (Deploy to hosts)
 
-- **Deploy services**
+## - **Setup host (Update apps)**
+
 ```
 $ cd insterscity-platform/deploy/ansible
 $ ansible-playbook setup-swarm.yml -i standalone_vagrant_host
 ```
 ___Troubleshoot___: If it fails, enter in the vagrant machine and run:
 ```
+$ vagrant ssh gateway-machine
 $ sudo apt --fix-broken install
+$ exit
 ```
-And repeat the setup-swarm again.
+And repeat the *setup-swarm* again.
+
+## - **Deploy services**
 
 The setup swarm script details is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
 ```
@@ -215,6 +220,9 @@ $ sudo docker service ls
 ___Troubleshoot___: Force service update at host machine:
 ```
 $ sudo docker service update --force <docker container id>
+overall progress: 1 out of 1 tasks 
+1/1: running   [==================================================>] 
+verify: Service converged 
 ```
 Check host services:
 ```
@@ -270,6 +278,16 @@ $ rspec ./spec/resource_not_found_bug_spec.rb
 ```
 
 ___Troubleshoot___: The last two test cases probably will fail due to the lack of data not yet registered, cause it's a clean installation. See how to register data in next step 6!
+
+# Relaunch Host Machine
+
+To power on the host machine again, access the deploy subfoler, and run vagrant up again:
+
+```
+$ cd interscity-platform/deploy
+$ vagrant up
+```
+
 # STEP 6 - Using interSCity with API Requests
 
 interscity-platform API: https://playground.interscity.org/
