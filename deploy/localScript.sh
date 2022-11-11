@@ -1,4 +1,5 @@
 sudo apt update
+sudo apt upgrade -y
 sudo apt install python3.10 -y
 python3.10 --version
 sudo apt install python3-pip -y
@@ -35,11 +36,11 @@ sudo apt install ruby-bundler -y
 bundle --version
 sudo mv Postman /opt
 sudo ln -s /opt/Postman/Postman /usr/local/bin/postman
-echo "[Desktop Entry]" >> /usr/share/applications/postman.desktop
-echo "Type=Application" >> /usr/share/applications/postman.desktop
-echo "Name=Postman" >> /usr/share/applications/postman.desktop
-echo "Icon=/opt/Postman/app/resources/app/assets/icon.png" >> /usr/share/applications/postman.desktop
-echo "Exec="/opt/Postman/Postman"" >> /usr/share/applications/postman.desktop
-echo "Comment=Postman GUI" >> /usr/share/applications/postman.desktop
-echo "Categories=Development;Code;" >> /usr/share/applications/postman.desktop
+sudo echo "[Desktop Entry]" >> /usr/share/applications/postman.desktop
+sudo echo "Type=Application" >> /usr/share/applications/postman.desktop
+sudo echo "Name=Postman" >> /usr/share/applications/postman.desktop
+sudo echo "Icon=/opt/Postman/app/resources/app/assets/icon.png" >> /usr/share/applications/postman.desktop
+sudo echo "Exec="/opt/Postman/Postman"" >> /usr/share/applications/postman.desktop
+sudo echo "Comment=Postman GUI" >> /usr/share/applications/postman.desktop
+sudo echo "Categories=Development;Code;" >> /usr/share/applications/postman.desktop
 cat ~/.ssh/id_rsa.pub
