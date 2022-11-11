@@ -66,3 +66,4 @@ echo "APPS COMPLETE!"
 echo "SHH PUBLIC KEY: TAKE NOTE:"
 cat ~/.ssh/id_rsa.pub
 notify-send "SCRIPT FINISHED!"
+echo "Maybe a reboot could be necessary to finish the setup!"
