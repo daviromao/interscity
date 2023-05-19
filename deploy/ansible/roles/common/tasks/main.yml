@@ -8,7 +8,7 @@
 
 - name: add debian backport repository
   apt_repository:
-    repo: 'deb http://http.debian.net/debian stretch-backports main'
+    repo: 'deb http://deb.debian.org/debian bullseye-backports main'
     state: present
 
 - name: install ca-certificates package

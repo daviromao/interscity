@@ -136,12 +136,51 @@ Finishing it, **reboot the PC** to finish the setup!
 
 **Vagrant up (Create hosts)**
 
-```shell
-$ vagrant up
-```
 Go to deploy subfolder:
 ```shell
 $ cd interscity-platform/deploy
+```
+
+```shell
+$ vagrant up
+```
+
+Debian9 repositories need to be updated at virtual machine:
+
+```shell
+$ vagrant ssh gateway-machine
+```
+
+```shell
+$ sudo nano /etc/apt/sources.list
+```
+Update from
+```shell
+# deb cdrom:[Debian GNU/Linux 9.12.0 _Stretch_ - Official amd64 NETINST 20200209-02:13]/ stretch main
+
+#deb cdrom:[Debian GNU/Linux 9.12.0 _Stretch_ - Official amd64 NETINST 20200209-02:13]/ stretch main
+
+deb http://deb.debian.org/debian stretch main
+deb-src http://deb.debian.org/debian stretch main
+
+deb http://security.debian.org/debian-security stretch/updates main
+deb-src http://security.debian.org/debian-security stretch/updates main
+```
+To:
+```shell
+# deb cdrom:[Debian GNU/Linux 9.12.0 Stretch - Official amd64 NETINST 20200209-02:13]/ stretch main
+
+#deb cdrom:[Debian GNU/Linux 9.12.0 Stretch - Official amd64 NETINST 20200209-02:13]/ stretch main
+
+#deb http://deb.debian.org/debian stretch main
+deb http://archive.debian.org/debian stretch main
+#deb-src http://deb.debian.org/debian stretch main
+deb-src http://archive.debian.org/debian stretch main
+
+#deb http://security.debian.org/debian-security stretch/updates main
+deb http://archive.debian.org/debian-security stretch/updates main
+#deb-src http://security.debian.org/debian-security stretch/updates main
+deb-src http://archive.debian.org/debian-security stretch/updates main
 ```
 
 The host *gateway-machine* should be created!
@@ -178,6 +217,12 @@ $ python --version
 ```shell
 $ pip -V
 ```
+Install it if not available (sometimes the script does not install it, not sure why cause it`s already in the [main.yml](./ansible/roles/common/tasks/main.yml) file:
+```shell
+$ sudo apt install python-pip
+$ pip -V
+```shell
+
 - **exit from host machine**
 ```shell
 $ exit
@@ -190,7 +235,7 @@ $ exit
 (You need to setup everytime the virtual machine reboot)
 
 ```shell
-$ cd insterscity-platform/deploy/ansible
+$ cd insterscity-platform/deploy/ansible/
 $ ansible-playbook setup-swarm.yml -i standalone_vagrant_host
 ```
 ___Troubleshoot___: If it fails, enter in the vagrant machine and run:
@@ -200,6 +245,12 @@ $ sudo apt --fix-broken install
 $ exit
 ```
 And repeat the *setup-swarm* again.
+
+ansible-playbook [setup-swarm.yml](./ansible/setup-swarm.yml), will run the commands:
+1 - Basic Setup: [main.yml](./ansible/setup-swarm.yml)
+2 - Common Setup: [main.yml](./ansible/roles/common/tasks/main.yml)
+3 - Docker Setup [main.yml](./ansible/roles/docker/tasks/main.yml)
+4 - and complete the setup-swarm.yml setup
 
 ## - **Deploy services**
 
@@ -212,6 +263,10 @@ $ ansible-playbook deploy-swarm-stack.yml -i standalone_vagrant_host
 The setup swarm script details is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
 
 ___Troubleshoot___: Those scripts could be not up-to-date and need to be fixed! (Normally updating to a new version solves the problem)
+
+ansible-playbook [deploy-swarm-stack.yml](./ansible/deploy-swarm-stack.yml), will run the commands:
+1 - Deply Services: [main.yml](./ansible/roles/deploy-swarm-stack/tasks/main.yml)
+2 - and complete the deploy-swarm-stack.yml setup
 
 # STEP 4 - At host machine (Check services)
 
