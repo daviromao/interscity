@@ -274,13 +274,30 @@ Enter host machine
 ```shell
 $ vagrant ssh gateway-machine
 ```
+Verify docker status:
+```shell
+$ docker --version 
+$ systemctl status -l docker
+```
+
 Verify docker services:
 ```shell
 $ sudo docker service ls
 ```
+Check docker running/stop:
+```shell
+$ sudo docker ps -a
+```
+Check docker logs
+```shell
+$ sudo docker logs <container_id>
+```
 ___Troubleshoot___: Force service update at host machine:
 ```shell
-$ sudo docker service update --force <docker container id>
+$ sudo docker service update --force <docker container id or name>
+$ sudo docker service update --force interscity-platform_kong-docs
+$ sudo docker service update --force interscity-platform_mongodb
+$ sudo docker service update --force interscity-platform_datacollector
 overall progress: 1 out of 1 tasks 
 1/1: running   [==================================================>] 
 verify: Service converged 
@@ -312,7 +329,7 @@ $ sudo apt install ruby-bundler
 $ bundle --version
 ```
 ```shell
-$ cd interscity/src/test
+$ cd interscity/src/test/
 ```
 ___Troubleshoot___: It was necessary to update the Gemfile to ruby 3.0.2 to make it works! (Maybe you will need to update it in the future to a newer version)
 ```shell
