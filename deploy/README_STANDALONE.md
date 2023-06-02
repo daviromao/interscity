@@ -183,7 +183,14 @@ deb http://archive.debian.org/debian-security stretch/updates main
 deb-src http://archive.debian.org/debian-security stretch/updates main
 ```
 
-The host *gateway-machine* should be created!
+So, let`s supend and up again:
+
+```shell
+$ sudo vagrant suspend
+$ sudo vagrant up
+```
+
+The host *gateway-machine* should be created! (Now correctly!)
 
 ___Troubleshoot___: If you are trying to build a VM with the same name, delete/remove it from VirtualBox first and remove the remain files from */home/$USER/.VirutalBox VMS/* and try again!
 
@@ -199,7 +206,7 @@ $ vagrant ssh gateway-machine
 ```
 - **Save your public key into host machine**
 ```shell
-$ echo public_key_string >> ~/.ssh/authorized_keys
+$ echo "public_key_string" >> ~/.ssh/authorized_keys
 ```
 Replace *public_key_string* as your outupt from public key executed from a step before at "Note the output" [printed at the end of localScript.sh]
 
@@ -217,7 +224,7 @@ $ python --version
 ```shell
 $ pip -V
 ```
-Install it if not available (sometimes the script does not install it, not sure why cause it`s already in the [main.yml](./ansible/roles/common/tasks/main.yml) file:
+Install it if not available - probabbly if you did not suspend and up vagrant again after update the debian repositories (sometimes the script does not install it, not sure why cause it`s already in the [main.yml](./ansible/roles/common/tasks/main.yml) file:
 ```shell
 $ sudo apt install python-pip
 $ pip -V
@@ -261,6 +268,8 @@ The setup swarm script details is available in the file [/ansible/roles/docker/t
 $ ansible-playbook deploy-swarm-stack.yml -i standalone_vagrant_host
 ```
 The setup swarm script details is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
+
+___Troubleshoot___: If it fails, probably the socker_stacj TASK, repeat the deploy-swarm-stack again, sometime the docker take a long time to complete and some TASK can`t be done completely!
 
 ___Troubleshoot___: Those scripts could be not up-to-date and need to be fixed! (Normally updating to a new version solves the problem)
 
