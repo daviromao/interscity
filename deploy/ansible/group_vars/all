@@ -40,7 +40,7 @@ postgres_resadapt_password: 'resadaptpass'
 mongo_user: 'admin'
 mongo_password: 'admin'
 replica_set_name: 'interscity-set'
-mongodb_image: 'mongo'
+mongodb_image: 'mongo:4.2'
 
 # Collectl
 collecting_time: 1m
@@ -57,4 +57,4 @@ kong_database: 'postgres'
 rabbitmq_image: 'rabbitmq:3.6.5'
 
 # Redis
-redis_image: 'redis'
+redis_image: 'redis:7.0.10'
