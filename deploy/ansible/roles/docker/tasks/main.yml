@@ -62,8 +62,8 @@
 - name: run docker default test
   command: docker run hello-world
 
-- name: install python-pip
-  easy_install: name=pip state=latest
+# - name: install python-pip
+#   easy_install: name=pip state=latest
 
 - name: install docker
   pip: name=docker
