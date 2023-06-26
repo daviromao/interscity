@@ -18,6 +18,7 @@ Go to interSCity deploy folder:
 $ cd interscity-platform/deploy
 ```
 ## * *Option 1*: __Fast-way__ : run the script file: [localScript.sh](./localScript.sh)
+**It will updates your system and all dependencies needed for the lastest versions to continue the setup**
 
 ```shell
 $ chmod +x localScript.sh
@@ -186,8 +187,9 @@ deb-src http://archive.debian.org/debian-security stretch/updates main
 So, let`s supend and up again:
 
 ```shell
-$ sudo vagrant suspend
-$ sudo vagrant up
+$ vagrant suspend
+$ vagrant halt
+$ vagrant up
 ```
 
 The host *gateway-machine* should be created! (Now correctly!)
@@ -253,7 +255,7 @@ $ exit
 ```
 And repeat the *setup-swarm* again.
 
-ansible-playbook [setup-swarm.yml](./ansible/setup-swarm.yml), will run the commands:
+ansible-playbook [setup-swarm.yml](./ansible/setup-swarm.yml), will run those commands:
 1 - Basic Setup: [main.yml](./ansible/setup-swarm.yml)
 2 - Common Setup: [main.yml](./ansible/roles/common/tasks/main.yml)
 3 - Docker Setup [main.yml](./ansible/roles/docker/tasks/main.yml)
@@ -269,11 +271,11 @@ $ ansible-playbook deploy-swarm-stack.yml -i standalone_vagrant_host
 ```
 The setup swarm script details is available in the file [/ansible/roles/docker/tasks/main.yml](./ansible/roles/docker/tasks/main.yml)
 
-___Troubleshoot___: If it fails, probably the socker_stacj TASK, repeat the deploy-swarm-stack again, sometime the docker take a long time to complete and some TASK can`t be done completely!
+___Troubleshoot___: If it fails, probably the **docker_stack** TASK, repeat the deploy-swarm-stack again, sometime the docker take a long time to complete and some TASK can`t be done completely!
 
 ___Troubleshoot___: Those scripts could be not up-to-date and need to be fixed! (Normally updating to a new version solves the problem)
 
-ansible-playbook [deploy-swarm-stack.yml](./ansible/deploy-swarm-stack.yml), will run the commands:
+ansible-playbook [deploy-swarm-stack.yml](./ansible/deploy-swarm-stack.yml), will run those commands:
 1 - Deply Services: [main.yml](./ansible/roles/deploy-swarm-stack/tasks/main.yml)
 2 - and complete the deploy-swarm-stack.yml setup
 
@@ -435,6 +437,17 @@ After SEND the request you should receive the follow response:
 ```
 
 Now check the others examples into interSCity playground: https://playground.interscity.org/ 
+
+# Stops and delete the virtual machine
+
+If you need to remove the virtual machine:
+
+```shell
+$ cd interscity-platform/deploy
+$ vagrant halt
+$ vagrant destroy
+gateway-machine: Are you sure you want to destroy the 'gateway-machine' VM? [y/N] y
+```
 
 # Others - Documentation
 

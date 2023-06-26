@@ -1,4 +1,4 @@
-image: ruby:2.7
+image: ruby:3.0
 
 services:
   - mongo:1.3.4
@@ -212,7 +212,7 @@ deploy:
 
 post_deploy_integration_test:
   stage: post_deploy_integration_test
-  image: ruby:2.7
+  image: ruby:3.0
   only:
     - master
   before_script:
