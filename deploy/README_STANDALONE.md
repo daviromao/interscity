@@ -38,11 +38,12 @@ $ python3.10 --version
 - **PIP 3** [skip if localScript.sh]
 ```shell
 $ sudo apt install python3-pip
-$ pip -V
+$ pip3 -V
 ```
 - **Ansible 2.8+** Needed for Ansible [skip if localScript.sh]
 ```shell
 $ sudo apt install ansible
+$ python3 -m pip install --upgrade --user ansible
 $ ansible --version
 ```
 - **OpenSSH** [skip if localScript.sh]
@@ -147,6 +148,7 @@ $ vagrant up
 ```
 
 Debian9 repositories need to be updated at virtual machine:
+ [SKYP THIS STEP WHEN USING THE BUSTER IMAGE]
 
 ```shell
 $ vagrant ssh gateway-machine
@@ -220,16 +222,16 @@ $ ssh -v Protocol
 ```
 - **Verify python**
 ```shell
-$ python --version
+$ python3 --version
 ```
 - **Verify pip**
 ```shell
-$ pip -V
+$ pip3 -V
 ```
 Install it if not available - probabbly if you did not suspend and up vagrant again after update the debian repositories (sometimes the script does not install it, not sure why cause it`s already in the [main.yml](./ansible/roles/common/tasks/main.yml) file:
 ```shell
-$ sudo apt install python-pip
-$ pip -V
+$ sudo apt install python3-pip
+$ pip3 -V
 ```shell
 
 - **exit from host machine**
@@ -238,6 +240,10 @@ $ exit
 ```
 
 # STEP 3 - At Local Machine (Deploy to hosts)
+
+## - **Upgrade ansible**
+
+$ python3 -m pip install --upgrade --user ansible
 
 ## - **Setup host (Update apps)**
 
@@ -340,7 +346,7 @@ $ sudo apt install ruby-bundler
 $ bundle --version
 ```
 ```shell
-$ cd interscity/src/test/
+$ cd interscity-platform/src/test/
 ```
 ___Troubleshoot___: It was necessary to update the Gemfile to ruby 3.0.2 to make it works! (Maybe you will need to update it in the future to a newer version)
 ```shell

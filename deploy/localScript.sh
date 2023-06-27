@@ -25,6 +25,7 @@ sudo apt install python3-pip -y
 pip -V
 sudo apt install ansible -y
 ansible --version
+python3 -m pip install --upgrade --user ansible
 sudo apt install openssh-server -y
 ssh -v Protocol
 sudo apt install virtualbox -y
