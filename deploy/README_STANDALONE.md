@@ -2,6 +2,15 @@
 
 Ansible scripts to deploy interSCity in a Docker Swarm environment.
 
+Upgrades: 
+- Debian/Buster64 image version
+- MongoDb 3.4 image version
+- Docker 19.03.15 version
+- Python3 22.0.2 version
+- pip3 3.10.6 version
+- Ansible 2.15.1 version
+- Ruby 3.0.2p107 version
+
 # Requirements
 
 # STEP 1 - At Local Machine (Check local enviroment)
