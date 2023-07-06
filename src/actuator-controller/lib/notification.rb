@@ -1,29 +1,28 @@
 # frozen_string_literal: true
+require 'bunny'
 
 module SmartCities
   module Notifier
-    @conn = nil
-    @channel = nil
+    attr_reader :conn, :channel
 
-    def self.connect
-      if @conn.nil? || @conn.closed?
-        @conn = Bunny.new(hostname: SERVICES_CONFIG['services']['rabbitmq'])
-        @conn.start
-      end
-      @channel = @conn.create_channel if @channel.nil? || @channel.closed?
+    def connect
+      @conn ||= Bunny.new(hostname: SERVICES_CONFIG['services']['rabbitmq'])
+      @conn.start unless @conn.open?
+      @channel ||= @conn.create_channel
     end
 
     def setup_connection
-      SmartCities::Notifier.connect
+      connect
     end
 
     def notify_command_request(command = self)
-      setup_connection if @conn.nil? || @conn.closed?
-      key = command.uuid
-      key = key + '.' + command.capability
-      topic = @channel.topic('resource.actuate.create')
+      setup_connection
+      key = "#{command.uuid}.#{command.capability}"
+      topic = channel.topic('resource.actuate.create')
       message = command.to_json
       topic.publish(message, routing_key: key)
     end
+
+    module_function :connect, :setup_connection, :notify_command_request
   end
 end
