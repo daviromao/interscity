@@ -1,12 +1,14 @@
 ---
 
 # General
+
 rails_env: production
 secret_key_base: 'admin'
 
 enabled_db_backups: false
 
 # Ports
+
 resource_cataloguer_port: 3000
 resource_adaptor_port: 3001
 data_collector_port: 3002
@@ -17,14 +19,16 @@ kong_admin_port: 8001
 mongo_port: 27017
 
 # Docker
+
 resource_cataloguer_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-cataloguer
 resource_adaptor_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-adaptor
 data_collector_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/data-collector
-actuator_controller_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/actuator-controller
+actuator_controller_docker_image: registry.gitlab.com/daviromao/interscity-platform/actuator
 resource_discoverer_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/resource-discoverer
 kong_api_gateway_docker_image: registry.gitlab.com/interscity/interscity-platform/interscity-platform/kong-api-gateway
 
 # Postgresql
+
 postgres_image: 'postgres:9.5'
 postgres_port: 5432
 postgres_user: 'postgres'
@@ -37,24 +41,30 @@ postgres_resadapt_user: 'resource_adaptor'
 postgres_resadapt_password: 'resadaptpass'
 
 # Mongo
+
 mongo_user: 'admin'
 mongo_password: 'admin'
 replica_set_name: 'interscity-set'
 mongodb_image: 'mongo:4.2'
 
 # Collectl
+
 collecting_time: 1m
 collecting_interval: 5
 
 # Swarm
+
 swarm_deployments_path: /opt/docker-swarm-deployments
 
 # Kong
+
 kong_image: 'kong:0.11.0'
 kong_database: 'postgres'
 
 # RabbitMQ
+
 rabbitmq_image: 'rabbitmq:3.6.5'
 
 # Redis
+
 redis_image: 'redis:7.0.10'
